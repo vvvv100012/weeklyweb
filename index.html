@@ -1107,6 +1107,9 @@
             button.disabled = true;
             
             try {
+                // 1. 首先加载背景图片并转换为 Base64
+                const backgroundImage = await loadImageAsBase64('background.png');
+                
                 // 获取原始 poster 的内容
                 const originalPoster = document.getElementById('poster');
                 
@@ -1129,8 +1132,8 @@
                 newPoster.style.margin = '0';
                 newPoster.style.padding = '0';
                 newPoster.style.boxSizing = 'border-box';
-                // 添加背景图片
-                newPoster.style.backgroundImage = 'url(background.png)';
+                // 使用 Base64 背景图片
+                newPoster.style.backgroundImage = `url(${backgroundImage})`;
                 newPoster.style.backgroundSize = 'cover';
                 newPoster.style.backgroundPosition = 'center';
                 newPoster.style.backgroundRepeat = 'no-repeat';
@@ -1146,7 +1149,6 @@
                 renderStyle.id = 'render-style';
                 renderStyle.textContent = `
                     #temp-poster {
-                        background-image: url(background.png) !important;
                         background-size: cover !important;
                         background-position: center !important;
                         background-repeat: no-repeat !important;
@@ -1257,11 +1259,11 @@
                         margin: 0;
                     }
                     #temp-poster .triple-bubble {
-                        background: #1a5550 !important;
+                        background: rgba(0, 192, 179, 0.35) !important;
                         background-image: none !important;
                         backdrop-filter: none !important;
                         -webkit-backdrop-filter: none !important;
-                        border: 2px solid #00D9D9;
+                        border: 2px solid rgba(0, 217, 217, 0.6);
                         border-radius: 35px;
                         padding: 20px 35px 40px 35px;
                         width: 100%;
@@ -1277,11 +1279,11 @@
                         margin: 0;
                     }
                     #temp-poster .single-bubble {
-                        background: #1a5550 !important;
+                        background: rgba(14, 173, 152, 0.25) !important;
                         background-image: none !important;
                         backdrop-filter: none !important;
                         -webkit-backdrop-filter: none !important;
-                        border: 2px solid #00D9D9;
+                        border: 2px solid rgba(0, 217, 217, 0.6);
                         border-radius: 40px;
                         padding: 40px 50px;
                         width: 100%;
@@ -1425,10 +1427,10 @@
                     width: 1080,
                     height: 1920,
                     scale: 2,
-                    backgroundColor: '#0a0e1a',
+                    backgroundColor: null,
                     logging: false,
                     useCORS: true,
-                    allowTaint: false,
+                    allowTaint: true,
                     removeContainer: false,
                     foreignObjectRendering: false,
                     imageTimeout: 15000,
@@ -1471,6 +1473,32 @@
                     button.textContent = originalButtonText;
                 }, 2000);
             }
+        }
+
+        // 辅助函数：加载图片并转换为 Base64
+        function loadImageAsBase64(imageUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous'; // 处理跨域问题
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    try {
+                        const dataURL = canvas.toDataURL('image/png');
+                        resolve(dataURL);
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+                img.onerror = function() {
+                    reject(new Error('Failed to load image: ' + imageUrl));
+                };
+                // 添加时间戳防止缓存
+                img.src = imageUrl + '?t=' + new Date().getTime();
+            });
         }
 
         // 实时更新功能
