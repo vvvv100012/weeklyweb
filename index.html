@@ -1098,175 +1098,288 @@
         }
         function downloadPoster() {
             const poster = document.getElementById('poster');
+            const button = event.target;
+            
+            // 显示加载状态
+            const originalButtonText = button.textContent;
+            button.textContent = '生成中...';
+            button.disabled = true;
             
             // 1. 保存所有原始样式
             const originalStyles = {
                 poster: {
                     backgroundImage: poster.style.backgroundImage,
+                    backgroundColor: poster.style.backgroundColor,
                     width: poster.style.width,
                     height: poster.style.height,
                     margin: poster.style.margin,
-                    padding: poster.style.padding
-                },
-                posterBefore: null // 伪元素无法直接访问
+                    padding: poster.style.padding,
+                    boxSizing: poster.style.boxSizing
+                }
             };
             
+            const posterContent = poster.querySelector('.poster-content');
             const posterSections = poster.querySelector('.poster-sections');
             const posterHeader = poster.querySelector('.poster-header');
             const posterFooter = poster.querySelector('.poster-footer');
             const sectionContents = poster.querySelectorAll('.section-content');
             const bubbles = poster.querySelectorAll('.triple-bubble');
+            const singleBubbles = poster.querySelectorAll('.single-bubble');
             
-            originalStyles.posterSections = { padding: posterSections.style.padding };
-            originalStyles.posterHeader = { padding: posterHeader.style.padding };
+            originalStyles.posterContent = {
+                padding: posterContent.style.padding,
+                margin: posterContent.style.margin,
+                boxSizing: posterContent.style.boxSizing
+            };
+            originalStyles.posterSections = { 
+                padding: posterSections.style.padding,
+                margin: posterSections.style.margin,
+                boxSizing: posterSections.style.boxSizing
+            };
+            originalStyles.posterHeader = { 
+                padding: posterHeader.style.padding,
+                margin: posterHeader.style.margin,
+                boxSizing: posterHeader.style.boxSizing
+            };
             originalStyles.sectionContents = Array.from(sectionContents).map(el => ({
-                padding: el.style.padding
+                padding: el.style.padding,
+                margin: el.style.margin,
+                boxSizing: el.style.boxSizing
             }));
             originalStyles.bubbles = Array.from(bubbles).map(el => ({
                 backdropFilter: el.style.backdropFilter,
                 webkitBackdropFilter: el.style.webkitBackdropFilter,
                 background: el.style.background,
+                backgroundColor: el.style.backgroundColor,
                 padding: el.style.padding,
-                margin: el.style.margin
+                margin: el.style.margin,
+                boxSizing: el.style.boxSizing,
+                border: el.style.border
+            }));
+            originalStyles.singleBubbles = Array.from(singleBubbles).map(el => ({
+                backdropFilter: el.style.backdropFilter,
+                webkitBackdropFilter: el.style.webkitBackdropFilter,
+                background: el.style.background,
+                backgroundColor: el.style.backgroundColor,
+                padding: el.style.padding,
+                margin: el.style.margin,
+                boxSizing: el.style.boxSizing,
+                border: el.style.border
             }));
             
-            // 2. 临时移除背景图片,添加纯色背景
-            poster.style.backgroundImage = 'none';
-            poster.style.backgroundColor = '#0a0e1a'; // 深色纯背景
-            poster.style.width = '1080px';
-            poster.style.height = '1920px';
-            poster.style.margin = '0';
-            poster.style.padding = '0';
-            
-            // 3. 添加临时样式来替代::before伪元素
+            // 2. 添加临时样式 - 彻底移除所有可能导致渲染问题的样式
             const styleElement = document.createElement('style');
             styleElement.id = 'temp-download-style';
             styleElement.textContent = `
                 #poster::before {
                     display: none !important;
                 }
+                .poster-container::before {
+                    display: none !important;
+                }
+                #poster {
+                    background-image: none !important;
+                    background-color: #0a0e1a !important;
+                }
+                #poster .triple-bubble,
+                #poster .single-bubble {
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    background: #1a4d47 !important; /* 纯色背景，不透明 */
+                    background-image: none !important;
+                }
             `;
             document.head.appendChild(styleElement);
             
+            // 3. 强制设置精确尺寸和盒模型
+            poster.style.backgroundImage = 'none';
+            poster.style.backgroundColor = '#0a0e1a';
+            poster.style.width = '1080px';
+            poster.style.height = '1920px';
+            poster.style.margin = '0';
+            poster.style.padding = '0';
+            poster.style.boxSizing = 'border-box';
+            
+            posterContent.style.padding = '0';
+            posterContent.style.margin = '0';
+            posterContent.style.boxSizing = 'border-box';
+            
             posterSections.style.padding = '0 15px';
+            posterSections.style.margin = '0';
+            posterSections.style.boxSizing = 'border-box';
+            
             posterHeader.style.padding = '10px 40px 5px 40px';
+            posterHeader.style.margin = '0';
+            posterHeader.style.boxSizing = 'border-box';
+            
             sectionContents.forEach(el => {
                 el.style.padding = '0';
+                el.style.margin = '0';
+                el.style.boxSizing = 'border-box';
             });
             
-            // 4. 移除backdrop-filter并使用纯色背景
+            // 4. 气泡框使用完全不透明的纯色背景
             bubbles.forEach(bubble => {
                 bubble.style.backdropFilter = 'none';
                 bubble.style.webkitBackdropFilter = 'none';
-                // 使用更不透明的纯色背景替代半透明
-                bubble.style.background = 'rgba(0, 192, 179, 0.35)'; 
+                bubble.style.background = '#1a4d47'; // 纯色，不透明
+                bubble.style.backgroundColor = '#1a4d47';
                 bubble.style.padding = '20px 35px 40px 35px';
                 bubble.style.margin = '0';
+                bubble.style.boxSizing = 'border-box';
+                bubble.style.border = '2px solid rgba(0, 217, 217, 0.6)';
             });
             
-            // 5. 等待样式应用后再渲染
+            singleBubbles.forEach(bubble => {
+                bubble.style.backdropFilter = 'none';
+                bubble.style.webkitBackdropFilter = 'none';
+                bubble.style.background = '#1a4d47';
+                bubble.style.backgroundColor = '#1a4d47';
+                bubble.style.boxSizing = 'border-box';
+                bubble.style.border = '2px solid rgba(0, 217, 217, 0.6)';
+            });
+            
+            // 5. 等待样式完全应用
             setTimeout(() => {
                 html2canvas(poster, {
                     width: 1080,
                     height: 1920,
-                    scale: 2, // 提高到2倍分辨率以获得更好的质量
+                    scale: 2, // 生成 2160x3840 高清图
                     useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: '#0a0e1a', // 明确指定背景色
+                    allowTaint: false,
+                    backgroundColor: '#0a0e1a',
                     logging: false,
                     imageTimeout: 15000,
                     removeContainer: false,
                     foreignObjectRendering: false,
-                    pixelRatio: 2,
                     x: 0,
                     y: 0,
                     scrollX: 0,
                     scrollY: 0,
                     windowWidth: 1080,
                     windowHeight: 1920,
-                    // 关键: 克隆时确保背景正确
+                    // 关键：在克隆时也应用相同的修复
                     onclone: function(clonedDoc) {
                         const clonedPoster = clonedDoc.getElementById('poster');
                         if (clonedPoster) {
                             clonedPoster.style.backgroundImage = 'none';
                             clonedPoster.style.backgroundColor = '#0a0e1a';
-                            // 移除克隆文档中的伪元素
-                            const clonedBubbles = clonedPoster.querySelectorAll('.triple-bubble');
+                            clonedPoster.style.width = '1080px';
+                            clonedPoster.style.height = '1920px';
+                            clonedPoster.style.boxSizing = 'border-box';
+                            
+                            // 确保克隆的气泡框也有纯色背景
+                            const clonedBubbles = clonedPoster.querySelectorAll('.triple-bubble, .single-bubble');
                             clonedBubbles.forEach(bubble => {
                                 bubble.style.backdropFilter = 'none';
                                 bubble.style.webkitBackdropFilter = 'none';
-                                bubble.style.background = 'rgba(0, 192, 179, 0.35)';
+                                bubble.style.background = '#1a4d47';
+                                bubble.style.backgroundColor = '#1a4d47';
+                                bubble.style.backgroundImage = 'none';
+                                bubble.style.boxSizing = 'border-box';
                             });
+                            
+                            // 移除伪元素
+                            const clonedContent = clonedPoster.querySelector('.poster-content');
+                            if (clonedContent) {
+                                const beforeStyle = clonedDoc.createElement('style');
+                                beforeStyle.textContent = `
+                                    #poster::before,
+                                    .poster-container::before {
+                                        display: none !important;
+                                    }
+                                `;
+                                clonedDoc.head.appendChild(beforeStyle);
+                            }
                         }
                     }
                 }).then(canvas => {
                     // 6. 恢复所有原始样式
-                    poster.style.backgroundImage = originalStyles.poster.backgroundImage;
-                    poster.style.backgroundColor = '';
-                    poster.style.width = originalStyles.poster.width;
-                    poster.style.height = originalStyles.poster.height;
-                    poster.style.margin = originalStyles.poster.margin;
-                    poster.style.padding = originalStyles.poster.padding;
+                    restoreStyles();
                     
-                    // 移除临时样式
-                    const tempStyle = document.getElementById('temp-download-style');
-                    if (tempStyle) {
-                        tempStyle.remove();
-                    }
-                    
-                    posterSections.style.padding = originalStyles.posterSections.padding;
-                    posterHeader.style.padding = originalStyles.posterHeader.padding;
-                    
-                    sectionContents.forEach((el, index) => {
-                        el.style.padding = originalStyles.sectionContents[index].padding;
-                    });
-                    
-                    bubbles.forEach((bubble, index) => {
-                        bubble.style.backdropFilter = originalStyles.bubbles[index].backdropFilter;
-                        bubble.style.webkitBackdropFilter = originalStyles.bubbles[index].webkitBackdropFilter;
-                        bubble.style.background = originalStyles.bubbles[index].background;
-                        bubble.style.padding = originalStyles.bubbles[index].padding;
-                        bubble.style.margin = originalStyles.bubbles[index].margin;
-                    });
-                    
-                    // 7. 创建下载
+                    // 7. 下载图片
                     const link = document.createElement('a');
                     link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}.png`;
                     link.href = canvas.toDataURL('image/png', 1.0);
                     link.click();
+                    
+                    // 恢复按钮
+                    button.textContent = originalButtonText;
+                    button.disabled = false;
                 }).catch(error => {
-                    // 出错时也要恢复样式
-                    poster.style.backgroundImage = originalStyles.poster.backgroundImage;
-                    poster.style.backgroundColor = '';
-                    poster.style.width = originalStyles.poster.width;
-                    poster.style.height = originalStyles.poster.height;
-                    poster.style.margin = originalStyles.poster.margin;
-                    poster.style.padding = originalStyles.poster.padding;
-                    
-                    const tempStyle = document.getElementById('temp-download-style');
-                    if (tempStyle) {
-                        tempStyle.remove();
-                    }
-                    
-                    posterSections.style.padding = originalStyles.posterSections.padding;
-                    posterHeader.style.padding = originalStyles.posterHeader.padding;
-                    
-                    sectionContents.forEach((el, index) => {
+                    // 出错时恢复样式
+                    restoreStyles();
+                    console.error('下载失败:', error);
+                    button.textContent = '下载失败，请重试';
+                    button.disabled = false;
+                    setTimeout(() => {
+                        button.textContent = originalButtonText;
+                    }, 2000);
+                });
+            }, 200); // 增加等待时间到200ms
+            
+            // 恢复样式的函数
+            function restoreStyles() {
+                poster.style.backgroundImage = originalStyles.poster.backgroundImage;
+                poster.style.backgroundColor = originalStyles.poster.backgroundColor;
+                poster.style.width = originalStyles.poster.width;
+                poster.style.height = originalStyles.poster.height;
+                poster.style.margin = originalStyles.poster.margin;
+                poster.style.padding = originalStyles.poster.padding;
+                poster.style.boxSizing = originalStyles.poster.boxSizing;
+                
+                posterContent.style.padding = originalStyles.posterContent.padding;
+                posterContent.style.margin = originalStyles.posterContent.margin;
+                posterContent.style.boxSizing = originalStyles.posterContent.boxSizing;
+                
+                posterSections.style.padding = originalStyles.posterSections.padding;
+                posterSections.style.margin = originalStyles.posterSections.margin;
+                posterSections.style.boxSizing = originalStyles.posterSections.boxSizing;
+                
+                posterHeader.style.padding = originalStyles.posterHeader.padding;
+                posterHeader.style.margin = originalStyles.posterHeader.margin;
+                posterHeader.style.boxSizing = originalStyles.posterHeader.boxSizing;
+                
+                sectionContents.forEach((el, index) => {
+                    if (originalStyles.sectionContents[index]) {
                         el.style.padding = originalStyles.sectionContents[index].padding;
-                    });
-                    
-                    bubbles.forEach((bubble, index) => {
+                        el.style.margin = originalStyles.sectionContents[index].margin;
+                        el.style.boxSizing = originalStyles.sectionContents[index].boxSizing;
+                    }
+                });
+                
+                bubbles.forEach((bubble, index) => {
+                    if (originalStyles.bubbles[index]) {
                         bubble.style.backdropFilter = originalStyles.bubbles[index].backdropFilter;
                         bubble.style.webkitBackdropFilter = originalStyles.bubbles[index].webkitBackdropFilter;
                         bubble.style.background = originalStyles.bubbles[index].background;
+                        bubble.style.backgroundColor = originalStyles.bubbles[index].backgroundColor;
                         bubble.style.padding = originalStyles.bubbles[index].padding;
                         bubble.style.margin = originalStyles.bubbles[index].margin;
-                    });
-                    
-                    console.error('下载失败:', error);
-                    alert('下载失败,请重试');
+                        bubble.style.boxSizing = originalStyles.bubbles[index].boxSizing;
+                        bubble.style.border = originalStyles.bubbles[index].border;
+                    }
                 });
-            }, 100); // 等待100ms让样式完全应用
+                
+                singleBubbles.forEach((bubble, index) => {
+                    if (originalStyles.singleBubbles[index]) {
+                        bubble.style.backdropFilter = originalStyles.singleBubbles[index].backdropFilter;
+                        bubble.style.webkitBackdropFilter = originalStyles.singleBubbles[index].webkitBackdropFilter;
+                        bubble.style.background = originalStyles.singleBubbles[index].background;
+                        bubble.style.backgroundColor = originalStyles.singleBubbles[index].backgroundColor;
+                        bubble.style.padding = originalStyles.singleBubbles[index].padding;
+                        bubble.style.margin = originalStyles.singleBubbles[index].margin;
+                        bubble.style.boxSizing = originalStyles.singleBubbles[index].boxSizing;
+                        bubble.style.border = originalStyles.singleBubbles[index].border;
+                    }
+                });
+                
+                // 移除临时样式
+                const tempStyle = document.getElementById('temp-download-style');
+                if (tempStyle) {
+                    tempStyle.remove();
+                }
+            }
         }
 
         // 备用下载方案
