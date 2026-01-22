@@ -384,6 +384,10 @@
             text-shadow: none !important;
             white-space: nowrap;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* 板块2的标签容器 - 位于右下角 */
@@ -1125,8 +1129,11 @@
                 newPoster.style.margin = '0';
                 newPoster.style.padding = '0';
                 newPoster.style.boxSizing = 'border-box';
-                // 添加纯色背景
-                newPoster.style.backgroundColor = '#0a0e1a';
+                // 添加背景图片
+                newPoster.style.backgroundImage = 'url(background.png)';
+                newPoster.style.backgroundSize = 'cover';
+                newPoster.style.backgroundPosition = 'center';
+                newPoster.style.backgroundRepeat = 'no-repeat';
                 
                 // 克隆 poster-content
                 const originalContent = originalPoster.querySelector('.poster-content');
@@ -1139,11 +1146,20 @@
                 renderStyle.id = 'render-style';
                 renderStyle.textContent = `
                     #temp-poster {
-                        background: #0a0e1a !important;
-                        background-image: none !important;
+                        background-image: url(background.png) !important;
+                        background-size: cover !important;
+                        background-position: center !important;
+                        background-repeat: no-repeat !important;
                     }
                     #temp-poster::before {
-                        display: none !important;
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.3);
+                        z-index: 1;
                     }
                     #temp-poster * {
                         box-sizing: border-box !important;
@@ -1356,6 +1372,10 @@
                         text-shadow: none !important;
                         white-space: nowrap;
                         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                        text-align: center;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                     #temp-poster .verdict-container {
                         position: absolute;
