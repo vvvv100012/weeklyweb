@@ -1096,343 +1096,361 @@
 
             alert('Poster 已更新！');
         }
-        function downloadPoster() {
-            const poster = document.getElementById('poster');
+        async function downloadPoster() {
             const button = event.target;
-            
-            // 显示加载状态
             const originalButtonText = button.textContent;
             button.textContent = '生成中...';
             button.disabled = true;
             
-            // 1. 保存所有原始样式
-            const originalStyles = {
-                poster: {
-                    backgroundImage: poster.style.backgroundImage,
-                    backgroundColor: poster.style.backgroundColor,
-                    width: poster.style.width,
-                    height: poster.style.height,
-                    margin: poster.style.margin,
-                    padding: poster.style.padding,
-                    boxSizing: poster.style.boxSizing
-                }
-            };
-            
-            const posterContent = poster.querySelector('.poster-content');
-            const posterSections = poster.querySelector('.poster-sections');
-            const posterHeader = poster.querySelector('.poster-header');
-            const posterFooter = poster.querySelector('.poster-footer');
-            const sectionContents = poster.querySelectorAll('.section-content');
-            const bubbles = poster.querySelectorAll('.triple-bubble');
-            const singleBubbles = poster.querySelectorAll('.single-bubble');
-            
-            originalStyles.posterContent = {
-                padding: posterContent.style.padding,
-                margin: posterContent.style.margin,
-                boxSizing: posterContent.style.boxSizing
-            };
-            originalStyles.posterSections = { 
-                padding: posterSections.style.padding,
-                margin: posterSections.style.margin,
-                boxSizing: posterSections.style.boxSizing
-            };
-            originalStyles.posterHeader = { 
-                padding: posterHeader.style.padding,
-                margin: posterHeader.style.margin,
-                boxSizing: posterHeader.style.boxSizing
-            };
-            originalStyles.sectionContents = Array.from(sectionContents).map(el => ({
-                padding: el.style.padding,
-                margin: el.style.margin,
-                boxSizing: el.style.boxSizing
-            }));
-            originalStyles.bubbles = Array.from(bubbles).map(el => ({
-                backdropFilter: el.style.backdropFilter,
-                webkitBackdropFilter: el.style.webkitBackdropFilter,
-                background: el.style.background,
-                backgroundColor: el.style.backgroundColor,
-                padding: el.style.padding,
-                margin: el.style.margin,
-                boxSizing: el.style.boxSizing,
-                border: el.style.border
-            }));
-            originalStyles.singleBubbles = Array.from(singleBubbles).map(el => ({
-                backdropFilter: el.style.backdropFilter,
-                webkitBackdropFilter: el.style.webkitBackdropFilter,
-                background: el.style.background,
-                backgroundColor: el.style.backgroundColor,
-                padding: el.style.padding,
-                margin: el.style.margin,
-                boxSizing: el.style.boxSizing,
-                border: el.style.border
-            }));
-            
-            // 2. 添加临时样式 - 彻底移除所有可能导致渲染问题的样式
-            const styleElement = document.createElement('style');
-            styleElement.id = 'temp-download-style';
-            styleElement.textContent = `
-                #poster::before {
-                    display: none !important;
-                }
-                .poster-container::before {
-                    display: none !important;
-                }
-                #poster {
-                    background-image: none !important;
-                    background-color: #0a0e1a !important;
-                }
-                #poster .triple-bubble,
-                #poster .single-bubble {
-                    backdrop-filter: none !important;
-                    -webkit-backdrop-filter: none !important;
-                    background: #1a4d47 !important; /* 纯色背景，不透明 */
-                    background-image: none !important;
-                }
-            `;
-            document.head.appendChild(styleElement);
-            
-            // 3. 强制设置精确尺寸和盒模型
-            poster.style.backgroundImage = 'none';
-            poster.style.backgroundColor = '#0a0e1a';
-            poster.style.width = '1080px';
-            poster.style.height = '1920px';
-            poster.style.margin = '0';
-            poster.style.padding = '0';
-            poster.style.boxSizing = 'border-box';
-            
-            posterContent.style.padding = '0';
-            posterContent.style.margin = '0';
-            posterContent.style.boxSizing = 'border-box';
-            
-            posterSections.style.padding = '0 15px';
-            posterSections.style.margin = '0';
-            posterSections.style.boxSizing = 'border-box';
-            
-            posterHeader.style.padding = '10px 40px 5px 40px';
-            posterHeader.style.margin = '0';
-            posterHeader.style.boxSizing = 'border-box';
-            
-            sectionContents.forEach(el => {
-                el.style.padding = '0';
-                el.style.margin = '0';
-                el.style.boxSizing = 'border-box';
-            });
-            
-            // 4. 气泡框使用完全不透明的纯色背景
-            bubbles.forEach(bubble => {
-                bubble.style.backdropFilter = 'none';
-                bubble.style.webkitBackdropFilter = 'none';
-                bubble.style.background = '#1a4d47'; // 纯色，不透明
-                bubble.style.backgroundColor = '#1a4d47';
-                bubble.style.padding = '20px 35px 40px 35px';
-                bubble.style.margin = '0';
-                bubble.style.boxSizing = 'border-box';
-                bubble.style.border = '2px solid rgba(0, 217, 217, 0.6)';
-            });
-            
-            singleBubbles.forEach(bubble => {
-                bubble.style.backdropFilter = 'none';
-                bubble.style.webkitBackdropFilter = 'none';
-                bubble.style.background = '#1a4d47';
-                bubble.style.backgroundColor = '#1a4d47';
-                bubble.style.boxSizing = 'border-box';
-                bubble.style.border = '2px solid rgba(0, 217, 217, 0.6)';
-            });
-            
-            // 5. 等待样式完全应用
-            setTimeout(() => {
-                html2canvas(poster, {
+            try {
+                // 获取原始 poster 的内容
+                const originalPoster = document.getElementById('poster');
+                
+                // 创建一个完全独立的容器，放在屏幕外
+                const renderContainer = document.createElement('div');
+                renderContainer.style.position = 'fixed';
+                renderContainer.style.left = '-9999px';
+                renderContainer.style.top = '0';
+                renderContainer.style.width = '1080px';
+                renderContainer.style.height = '1920px';
+                document.body.appendChild(renderContainer);
+                
+                // 创建新的 poster 副本
+                const newPoster = document.createElement('div');
+                newPoster.id = 'temp-poster';
+                newPoster.style.width = '1080px';
+                newPoster.style.height = '1920px';
+                newPoster.style.position = 'relative';
+                newPoster.style.overflow = 'hidden';
+                newPoster.style.margin = '0';
+                newPoster.style.padding = '0';
+                newPoster.style.boxSizing = 'border-box';
+                // 添加纯色背景
+                newPoster.style.backgroundColor = '#0a0e1a';
+                
+                // 克隆 poster-content
+                const originalContent = originalPoster.querySelector('.poster-content');
+                const newContent = originalContent.cloneNode(true);
+                newPoster.appendChild(newContent);
+                renderContainer.appendChild(newPoster);
+                
+                // 添加专门用于渲染的样式
+                const renderStyle = document.createElement('style');
+                renderStyle.id = 'render-style';
+                renderStyle.textContent = `
+                    #temp-poster {
+                        background: #0a0e1a !important;
+                        background-image: none !important;
+                    }
+                    #temp-poster::before {
+                        display: none !important;
+                    }
+                    #temp-poster * {
+                        box-sizing: border-box !important;
+                    }
+                    #temp-poster .poster-content {
+                        position: relative;
+                        z-index: 2;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        color: white;
+                        padding: 0;
+                        margin: 0;
+                    }
+                    #temp-poster .poster-header {
+                        height: 100px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 10px 40px 5px 40px;
+                        flex-shrink: 0;
+                        position: relative;
+                        background: transparent;
+                    }
+                    #temp-poster .poster-header::after {
+                        content: '';
+                        position: absolute;
+                        bottom: 0;
+                        left: 10px;
+                        right: 10px;
+                        height: 1px;
+                        background: rgba(255, 255, 255, 0.4);
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                    }
+                    #temp-poster .poster-title {
+                        font-size: 60px;
+                        font-weight: 800;
+                        color: #00D9D9 !important;
+                        margin: 0;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                        line-height: 1.1;
+                        text-align: left;
+                    }
+                    #temp-poster .poster-date {
+                        font-size: 20px;
+                        color: rgba(255, 255, 255, 0.9);
+                        font-weight: 500;
+                        margin: 0;
+                        text-align: right;
+                    }
+                    #temp-poster .poster-sections {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        padding: 0 15px;
+                        margin: 0;
+                    }
+                    #temp-poster .poster-section {
+                        display: flex;
+                        flex-direction: column;
+                        margin-bottom: 10px;
+                    }
+                    #temp-poster .poster-section.section-2,
+                    #temp-poster .poster-section.section-3 {
+                        flex: 1;
+                    }
+                    #temp-poster .section-title {
+                        font-size: 40px;
+                        font-weight: 700;
+                        color: #0EAD98 !important;
+                        margin-bottom: 1px;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                        text-align: left;
+                        padding-left: 10px;
+                        display: flex;
+                        align-items: center;
+                        height: 70px;
+                    }
+                    #temp-poster .section-content {
+                        flex: 1;
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: center;
+                        padding: 0;
+                        margin: 0;
+                    }
+                    #temp-poster .triple-bubble-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        height: 100%;
+                        width: 100%;
+                        justify-content: flex-start;
+                        padding: 0;
+                        margin: 0;
+                    }
+                    #temp-poster .triple-bubble {
+                        background: #1a5550 !important;
+                        background-image: none !important;
+                        backdrop-filter: none !important;
+                        -webkit-backdrop-filter: none !important;
+                        border: 2px solid #00D9D9;
+                        border-radius: 35px;
+                        padding: 20px 35px 40px 35px;
+                        width: 100%;
+                        height: calc((100% - 10px) / 3);
+                        min-height: 240px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+                        text-align: left;
+                        overflow: hidden;
+                        position: relative;
+                        box-sizing: border-box;
+                        margin: 0;
+                    }
+                    #temp-poster .single-bubble {
+                        background: #1a5550 !important;
+                        background-image: none !important;
+                        backdrop-filter: none !important;
+                        -webkit-backdrop-filter: none !important;
+                        border: 2px solid #00D9D9;
+                        border-radius: 40px;
+                        padding: 40px 50px;
+                        width: 100%;
+                        height: 100%;
+                        max-height: 200px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        text-align: left;
+                        overflow: hidden;
+                        box-sizing: border-box;
+                        margin: 0;
+                    }
+                    #temp-poster .bubble-text,
+                    #temp-poster .triple-bubble-text {
+                        color: white !important;
+                        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                        font-weight: 500;
+                        text-align: left;
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                    }
+                    #temp-poster .bubble-text {
+                        font-size: 20px !important;
+                        line-height: 1.3 !important;
+                    }
+                    #temp-poster .triple-bubble-text {
+                        font-size: 25px !important;
+                        line-height: 1.15 !important;
+                        width: 100%;
+                        flex: 1;
+                        overflow: hidden;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 6;
+                        -webkit-box-orient: vertical;
+                        margin-bottom: 5px;
+                        padding-right: 8px;
+                    }
+                    #temp-poster .bubble-text *,
+                    #temp-poster .triple-bubble-text * {
+                        color: inherit !important;
+                        font-size: inherit !important;
+                        line-height: inherit !important;
+                        font-family: inherit !important;
+                    }
+                    #temp-poster .bubble-text strong,
+                    #temp-poster .bubble-text b,
+                    #temp-poster .triple-bubble-text strong,
+                    #temp-poster .triple-bubble-text b {
+                        color: #0EAD98 !important;
+                        font-weight: 700 !important;
+                        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+                    }
+                    #temp-poster .bubble-text em,
+                    #temp-poster .bubble-text i,
+                    #temp-poster .triple-bubble-text em,
+                    #temp-poster .triple-bubble-text i {
+                        color: #00D9D9 !important;
+                        font-style: italic !important;
+                    }
+                    #temp-poster .bubble-text u,
+                    #temp-poster .triple-bubble-text u {
+                        color: #F3BB2C !important;
+                        text-decoration: underline !important;
+                    }
+                    #temp-poster .tag-container {
+                        position: absolute;
+                        bottom: 12px;
+                        left: 20px;
+                        display: flex;
+                        gap: 6px;
+                        flex-wrap: wrap;
+                        max-width: calc(100% - 140px);
+                        z-index: 10;
+                    }
+                    #temp-poster .section-2 .tag-container,
+                    #temp-poster .section-3 .tag-container {
+                        left: auto;
+                        right: 20px;
+                    }
+                    #temp-poster .tag-item {
+                        color: white !important;
+                        font-size: 18px !important;
+                        font-weight: 600 !important;
+                        padding: 4px 10px;
+                        border-radius: 12px;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        text-shadow: none !important;
+                        white-space: nowrap;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                    }
+                    #temp-poster .verdict-container {
+                        position: absolute;
+                        bottom: 12px;
+                        right: 20px;
+                        background: rgba(243, 187, 44, 0.9);
+                        color: #000 !important;
+                        font-size: 20px !important;
+                        font-weight: 600 !important;
+                        padding: 0px 12px 6px 12px;
+                        border-radius: 16px;
+                        border: 1px solid rgba(243, 187, 44, 1);
+                        text-shadow: none !important;
+                        white-space: nowrap;
+                        z-index: 10;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                    }
+                    #temp-poster .section-2 .verdict-container,
+                    #temp-poster .section-3 .verdict-container {
+                        right: auto;
+                        left: 20px;
+                    }
+                    #temp-poster .poster-footer {
+                        height: 80px;
+                        flex-shrink: 0;
+                        position: relative;
+                        background: transparent;
+                    }
+                    #temp-poster .poster-footer::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 10px;
+                        right: 10px;
+                        height: 1px;
+                        background: rgba(255, 255, 255, 0.4);
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                    }
+                `;
+                document.head.appendChild(renderStyle);
+                
+                // 等待样式应用和DOM更新
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // 使用 html2canvas 渲染
+                const canvas = await html2canvas(newPoster, {
                     width: 1080,
                     height: 1920,
-                    scale: 2, // 生成 2160x3840 高清图
-                    useCORS: true,
-                    allowTaint: false,
+                    scale: 2,
                     backgroundColor: '#0a0e1a',
                     logging: false,
-                    imageTimeout: 15000,
+                    useCORS: true,
+                    allowTaint: false,
                     removeContainer: false,
                     foreignObjectRendering: false,
+                    imageTimeout: 15000,
                     x: 0,
                     y: 0,
                     scrollX: 0,
                     scrollY: 0,
                     windowWidth: 1080,
-                    windowHeight: 1920,
-                    // 关键：在克隆时也应用相同的修复
-                    onclone: function(clonedDoc) {
-                        const clonedPoster = clonedDoc.getElementById('poster');
-                        if (clonedPoster) {
-                            clonedPoster.style.backgroundImage = 'none';
-                            clonedPoster.style.backgroundColor = '#0a0e1a';
-                            clonedPoster.style.width = '1080px';
-                            clonedPoster.style.height = '1920px';
-                            clonedPoster.style.boxSizing = 'border-box';
-                            
-                            // 确保克隆的气泡框也有纯色背景
-                            const clonedBubbles = clonedPoster.querySelectorAll('.triple-bubble, .single-bubble');
-                            clonedBubbles.forEach(bubble => {
-                                bubble.style.backdropFilter = 'none';
-                                bubble.style.webkitBackdropFilter = 'none';
-                                bubble.style.background = '#1a4d47';
-                                bubble.style.backgroundColor = '#1a4d47';
-                                bubble.style.backgroundImage = 'none';
-                                bubble.style.boxSizing = 'border-box';
-                            });
-                            
-                            // 移除伪元素
-                            const clonedContent = clonedPoster.querySelector('.poster-content');
-                            if (clonedContent) {
-                                const beforeStyle = clonedDoc.createElement('style');
-                                beforeStyle.textContent = `
-                                    #poster::before,
-                                    .poster-container::before {
-                                        display: none !important;
-                                    }
-                                `;
-                                clonedDoc.head.appendChild(beforeStyle);
-                            }
-                        }
-                    }
-                }).then(canvas => {
-                    // 6. 恢复所有原始样式
-                    restoreStyles();
-                    
-                    // 7. 下载图片
-                    const link = document.createElement('a');
-                    link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}.png`;
-                    link.href = canvas.toDataURL('image/png', 1.0);
-                    link.click();
-                    
-                    // 恢复按钮
-                    button.textContent = originalButtonText;
-                    button.disabled = false;
-                }).catch(error => {
-                    // 出错时恢复样式
-                    restoreStyles();
-                    console.error('下载失败:', error);
-                    button.textContent = '下载失败，请重试';
-                    button.disabled = false;
-                    setTimeout(() => {
-                        button.textContent = originalButtonText;
-                    }, 2000);
-                });
-            }, 200); // 增加等待时间到200ms
-            
-            // 恢复样式的函数
-            function restoreStyles() {
-                poster.style.backgroundImage = originalStyles.poster.backgroundImage;
-                poster.style.backgroundColor = originalStyles.poster.backgroundColor;
-                poster.style.width = originalStyles.poster.width;
-                poster.style.height = originalStyles.poster.height;
-                poster.style.margin = originalStyles.poster.margin;
-                poster.style.padding = originalStyles.poster.padding;
-                poster.style.boxSizing = originalStyles.poster.boxSizing;
-                
-                posterContent.style.padding = originalStyles.posterContent.padding;
-                posterContent.style.margin = originalStyles.posterContent.margin;
-                posterContent.style.boxSizing = originalStyles.posterContent.boxSizing;
-                
-                posterSections.style.padding = originalStyles.posterSections.padding;
-                posterSections.style.margin = originalStyles.posterSections.margin;
-                posterSections.style.boxSizing = originalStyles.posterSections.boxSizing;
-                
-                posterHeader.style.padding = originalStyles.posterHeader.padding;
-                posterHeader.style.margin = originalStyles.posterHeader.margin;
-                posterHeader.style.boxSizing = originalStyles.posterHeader.boxSizing;
-                
-                sectionContents.forEach((el, index) => {
-                    if (originalStyles.sectionContents[index]) {
-                        el.style.padding = originalStyles.sectionContents[index].padding;
-                        el.style.margin = originalStyles.sectionContents[index].margin;
-                        el.style.boxSizing = originalStyles.sectionContents[index].boxSizing;
-                    }
+                    windowHeight: 1920
                 });
                 
-                bubbles.forEach((bubble, index) => {
-                    if (originalStyles.bubbles[index]) {
-                        bubble.style.backdropFilter = originalStyles.bubbles[index].backdropFilter;
-                        bubble.style.webkitBackdropFilter = originalStyles.bubbles[index].webkitBackdropFilter;
-                        bubble.style.background = originalStyles.bubbles[index].background;
-                        bubble.style.backgroundColor = originalStyles.bubbles[index].backgroundColor;
-                        bubble.style.padding = originalStyles.bubbles[index].padding;
-                        bubble.style.margin = originalStyles.bubbles[index].margin;
-                        bubble.style.boxSizing = originalStyles.bubbles[index].boxSizing;
-                        bubble.style.border = originalStyles.bubbles[index].border;
-                    }
-                });
+                // 清理临时元素
+                document.body.removeChild(renderContainer);
+                document.head.removeChild(renderStyle);
                 
-                singleBubbles.forEach((bubble, index) => {
-                    if (originalStyles.singleBubbles[index]) {
-                        bubble.style.backdropFilter = originalStyles.singleBubbles[index].backdropFilter;
-                        bubble.style.webkitBackdropFilter = originalStyles.singleBubbles[index].webkitBackdropFilter;
-                        bubble.style.background = originalStyles.singleBubbles[index].background;
-                        bubble.style.backgroundColor = originalStyles.singleBubbles[index].backgroundColor;
-                        bubble.style.padding = originalStyles.singleBubbles[index].padding;
-                        bubble.style.margin = originalStyles.singleBubbles[index].margin;
-                        bubble.style.boxSizing = originalStyles.singleBubbles[index].boxSizing;
-                        bubble.style.border = originalStyles.singleBubbles[index].border;
-                    }
-                });
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
                 
-                // 移除临时样式
-                const tempStyle = document.getElementById('temp-download-style');
+                button.textContent = originalButtonText;
+                button.disabled = false;
+            } catch (error) {
+                console.error('下载失败:', error);
+                
+                // 清理可能残留的元素
+                const tempContainer = document.querySelector('#temp-poster');
+                if (tempContainer && tempContainer.parentElement) {
+                    tempContainer.parentElement.remove();
+                }
+                const tempStyle = document.getElementById('render-style');
                 if (tempStyle) {
                     tempStyle.remove();
                 }
-            }
-        }
-
-        // 备用下载方案
-        function downloadPosterAlternative() {
-            const poster = document.getElementById('poster');
-            
-            // 创建一个临时容器来完全重建poster
-            const tempContainer = document.createElement('div');
-            tempContainer.style.position = 'absolute';
-            tempContainer.style.left = '-9999px';
-            tempContainer.style.top = '0';
-            document.body.appendChild(tempContainer);
-            
-            // 克隆poster
-            const clonedPoster = poster.cloneNode(true);
-            clonedPoster.id = 'temp-poster';
-            
-            // 移除所有问题样式
-            clonedPoster.style.backgroundImage = 'none';
-            clonedPoster.style.backgroundColor = '#0a0e1a';
-            clonedPoster.style.width = '1080px';
-            clonedPoster.style.height = '1920px';
-            
-            // 移除所有backdrop-filter
-            const clonedBubbles = clonedPoster.querySelectorAll('.triple-bubble');
-            clonedBubbles.forEach(bubble => {
-                bubble.style.backdropFilter = 'none';
-                bubble.style.webkitBackdropFilter = 'none';
-                bubble.style.background = 'rgba(0, 192, 179, 0.4)';
-            });
-            
-            tempContainer.appendChild(clonedPoster);
-            
-            // 渲染克隆的元素
-            html2canvas(clonedPoster, {
-                width: 1080,
-                height: 1920,
-                scale: 2,
-                backgroundColor: '#0a0e1a',
-                logging: false
-            }).then(canvas => {
-                // 移除临时容器
-                document.body.removeChild(tempContainer);
                 
-                const link = document.createElement('a');
-                link.download = `vip-insight-${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-            }).catch(error => {
-                document.body.removeChild(tempContainer);
-                console.error('备用方案也失败:', error);
-                alert('下载失败，请尝试刷新页面后重试');
-            });
+                button.textContent = '下载失败，请重试';
+                button.disabled = false;
+                setTimeout(() => {
+                    button.textContent = originalButtonText;
+                }, 2000);
+            }
         }
 
         // 实时更新功能
