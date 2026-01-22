@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Institutional Insight</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0EAD98;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .update-btn {
+            background: linear-gradient(135deg, #0EAD98 0%, #00C0B3 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .update-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 173, 152, 0.3);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #00D9D9 0%, #00C0B3 100%);
+        }
+
+        .module {
+            background: rgba(248, 249, 250, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #0EAD98;
+        }
+
+        .module h3 {
+            font-size: 1.4rem;
+            color: #0EAD98;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #0EAD98;
+        }
+
+        .instructions {
+            background: rgba(14, 173, 152, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #0EAD98;
+        }
+
+        .poster-container {
+            width: 540px;
+            height: 960px;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            margin: 20px auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poster-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+        .poster-header {
+            height: 45px; /* 90px / 2 for scale */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px 5px 20px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .poster-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .poster-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #00D9D9 !important; /* Bright Cyan - 用于主标题 */
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            line-height: 1.1;
+            text-align: left;
+        }
+
+        .poster-date {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin: 0;
+            text-align: right;
+        }
+
+        .poster-sections {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+        }
+
+        .poster-footer {
+            height: 40px; /* 80px / 2 for scale */
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .poster-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Poster Sections with proportional heights - 现在只有2个板块 */
+        .poster-section {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        .poster-section.section-2,
+        .poster-section.section-3 {
+            flex: 1; /* 两个板块平均分配空间 */
+        }
+
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0EAD98 !important; /* Bamboo Green - 主题色用于标题 */
+            margin-bottom: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-align: left;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            height: 45px;
+        }
+
+        .section-content {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        /* 单个气泡框设计 */
+        .single-bubble {
+            background: rgba(14, 173, 152, 0.25); /* 使用Bamboo Green透明背景 */
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
+            border-radius: 20px;
+            padding: 15px 20px;
+            width: 100%;
+            height: 100%;
+            max-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .bubble-text {
+            font-size: 0.7rem !important;
+            line-height: 1.3 !important;
+            color: white !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        /* 强制覆盖所有粘贴文字的颜色和字体大小，使用poster默认样式 */
+        .bubble-text * {
+            color: inherit !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+            font-family: inherit !important;
+        }
+
+        /* Brand Color文字样式 - 用于重要文字突出显示 */
+        .bubble-text strong,
+        .bubble-text b {
+            color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
+            font-weight: 700 !important;
+            font-size: inherit !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        .bubble-text em,
+        .bubble-text i {
+            color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
+            font-style: italic !important;
+            font-size: inherit !important;
+        }
+
+        .bubble-text u {
+            color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
+            text-decoration: underline !important;
+            font-size: inherit !important;
+        }
+
+        /* 三个气泡框布局 - 用于板块2和3 */
+        .triple-bubble-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px; /* 减少间距以获得更多空间 */
+            height: 100%;
+            width: 100%;
+            justify-content: flex-start; /* 改为flex-start，让隐藏的气泡不占空间 */
+            padding: 0;
+        }
+
+        .triple-bubble {
+            background: rgba(0, 192, 179, 0.25); /* 使用New Bamboo Green透明背景 */
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
+            border-radius: 20px;
+            padding: 15px 20px 15px 20px; /* 优化内边距 */
+            width: 100%;
+            height: calc((100% - 16px) / 3); /* 增加气泡间距 */
+            min-height: 85px; /* 稍微增加最小高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 改为顶部对齐 */
+            text-align: left;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 判断容器样式 - 位于气泡右下角 */
+        .verdict-container {
+            position: absolute;
+            bottom: 6px;
+            right: 10px;
+            background: rgba(243, 187, 44, 0.9); /* Sunset色作为背景 */
+            color: #000 !important;
+            font-size: 0.45rem !important; /* 稍微缩小字体 */
+            font-weight: 600 !important;
+            padding: 2px 6px; /* 减小内边距 */
+            border-radius: 10px; /* 稍微减小圆角 */
+            border: 1px solid rgba(243, 187, 44, 1);
+            text-shadow: none !important;
+            white-space: nowrap;
+            z-index: 10;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            /* 移除固定宽度，让容器自适应文字内容 */
+        }
+
+        /* 标签容器样式 - 位于气泡左下角 */
+        .tag-container {
+            position: absolute;
+            bottom: 6px;
+            left: 10px;
+            background: rgba(14, 173, 152, 0.9); /* Bamboo Green作为背景 */
+            color: white !important;
+            font-size: 0.45rem !important;
+            font-weight: 600 !important;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(14, 173, 152, 1);
+            text-shadow: none !important;
+            white-space: nowrap;
+            z-index: 10;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            /* 自适应文字宽度 */
+        }
+
+        .triple-bubble-text {
+            font-size: 0.75rem !important; /* 稍微增大字体 */
+            line-height: 1.3 !important; /* 优化行高 */
+            color: white !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 5; /* 增加到5行显示更多内容 */
+            line-clamp: 5;
+            -webkit-box-orient: vertical;
+            margin-bottom: 20px; /* 减少底部边距 */
+            padding-right: 5px; /* 右侧留一点空间避免与verdict重叠 */
+        }
+
+        /* 强制覆盖三气泡框中所有粘贴文字的颜色和字体大小 */
+        .triple-bubble-text * {
+            color: inherit !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+            font-family: inherit !important;
+        }
+
+        /* Brand Color文字样式 - 三气泡框 */
+        .triple-bubble-text strong,
+        .triple-bubble-text b {
+            color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
+            font-weight: 700 !important;
+            font-size: inherit !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        .triple-bubble-text em,
+        .triple-bubble-text i {
+            color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
+            font-style: italic !important;
+            font-size: inherit !important;
+        }
+
+        .triple-bubble-text u {
+            color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
+            text-decoration: underline !important;
+            font-size: inherit !important;
+        }
+
+        /* 空白区域样式 - 用于板块4 */
+        .empty-area {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+        /* 气泡框样式 - 统一设计 */
+        .bubble-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .bubble {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .bubble-large {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .bubble-medium {
+            flex: 0 1 45%;
+            min-width: 100px;
+        }
+
+        .bubble-small {
+            flex: 0 1 22%;
+            min-width: 80px;
+        }
+
+        .bubble-title {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bubble-value {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .bubble-value.large {
+            font-size: 1rem;
+        }
+
+        .bubble-value.positive { color: #27ae60; }
+        .bubble-value.negative { color: #e74c3c; }
+        .bubble-value.warning { color: #f39c12; }
+        /* 新闻气泡特殊样式 */
+        .news-bubbles {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .news-bubble {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 8px 12px;
+            font-size: 0.6rem;
+            line-height: 1.2;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .news-bubble::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            background: #f39c12;
+            border-radius: 50%;
+        }
+
+        /* 表单样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .update-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .update-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .update-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .content-modules {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .module {
+            background: rgba(248, 249, 250, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .module h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* 富文本输入框样式 */
+        .rich-text-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            line-height: 1.4;
+            transition: border-color 0.3s ease;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .rich-text-input:focus {
+            outline: none;
+            border-color: #0EAD98;
+        }
+
+        .rich-text-input[placeholder]:empty::before {
+            content: attr(placeholder);
+            color: #999;
+            font-style: italic;
+        }
+
+        .rich-text-input[placeholder]:empty:focus::before {
+            content: "";
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .token-grid .input-group input {
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            background: #e8f4fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "•";
+            color: #0EAD98;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .poster-container {
+                width: 270px;
+                height: 480px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VIP Institutional Insight</h1>
+        </div>
+
+        <div class="update-section">
+            <button class="update-btn generate-btn" onclick="generatePoster()">生成 Poster</button>
+            <button class="update-btn" onclick="downloadPoster()">下载 Poster</button>
+        </div>
+
+        <div class="content-modules">
+            <!-- 基本信息 -->
+            <div class="module">
+                <h3>基本信息</h3>
+                <div class="input-group">
+                    <label for="poster-title">标题</label>
+                    <input type="text" id="poster-title" value="VIP Institutional Insight" placeholder="输入标题">
+                </div>
+                <div class="input-group">
+                    <label for="date">日期</label>
+                    <input type="date" id="date" name="date">
+                </div>
+            </div>
+
+            <!-- 板块2 -->
+            <div class="module">
+                <h3>板块2 (比例3) - 3个气泡框</h3>
+                <div class="input-group">
+                    <label for="section2-title">板块标题</label>
+                    <input type="text" id="section2-title" value="⬅️ MARKET RECAP" placeholder="输入板块标题">
+                </div>
+                <div class="input-group">
+                    <label for="section2-content1">气泡框1内容</label>
+                    <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Market Decoupling - The market decoupled from traditional equities this week. Bitcoin corrected from $93,800 to a low of $90,300, while the S&P 500 and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets.</div>
+                </div>
+                <div class="input-group">
+                    <label for="section2-tag1">气泡框1标签</label>
+                    <input type="text" id="section2-tag1" value="" placeholder="输入标签内容">
+                </div>
+                <div class="input-group">
+                    <label for="section2-verdict1">气泡框1判断</label>
+                    <input type="text" id="section2-verdict1" value="VERDICT: ⚪ FULLY PRICED-IN" placeholder="输入判断内容">
+                </div>
+                <div class="input-group">
+                    <label for="section2-content2">气泡框2内容</label>
+                    <div class="rich-text-input" id="section2-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Flight to Safety - A strengthening U.S. Dollar (99.13) and surging Gold prices exerted heavy downward pressure on crypto, confirming a flight to safety that drained capital from riskier categories.</div>
+                </div>
+                <div class="input-group">
+                    <label for="section2-tag2">气泡框2标签</label>
+                    <input type="text" id="section2-tag2" value="" placeholder="输入标签内容">
+                </div>
+                <div class="input-group">
+                    <label for="section2-verdict2">气泡框2判断</label>
+                    <input type="text" id="section2-verdict2" value="VERDICT: ⚪ FULLY PRICED-IN" placeholder="输入判断内容">
+                </div>
+                <div class="input-group">
+                    <label for="section2-content3">气泡框3内容</label>
+                    <div class="rich-text-input" id="section2-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Liquidity Contraction: Liquidity conditions deteriorated sharply. Spot ETFs recorded net outflows of $749.5 million, alongside a $748 million contraction in stablecoin supply, erasing the previous week's inflows.</div>
+                </div>
+                <div class="input-group">
+                    <label for="section2-tag3">气泡框3标签</label>
+                    <input type="text" id="section2-tag3" value="" placeholder="输入标签内容">
+                </div>
+                <div class="input-group">
+                    <label for="section2-verdict3">气泡框3判断</label>
+                    <input type="text" id="section2-verdict3" value="VERDICT: ⚪ FULLY PRICED-IN" placeholder="输入判断内容">
+                </div>
+            </div>
+            <!-- 板块3 -->
+            <div class="module">
+                <h3>板块3 (比例3) - 3个气泡框</h3>
+                <div class="input-group">
+                    <label for="section3-title">板块标题</label>
+                    <input type="text" id="section3-title" value="➡️ THE WEEK AHEAD" placeholder="输入板块标题">
+                </div>
+                <div class="input-group">
+                    <label for="section3-content1">气泡框1内容</label>
+                    <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Bank of Japan Rate Decision (Jan 23 11:00am) - Should Governor Ueda signal a hawkish pivot toward further policy tightening, potential Yen Carry Trade.</div>
+                </div>
+                <div class="input-group">
+                    <label for="section3-tag1">气泡框1标签</label>
+                    <input type="text" id="section3-tag1" value="🛡️ [FLIGHT TO QUALITY]" placeholder="输入标签内容">
+                </div>
+                <div class="input-group">
+                    <label for="section3-verdict1">气泡框1判断</label>
+                    <input type="text" id="section3-verdict1" value="" placeholder="输入判断内容">
+                </div>
+                <div class="input-group">
+                    <label for="section3-content2">气泡框2内容</label>
+                    <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">U.S. December CPI Data Release (Jan 13, 21:30) - If Core CPI demonstrates sticky persistence or an upside surprise.</div>
+                </div>
+                <div class="input-group">
+                    <label for="section3-tag2">气泡框2标签</label>
+                    <input type="text" id="section3-tag2" value="🛡️ [FLIGHT TO QUALITY]" placeholder="输入标签内容">
+                </div>
+                <div class="input-group">
+                    <label for="section3-verdict2">气泡框2判断</label>
+                    <input type="text" id="section3-verdict2" value="" placeholder="输入判断内容">
+                </div>
+                <div class="input-group">
+                    <label for="section3-content3">气泡框3内容</label>
+                    <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Monero (XMR) - Driven by internal turmoil within ZEC's ECC team, significant capital is fleeing Zcash. This "rigid demand for privacy" is aggressively rotating into XMR, presenting short-term trading opportunity.</div>
+                </div>
+                <div class="input-group">
+                    <label for="section3-tag3">气泡框3标签</label>
+                    <input type="text" id="section3-tag3" value="🛡️ [FLIGHT TO QUALITY]" placeholder="输入标签内容">
+                </div>
+                <div class="input-group">
+                    <label for="section3-verdict3">气泡框3判断</label>
+                    <input type="text" id="section3-verdict3" value="" placeholder="输入判断内容">
+                </div>
+            </div>
+        </div>
+
+        <!-- Poster 预览 -->
+        <div class="poster-container" id="poster">
+            <div class="poster-content">
+                <div class="poster-header">
+                    <h1 class="poster-title" id="poster-title-display">VIP Institutional Insight</h1>
+                    <div class="poster-date" id="poster-date-display">January 21, 2026</div>
+                </div>
+
+                <div class="poster-sections">
+                    <!-- 板块2 (比例 3) -->
+                    <div class="poster-section section-2">
+                        <h2 class="section-title" id="poster-section2-title">⬅️ MARKET RECAP</h2>
+                        <div class="section-content">
+                            <div class="triple-bubble-container" id="poster-section2-content">
+                                <div class="triple-bubble" id="poster-section2-bubble-container1">
+                                    <div class="triple-bubble-text" id="poster-section2-bubble1">Market Decoupling - The market decoupled from traditional equities this week. Bitcoin corrected from $93,800 to a low of $90,300, while the S&P 500 and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets.</div>
+                                    <div class="tag-container" id="poster-section2-tag1"></div>
+                                    <div class="verdict-container" id="poster-section2-verdict1">VERDICT: ⚪ FULLY PRICED-IN</div>
+                                </div>
+                                <div class="triple-bubble" id="poster-section2-bubble-container2">
+                                    <div class="triple-bubble-text" id="poster-section2-bubble2">Flight to Safety - A strengthening U.S. Dollar (99.13) and surging Gold prices exerted heavy downward pressure on crypto, confirming a flight to safety that drained capital from riskier categories.</div>
+                                    <div class="tag-container" id="poster-section2-tag2"></div>
+                                    <div class="verdict-container" id="poster-section2-verdict2">VERDICT: ⚪ FULLY PRICED-IN</div>
+                                </div>
+                                <div class="triple-bubble" id="poster-section2-bubble-container3">
+                                    <div class="triple-bubble-text" id="poster-section2-bubble3">Liquidity Contraction: Liquidity conditions deteriorated sharply. Spot ETFs recorded net outflows of $749.5 million, alongside a $748 million contraction in stablecoin supply, erasing the previous week's inflows.</div>
+                                    <div class="tag-container" id="poster-section2-tag3"></div>
+                                    <div class="verdict-container" id="poster-section2-verdict3">VERDICT: ⚪ FULLY PRICED-IN</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 板块3 (比例 3) -->
+                    <div class="poster-section section-3">
+                        <h2 class="section-title" id="poster-section3-title">➡️ THE WEEK AHEAD</h2>
+                        <div class="section-content">
+                            <div class="triple-bubble-container" id="poster-section3-content">
+                                <div class="triple-bubble" id="poster-section3-bubble-container1">
+                                    <div class="triple-bubble-text" id="poster-section3-bubble1">Bank of Japan Rate Decision (Jan 23 11:00am) - Should Governor Ueda signal a hawkish pivot toward further policy tightening, potential Yen Carry Trade.</div>
+                                    <div class="tag-container" id="poster-section3-tag1">🛡️ [FLIGHT TO QUALITY]</div>
+                                    <div class="verdict-container" id="poster-section3-verdict1"></div>
+                                </div>
+                                <div class="triple-bubble" id="poster-section3-bubble-container2">
+                                    <div class="triple-bubble-text" id="poster-section3-bubble2">U.S. December CPI Data Release (Jan 13, 21:30) - If Core CPI demonstrates sticky persistence or an upside surprise.</div>
+                                    <div class="tag-container" id="poster-section3-tag2">🛡️ [FLIGHT TO QUALITY]</div>
+                                    <div class="verdict-container" id="poster-section3-verdict2"></div>
+                                </div>
+                                <div class="triple-bubble" id="poster-section3-bubble-container3">
+                                    <div class="triple-bubble-text" id="poster-section3-bubble3">Monero (XMR) - Driven by internal turmoil within ZEC's ECC team, significant capital is fleeing Zcash. This "rigid demand for privacy" is aggressively rotating into XMR, presenting short-term trading opportunity.</div>
+                                    <div class="tag-container" id="poster-section3-tag3">🛡️ [FLIGHT TO QUALITY]</div>
+                                    <div class="verdict-container" id="poster-section3-verdict3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="poster-footer"></div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <ul>
+                <li>使用Brand Color色系：#0EAD98 (Bamboo Green)、#00D9D9 (Bright Cyan)等</li>
+                <li>Header高度: 90px，Footer高度: 80px</li>
+                <li>现在有2个板块平均分配空间</li>
+                <li>每个板块有3个优化大小的气泡框</li>
+                <li>标题左对齐，气泡内容左对齐显示</li>
+                <li><strong>富文本支持</strong>：直接从Google Docs等应用复制粘贴格式化文字</li>
+                <li>点击"生成 Poster"更新预览，"下载 Poster"保存图片</li>
+            </ul>
+            
+            <h4>富文本功能：</h4>
+            <ul>
+                <li>支持从Google Docs、Word等应用直接复制粘贴格式化文字</li>
+                <li>自动应用Brand Color调色板：</li>
+                <li style="margin-left: 20px;">• <strong style="color: #0EAD98;">加粗文字</strong> - 使用Bamboo Green (#0EAD98)</li>
+                <li style="margin-left: 20px;">• <em style="color: #00D9D9;">斜体文字</em> - 使用Bright Cyan (#00D9D9)</li>
+                <li style="margin-left: 20px;">• <u style="color: #F3BB2C;">下划线文字</u> - 使用Sunset (#F3BB2C)</li>
+                <li style="margin-left: 20px;">• 普通文字 - 使用白色，忽略原始颜色</li>
+                <li>实时预览：输入内容会立即在右侧poster中显示</li>
+                <li>支持换行和段落格式</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 设置当前日期
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        updatePosterDate();
+
+        function updatePosterDate() {
+            const dateInput = document.getElementById('date').value;
+            const date = new Date(dateInput);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('poster-date-display').textContent = date.toLocaleDateString('en-US', options);
+        }
+        function generatePoster() {
+            // 更新标题和日期
+            document.getElementById('poster-title-display').textContent = document.getElementById('poster-title').value;
+            updatePosterDate();
+
+            // 更新板块标题 (现在只有板块2,3)
+            for (let i = 2; i <= 3; i++) {
+                document.getElementById(`poster-section${i}-title`).textContent = document.getElementById(`section${i}-title`).value;
+            }
+
+            // 更新板块2和3的三气泡内容、标签和判断 (富文本)
+            [2, 3].forEach(i => {
+                for (let j = 1; j <= 3; j++) {
+                    updateBubbleVisibility(i, j);
+                }
+            });
+
+            alert('Poster 已更新！');
+        }
+        function downloadPoster() {
+            const poster = document.getElementById('poster');
+            
+            html2canvas(poster, {
+                width: 1080,
+                height: 1920,
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(error => {
+                console.error('下载失败:', error);
+                alert('下载失败，请检查浏览器权限');
+            });
+        }
+
+        // 实时更新功能
+        document.getElementById('poster-title').addEventListener('input', function() {
+            document.getElementById('poster-title-display').textContent = this.value;
+        });
+
+        document.getElementById('date').addEventListener('change', updatePosterDate);
+
+        // 检查内容并控制气泡显示的函数
+        function updateBubbleVisibility(sectionNum, bubbleNum) {
+            const content = document.getElementById(`section${sectionNum}-content${bubbleNum}`).innerHTML;
+            const textContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').replace(/\s/g, '').trim();
+            const bubbleContainer = document.getElementById(`poster-section${sectionNum}-bubble-container${bubbleNum}`);
+            
+            if (textContent === '' || textContent.length === 0) {
+                if (bubbleContainer) {
+                    // 完全移除元素
+                    bubbleContainer.remove();
+                }
+            } else {
+                // 检查元素是否存在，如果不存在则重新创建
+                const parentContainer = document.getElementById(`poster-section${sectionNum}-content`);
+                if (!bubbleContainer && parentContainer) {
+                    // 重新创建气泡容器
+                    const newBubble = document.createElement('div');
+                    newBubble.className = 'triple-bubble';
+                    newBubble.id = `poster-section${sectionNum}-bubble-container${bubbleNum}`;
+                    
+                    const bubbleText = document.createElement('div');
+                    bubbleText.className = 'triple-bubble-text';
+                    bubbleText.id = `poster-section${sectionNum}-bubble${bubbleNum}`;
+                    
+                    const tagContainer = document.createElement('div');
+                    tagContainer.className = 'tag-container';
+                    tagContainer.id = `poster-section${sectionNum}-tag${bubbleNum}`;
+                    
+                    const verdictContainer = document.createElement('div');
+                    verdictContainer.className = 'verdict-container';
+                    verdictContainer.id = `poster-section${sectionNum}-verdict${bubbleNum}`;
+                    
+                    newBubble.appendChild(bubbleText);
+                    newBubble.appendChild(tagContainer);
+                    newBubble.appendChild(verdictContainer);
+                    
+                    // 插入到正确位置
+                    const existingBubbles = parentContainer.children;
+                    if (bubbleNum <= existingBubbles.length) {
+                        parentContainer.insertBefore(newBubble, existingBubbles[bubbleNum - 1]);
+                    } else {
+                        parentContainer.appendChild(newBubble);
+                    }
+                }
+                
+                // 更新内容
+                const bubbleText = document.getElementById(`poster-section${sectionNum}-bubble${bubbleNum}`);
+                const tagContainer = document.getElementById(`poster-section${sectionNum}-tag${bubbleNum}`);
+                const verdictContainer = document.getElementById(`poster-section${sectionNum}-verdict${bubbleNum}`);
+                
+                if (bubbleText) bubbleText.innerHTML = content;
+                if (tagContainer) tagContainer.textContent = document.getElementById(`section${sectionNum}-tag${bubbleNum}`).value;
+                if (verdictContainer) verdictContainer.textContent = document.getElementById(`section${sectionNum}-verdict${bubbleNum}`).value;
+            }
+        }
+
+        // 添加实时内容更新
+        // 板块2 - 三气泡 (支持富文本) + 标签容器 + 判断容器
+        document.getElementById('section2-title').addEventListener('input', function() {
+            document.getElementById('poster-section2-title').textContent = this.value;
+        });
+        
+        for (let j = 1; j <= 3; j++) {
+            // 内容更新
+            document.getElementById(`section2-content${j}`).addEventListener('input', function() {
+                const bubbleText = document.getElementById(`poster-section2-bubble${j}`);
+                if (bubbleText) {
+                    bubbleText.innerHTML = this.innerHTML;
+                }
+                updateBubbleVisibility(2, j);
+            });
+            
+            // 标签更新
+            document.getElementById(`section2-tag${j}`).addEventListener('input', function() {
+                const tagContainer = document.getElementById(`poster-section2-tag${j}`);
+                if (tagContainer) {
+                    tagContainer.textContent = this.value;
+                }
+            });
+            
+            // 判断更新
+            document.getElementById(`section2-verdict${j}`).addEventListener('input', function() {
+                const verdictContainer = document.getElementById(`poster-section2-verdict${j}`);
+                if (verdictContainer) {
+                    verdictContainer.textContent = this.value;
+                }
+            });
+        }
+
+        // 板块3 - 三气泡 (支持富文本) + 标签容器 + 判断容器
+        document.getElementById('section3-title').addEventListener('input', function() {
+            document.getElementById('poster-section3-title').textContent = this.value;
+        });
+        
+        for (let j = 1; j <= 3; j++) {
+            // 内容更新
+            document.getElementById(`section3-content${j}`).addEventListener('input', function() {
+                const bubbleText = document.getElementById(`poster-section3-bubble${j}`);
+                if (bubbleText) {
+                    bubbleText.innerHTML = this.innerHTML;
+                }
+                updateBubbleVisibility(3, j);
+            });
+            
+            // 标签更新
+            document.getElementById(`section3-tag${j}`).addEventListener('input', function() {
+                const tagContainer = document.getElementById(`poster-section3-tag${j}`);
+                if (tagContainer) {
+                    tagContainer.textContent = this.value;
+                }
+            });
+            
+            // 判断更新
+            document.getElementById(`section3-verdict${j}`).addEventListener('input', function() {
+                const verdictContainer = document.getElementById(`poster-section3-verdict${j}`);
+                if (verdictContainer) {
+                    verdictContainer.textContent = this.value;
+                }
+            });
+        }
+
+        // 页面加载时初始化
+        window.onload = function() {
+            generatePoster();
+        };
+    </script>
+</body>
+</html>
