@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 1800px; /* Increased to accommodate 1080px poster + form */
+            max-width: 1600px; /* 调整以适应70%预览大小 */
             margin: 0 auto;
             background: #ffffff;
             border-radius: 10px;
@@ -36,7 +36,7 @@
         }
 
         .left-panel {
-            flex: 0 0 1120px; /* Width to accommodate 1080px poster + padding */
+            flex: 0 0 784px; /* Width to accommodate 756px poster + padding */
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -127,8 +127,8 @@
         }
 
         .poster-container {
-            width: 1080px;  /* 100% actual size */
-            height: 1920px; /* 100% actual size */
+            width: 756px;  /* 1080 * 0.7 = 756px */
+            height: 1344px; /* 1920 * 0.7 = 1344px */
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
@@ -149,11 +149,11 @@
             color: white;
         }
         .poster-header {
-            height: 120px; /* Increased for larger text */
+            height: 100px; /* 减少header高度 */
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 40px 10px 40px;
+            padding: 10px 40px 5px 40px;
             flex-shrink: 0;
             position: relative;
         }
@@ -170,7 +170,7 @@
         }
 
         .poster-title {
-            font-size: 80px;
+            font-size: 60px; /* 主标题 60px */
             font-weight: 800;
             color: #00D9D9 !important; /* Bright Cyan - 用于主标题 */
             margin: 0;
@@ -180,7 +180,7 @@
         }
 
         .poster-date {
-            font-size: 40px;
+            font-size: 20px; /* 日期 20px */
             color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
             margin: 0;
@@ -195,7 +195,7 @@
         }
 
         .poster-footer {
-            height: 100px; /* Increased for larger layout */
+            height: 80px; /* 减少footer高度 */
             flex-shrink: 0;
             position: relative;
         }
@@ -235,7 +235,7 @@
         }
 
         .section-title {
-            font-size: 60px;
+            font-size: 40px; /* 板块标题 40px */
             font-weight: 700;
             color: #0EAD98 !important; /* Bamboo Green - 主题色用于标题 */
             margin-bottom: 1px;
@@ -244,7 +244,7 @@
             padding-left: 10px;
             display: flex;
             align-items: center;
-            height: 90px;
+            height: 70px; /* 进一步减少标题高度 */
         }
 
         .section-content {
@@ -273,7 +273,7 @@
         }
 
         .bubble-text {
-            font-size: 40px !important;
+            font-size: 20px !important; /* 单个气泡框内容 20px */
             line-height: 1.3 !important;
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -322,10 +322,10 @@
         .triple-bubble-container {
             display: flex;
             flex-direction: column;
-            gap: 6px; /* 减少间距以获得更多空间 */
+            gap: 5px; /* 设置气泡间隔为5px */
             height: 100%;
             width: 100%;
-            justify-content: flex-start; /* 改为flex-start，让隐藏的气泡不占空间 */
+            justify-content: flex-start;
             padding: 0;
         }
 
@@ -333,30 +333,68 @@
             background: rgba(0, 192, 179, 0.25); /* 使用New Bamboo Green透明背景 */
             backdrop-filter: blur(10px);
             border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
-            border-radius: 40px;
-            padding: 40px 50px 40px 50px; /* 优化内边距 */
+            border-radius: 35px; /* 稍微减小圆角 */
+            padding: 25px 35px 55px 35px; /* 进一步减少内边距 */
             width: 100%;
-            height: calc((100% - 32px) / 3); /* 增加气泡间距 */
-            min-height: 200px; /* 增加最小高度以容纳40px字体 */
+            height: calc((100% - 20px) / 3); /* 调整为5px间隔 * 2 = 10px，加上容器边距 */
+            min-height: 240px; /* 减少最小高度以适应版面 */
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* 改为顶部对齐 */
+            justify-content: flex-start;
             text-align: left;
             overflow: hidden;
             position: relative;
         }
 
-        /* 判断容器样式 - 位于气泡右下角 */
+        /* 标签容器样式 - 支持多个标签 */
+        .tag-container {
+            position: absolute;
+            bottom: 12px;
+            left: 20px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-width: calc(100% - 140px); /* 为verdict留出空间 */
+            z-index: 10;
+        }
+
+        .tag-item {
+            background: rgba(14, 173, 152, 0.9); /* 默认Bamboo Green */
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-shadow: none !important;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 板块2的标签容器 - 位于右下角 */
+        .section-2 .tag-container {
+            left: auto;
+            right: 20px;
+            max-width: calc(100% - 140px); /* 为verdict留出空间 */
+        }
+
+        /* 板块2的判断容器 - 位于左下角 */
+        .section-2 .verdict-container {
+            right: auto;
+            left: 20px;
+        }
+
+        /* 判断容器样式 - 默认位于气泡右下角 */
         .verdict-container {
             position: absolute;
-            bottom: 15px;
-            right: 25px;
+            bottom: 12px;
+            right: 20px;
             background: rgba(243, 187, 44, 0.9); /* Sunset色作为背景 */
             color: #000 !important;
-            font-size: 24px !important;
+            font-size: 20px !important; /* 减小字体 */
             font-weight: 600 !important;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px; /* 减小内边距 */
+            border-radius: 16px; /* 减小圆角 */
             border: 1px solid rgba(243, 187, 44, 1);
             text-shadow: none !important;
             white-space: nowrap;
@@ -364,27 +402,9 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
-        /* 标签容器样式 - 位于气泡左下角 */
-        .tag-container {
-            position: absolute;
-            bottom: 15px;
-            left: 25px;
-            background: rgba(14, 173, 152, 0.9); /* Bamboo Green作为背景 */
-            color: white !important;
-            font-size: 24px !important;
-            font-weight: 600 !important;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(14, 173, 152, 1);
-            text-shadow: none !important;
-            white-space: nowrap;
-            z-index: 10;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
         .triple-bubble-text {
-            font-size: 40px !important;
-            line-height: 1.3 !important;
+            font-size: 25px !important; /* 气泡框内容 25px */
+            line-height: 1.15 !important; /* 进一步减少行高 */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             font-weight: 500;
@@ -395,11 +415,19 @@
             flex: 1;
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 5; /* 增加到5行显示更多内容 */
-            line-clamp: 5;
+            -webkit-line-clamp: 6; /* 调整为6行以平衡内容和版面 */
+            line-clamp: 6;
             -webkit-box-orient: vertical;
-            margin-bottom: 50px; /* 增加底部边距以容纳更大的标签 */
-            padding-right: 10px; /* 右侧留一点空间避免与verdict重叠 */
+            margin-bottom: 45px; /* 减少底部边距 */
+            padding-right: 8px; /* 减少右侧间距 */
+        }
+
+        /* 当内容过多时允许滚动 */
+        .triple-bubble-text.overflow-scroll {
+            -webkit-line-clamp: unset;
+            line-clamp: unset;
+            overflow-y: auto;
+            max-height: calc(100% - 50px);
         }
 
         /* 强制覆盖三气泡框中所有粘贴文字的颜色和字体大小 */
@@ -602,6 +630,37 @@
         .rich-text-input[placeholder]:empty:focus::before {
             content: "";
         }
+
+        /* 标签输入样式 */
+        .tag-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tag-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .tag-input-row input[type="text"] {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tag-input-row input[type="color"] {
+            width: 40px;
+            height: 32px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .tag-input-row input[type="color"]:focus {
+            border-color: #0EAD98;
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -719,7 +778,7 @@
                         <div class="poster-sections">
                             <!-- 板块2 (比例 3) -->
                             <div class="poster-section section-2">
-                                <h2 class="section-title" id="poster-section2-title">⬅️ MARKET RECAP</h2>
+                                <h2 class="section-title" id="poster-section2-title">MARKET RECAP</h2>
                                 <div class="section-content">
                                     <div class="triple-bubble-container" id="poster-section2-content">
                                         <div class="triple-bubble" id="poster-section2-bubble-container1">
@@ -743,22 +802,22 @@
 
                             <!-- 板块3 (比例 3) -->
                             <div class="poster-section section-3">
-                                <h2 class="section-title" id="poster-section3-title">➡️ THE WEEK AHEAD</h2>
+                                <h2 class="section-title" id="poster-section3-title">THE WEEK AHEAD</h2>
                                 <div class="section-content">
                                     <div class="triple-bubble-container" id="poster-section3-content">
                                         <div class="triple-bubble" id="poster-section3-bubble-container1">
                                             <div class="triple-bubble-text" id="poster-section3-bubble1">Bank of Japan Rate Decision (Jan 23 11:00am) - Should Governor Ueda signal a hawkish pivot toward further policy tightening, potential Yen Carry Trade.</div>
-                                            <div class="tag-container" id="poster-section3-tag1">🛡️ [FLIGHT TO QUALITY]</div>
+                                            <div class="tag-container" id="poster-section3-tag1"></div>
                                             <div class="verdict-container" id="poster-section3-verdict1"></div>
                                         </div>
                                         <div class="triple-bubble" id="poster-section3-bubble-container2">
                                             <div class="triple-bubble-text" id="poster-section3-bubble2">U.S. December CPI Data Release (Jan 13, 21:30) - If Core CPI demonstrates sticky persistence or an upside surprise.</div>
-                                            <div class="tag-container" id="poster-section3-tag2">🛡️ [FLIGHT TO QUALITY]</div>
+                                            <div class="tag-container" id="poster-section3-tag2"></div>
                                             <div class="verdict-container" id="poster-section3-verdict2"></div>
                                         </div>
                                         <div class="triple-bubble" id="poster-section3-bubble-container3">
                                             <div class="triple-bubble-text" id="poster-section3-bubble3">Monero (XMR) - Driven by internal turmoil within ZEC's ECC team, significant capital is fleeing Zcash. This "rigid demand for privacy" is aggressively rotating into XMR, presenting short-term trading opportunity.</div>
-                                            <div class="tag-container" id="poster-section3-tag3">🛡️ [FLIGHT TO QUALITY]</div>
+                                            <div class="tag-container" id="poster-section3-tag3"></div>
                                             <div class="verdict-container" id="poster-section3-verdict3"></div>
                                         </div>
                                     </div>
@@ -815,15 +874,28 @@
                         <h3>板块2 - 3个气泡框</h3>
                         <div class="input-group">
                             <label for="section2-title">板块标题</label>
-                            <input type="text" id="section2-title" value="⬅️ MARKET RECAP" placeholder="输入板块标题">
+                            <input type="text" id="section2-title" value="MARKET RECAP" placeholder="输入板块标题">
                         </div>
                         <div class="input-group">
                             <label for="section2-content1">气泡框1内容</label>
                             <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Market Decoupling - The market decoupled from traditional equities this week. Bitcoin corrected from $93,800 to a low of $90,300, while the S&P 500 and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets.</div>
                         </div>
                         <div class="input-group">
-                            <label for="section2-tag1">气泡框1标签</label>
-                            <input type="text" id="section2-tag1" value="" placeholder="输入标签内容">
+                            <label>气泡框1标签 (最多3个)</label>
+                            <div class="tag-inputs">
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag1-1" value="BTC" placeholder="标签1">
+                                    <input type="color" id="section2-tag1-color1" value="#0EAD98" title="标签1颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag1-2" value="" placeholder="标签2">
+                                    <input type="color" id="section2-tag1-color2" value="#00D9D9" title="标签2颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag1-3" value="" placeholder="标签3">
+                                    <input type="color" id="section2-tag1-color3" value="#F3BB2C" title="标签3颜色">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="section2-verdict1">气泡框1判断</label>
@@ -834,8 +906,21 @@
                             <div class="rich-text-input" id="section2-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Flight to Safety - A strengthening U.S. Dollar (99.13) and surging Gold prices exerted heavy downward pressure on crypto, confirming a flight to safety that drained capital from riskier categories.</div>
                         </div>
                         <div class="input-group">
-                            <label for="section2-tag2">气泡框2标签</label>
-                            <input type="text" id="section2-tag2" value="" placeholder="输入标签内容">
+                            <label>气泡框2标签 (最多3个)</label>
+                            <div class="tag-inputs">
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag2-1" value="BTC" placeholder="标签1">
+                                    <input type="color" id="section2-tag2-color1" value="#0EAD98" title="标签1颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag2-2" value="" placeholder="标签2">
+                                    <input type="color" id="section2-tag2-color2" value="#00D9D9" title="标签2颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag2-3" value="" placeholder="标签3">
+                                    <input type="color" id="section2-tag2-color3" value="#F3BB2C" title="标签3颜色">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="section2-verdict2">气泡框2判断</label>
@@ -846,8 +931,21 @@
                             <div class="rich-text-input" id="section2-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Liquidity Contraction: Liquidity conditions deteriorated sharply. Spot ETFs recorded net outflows of $749.5 million, alongside a $748 million contraction in stablecoin supply, erasing the previous week's inflows.</div>
                         </div>
                         <div class="input-group">
-                            <label for="section2-tag3">气泡框3标签</label>
-                            <input type="text" id="section2-tag3" value="" placeholder="输入标签内容">
+                            <label>气泡框3标签 (最多3个)</label>
+                            <div class="tag-inputs">
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag3-1" value="BTC" placeholder="标签1">
+                                    <input type="color" id="section2-tag3-color1" value="#0EAD98" title="标签1颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag3-2" value="" placeholder="标签2">
+                                    <input type="color" id="section2-tag3-color2" value="#00D9D9" title="标签2颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section2-tag3-3" value="" placeholder="标签3">
+                                    <input type="color" id="section2-tag3-color3" value="#F3BB2C" title="标签3颜色">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="section2-verdict3">气泡框3判断</label>
@@ -859,15 +957,28 @@
                         <h3>板块3 - 3个气泡框</h3>
                         <div class="input-group">
                             <label for="section3-title">板块标题</label>
-                            <input type="text" id="section3-title" value="➡️ THE WEEK AHEAD" placeholder="输入板块标题">
+                            <input type="text" id="section3-title" value="THE WEEK AHEAD" placeholder="输入板块标题">
                         </div>
                         <div class="input-group">
                             <label for="section3-content1">气泡框1内容</label>
                             <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Bank of Japan Rate Decision (Jan 23 11:00am) - Should Governor Ueda signal a hawkish pivot toward further policy tightening, potential Yen Carry Trade.</div>
                         </div>
                         <div class="input-group">
-                            <label for="section3-tag1">气泡框1标签</label>
-                            <input type="text" id="section3-tag1" value="🛡️ [FLIGHT TO QUALITY]" placeholder="输入标签内容">
+                            <label>气泡框1标签 (最多3个)</label>
+                            <div class="tag-inputs">
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag1-1" value="BTC" placeholder="标签1">
+                                    <input type="color" id="section3-tag1-color1" value="#0EAD98" title="标签1颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag1-2" value="" placeholder="标签2">
+                                    <input type="color" id="section3-tag1-color2" value="#00D9D9" title="标签2颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag1-3" value="" placeholder="标签3">
+                                    <input type="color" id="section3-tag1-color3" value="#F3BB2C" title="标签3颜色">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="section3-verdict1">气泡框1判断</label>
@@ -878,8 +989,21 @@
                             <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">U.S. December CPI Data Release (Jan 13, 21:30) - If Core CPI demonstrates sticky persistence or an upside surprise.</div>
                         </div>
                         <div class="input-group">
-                            <label for="section3-tag2">气泡框2标签</label>
-                            <input type="text" id="section3-tag2" value="🛡️ [FLIGHT TO QUALITY]" placeholder="输入标签内容">
+                            <label>气泡框2标签 (最多3个)</label>
+                            <div class="tag-inputs">
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag2-1" value="BTC" placeholder="标签1">
+                                    <input type="color" id="section3-tag2-color1" value="#0EAD98" title="标签1颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag2-2" value="" placeholder="标签2">
+                                    <input type="color" id="section3-tag2-color2" value="#00D9D9" title="标签2颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag2-3" value="" placeholder="标签3">
+                                    <input type="color" id="section3-tag2-color3" value="#F3BB2C" title="标签3颜色">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="section3-verdict2">气泡框2判断</label>
@@ -890,8 +1014,21 @@
                             <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Monero (XMR) - Driven by internal turmoil within ZEC's ECC team, significant capital is fleeing Zcash. This "rigid demand for privacy" is aggressively rotating into XMR, presenting short-term trading opportunity.</div>
                         </div>
                         <div class="input-group">
-                            <label for="section3-tag3">气泡框3标签</label>
-                            <input type="text" id="section3-tag3" value="🛡️ [FLIGHT TO QUALITY]" placeholder="输入标签内容">
+                            <label>气泡框3标签 (最多3个)</label>
+                            <div class="tag-inputs">
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag3-1" value="BTC" placeholder="标签1">
+                                    <input type="color" id="section3-tag3-color1" value="#0EAD98" title="标签1颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag3-2" value="" placeholder="标签2">
+                                    <input type="color" id="section3-tag3-color2" value="#00D9D9" title="标签2颜色">
+                                </div>
+                                <div class="tag-input-row">
+                                    <input type="text" id="section3-tag3-3" value="" placeholder="标签3">
+                                    <input type="color" id="section3-tag3-color3" value="#F3BB2C" title="标签3颜色">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="section3-verdict3">气泡框3判断</label>
@@ -938,9 +1075,9 @@
             const poster = document.getElementById('poster');
             
             html2canvas(poster, {
-                width: 1080,
-                height: 1920,
-                scale: 1, // No scaling needed since display is already 1080x1920
+                width: 1080,  // 保持原始尺寸用于下载
+                height: 1920, // 保持原始尺寸用于下载
+                scale: 1080 / 756, // 缩放比例：原始尺寸 / 显示尺寸
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
@@ -961,6 +1098,36 @@
         });
 
         document.getElementById('date').addEventListener('change', updatePosterDate);
+
+        // 更新标签显示的函数
+        function updateTagDisplay(sectionNum, bubbleNum) {
+            const tagContainer = document.getElementById(`poster-section${sectionNum}-tag${bubbleNum}`);
+            if (!tagContainer) return;
+            
+            // 清空现有标签
+            tagContainer.innerHTML = '';
+            
+            // 添加最多3个标签
+            for (let k = 1; k <= 3; k++) {
+                const tagInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-${k}`);
+                const colorInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-color${k}`);
+                
+                if (tagInput && tagInput.value.trim() !== '') {
+                    const tagItem = document.createElement('div');
+                    tagItem.className = 'tag-item';
+                    tagItem.textContent = tagInput.value.trim();
+                    tagItem.style.backgroundColor = colorInput ? colorInput.value : '#0EAD98';
+                    tagContainer.appendChild(tagItem);
+                }
+            }
+            
+            // 如果没有任何标签，隐藏容器
+            if (tagContainer.children.length === 0) {
+                tagContainer.style.display = 'none';
+            } else {
+                tagContainer.style.display = 'flex';
+            }
+        }
 
         // 检查内容并控制气泡显示的函数
         function updateBubbleVisibility(sectionNum, bubbleNum) {
@@ -1012,9 +1179,57 @@
                 const tagContainer = document.getElementById(`poster-section${sectionNum}-tag${bubbleNum}`);
                 const verdictContainer = document.getElementById(`poster-section${sectionNum}-verdict${bubbleNum}`);
                 
-                if (bubbleText) bubbleText.innerHTML = content;
-                if (tagContainer) tagContainer.textContent = document.getElementById(`section${sectionNum}-tag${bubbleNum}`).value;
-                if (verdictContainer) verdictContainer.textContent = document.getElementById(`section${sectionNum}-verdict${bubbleNum}`).value;
+                if (bubbleText) {
+                    bubbleText.innerHTML = content;
+                    
+                    // 检查内容是否过长，如果是则启用滚动
+                    const plainText = content.replace(/<[^>]*>/g, '');
+                    if (plainText.length > 150) { // 调整阈值适应新的字体大小
+                        bubbleText.classList.add('overflow-scroll');
+                        bubbleText.title = '内容较长，可滚动查看完整内容';
+                    } else {
+                        bubbleText.classList.remove('overflow-scroll');
+                        bubbleText.title = '';
+                    }
+                }
+                
+                // 更新标签，支持多个标签
+                if (tagContainer) {
+                    // 清空现有标签
+                    tagContainer.innerHTML = '';
+                    
+                    // 添加最多3个标签
+                    for (let k = 1; k <= 3; k++) {
+                        const tagInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-${k}`);
+                        const colorInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-color${k}`);
+                        
+                        if (tagInput && tagInput.value.trim() !== '') {
+                            const tagItem = document.createElement('div');
+                            tagItem.className = 'tag-item';
+                            tagItem.textContent = tagInput.value.trim();
+                            tagItem.style.backgroundColor = colorInput ? colorInput.value : '#0EAD98';
+                            tagContainer.appendChild(tagItem);
+                        }
+                    }
+                    
+                    // 如果没有任何标签，隐藏容器
+                    if (tagContainer.children.length === 0) {
+                        tagContainer.style.display = 'none';
+                    } else {
+                        tagContainer.style.display = 'flex';
+                    }
+                }
+                
+                // 更新判断，如果为空则隐藏
+                if (verdictContainer) {
+                    const verdictValue = document.getElementById(`section${sectionNum}-verdict${bubbleNum}`).value.trim();
+                    if (verdictValue === '') {
+                        verdictContainer.style.display = 'none';
+                    } else {
+                        verdictContainer.style.display = 'block';
+                        verdictContainer.textContent = verdictValue;
+                    }
+                }
             }
         }
 
@@ -1034,19 +1249,29 @@
                 updateBubbleVisibility(2, j);
             });
             
-            // 标签更新
-            document.getElementById(`section2-tag${j}`).addEventListener('input', function() {
-                const tagContainer = document.getElementById(`poster-section2-tag${j}`);
-                if (tagContainer) {
-                    tagContainer.textContent = this.value;
-                }
-            });
+            // 标签更新 - 支持多个标签
+            for (let k = 1; k <= 3; k++) {
+                ['input', 'change'].forEach(eventType => {
+                    document.getElementById(`section2-tag${j}-${k}`).addEventListener(eventType, function() {
+                        updateTagDisplay(2, j);
+                    });
+                    document.getElementById(`section2-tag${j}-color${k}`).addEventListener(eventType, function() {
+                        updateTagDisplay(2, j);
+                    });
+                });
+            }
             
             // 判断更新
             document.getElementById(`section2-verdict${j}`).addEventListener('input', function() {
                 const verdictContainer = document.getElementById(`poster-section2-verdict${j}`);
                 if (verdictContainer) {
-                    verdictContainer.textContent = this.value;
+                    const verdictValue = this.value.trim();
+                    if (verdictValue === '') {
+                        verdictContainer.style.display = 'none';
+                    } else {
+                        verdictContainer.style.display = 'block';
+                        verdictContainer.textContent = verdictValue;
+                    }
                 }
             });
         }
@@ -1066,19 +1291,29 @@
                 updateBubbleVisibility(3, j);
             });
             
-            // 标签更新
-            document.getElementById(`section3-tag${j}`).addEventListener('input', function() {
-                const tagContainer = document.getElementById(`poster-section3-tag${j}`);
-                if (tagContainer) {
-                    tagContainer.textContent = this.value;
-                }
-            });
+            // 标签更新 - 支持多个标签
+            for (let k = 1; k <= 3; k++) {
+                ['input', 'change'].forEach(eventType => {
+                    document.getElementById(`section3-tag${j}-${k}`).addEventListener(eventType, function() {
+                        updateTagDisplay(3, j);
+                    });
+                    document.getElementById(`section3-tag${j}-color${k}`).addEventListener(eventType, function() {
+                        updateTagDisplay(3, j);
+                    });
+                });
+            }
             
             // 判断更新
             document.getElementById(`section3-verdict${j}`).addEventListener('input', function() {
                 const verdictContainer = document.getElementById(`poster-section3-verdict${j}`);
                 if (verdictContainer) {
-                    verdictContainer.textContent = this.value;
+                    const verdictValue = this.value.trim();
+                    if (verdictValue === '') {
+                        verdictContainer.style.display = 'none';
+                    } else {
+                        verdictContainer.style.display = 'block';
+                        verdictContainer.textContent = verdictValue;
+                    }
                 }
             });
         }
