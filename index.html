@@ -132,12 +132,17 @@
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
             margin: 10px auto;
             border-radius: 15px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
             flex-shrink: 0;
+            /* 改善渲染质量 */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            transform: translateZ(0); /* 启用硬件加速 */
         }
 
         .poster-content {
@@ -332,6 +337,7 @@
         .triple-bubble {
             background: rgba(0, 192, 179, 0.25); /* 使用New Bamboo Green透明背景 */
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* Safari支持 */
             border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
             border-radius: 35px; /* 稍微减小圆角 */
             padding: 20px 35px 40px 35px; /* 调整内边距：上20px，下40px */
@@ -344,6 +350,9 @@
             text-align: left;
             overflow: hidden;
             position: relative;
+            /* 改善渲染 */
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         /* 标签容器样式 - 支持多个标签 */
@@ -1084,21 +1093,89 @@
         function downloadPoster() {
             const poster = document.getElementById('poster');
             
+            // 临时禁用一些可能导致渲染问题的CSS效果
+            const originalFilter = poster.style.filter;
+            const originalBackdropFilter = poster.style.backdropFilter;
+            
+            // 获取所有气泡框元素并临时调整backdrop-filter
+            const bubbles = poster.querySelectorAll('.triple-bubble');
+            const originalBubbleFilters = [];
+            bubbles.forEach((bubble, index) => {
+                originalBubbleFilters[index] = bubble.style.backdropFilter;
+                bubble.style.backdropFilter = 'none';
+            });
+            
             html2canvas(poster, {
                 width: 1080,
                 height: 1920,
-                scale: 1, // No scaling needed since display is already 1080x1920
+                scale: 2, // 提高分辨率
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: null
+                backgroundColor: null,
+                logging: false,
+                imageTimeout: 15000,
+                removeContainer: true,
+                foreignObjectRendering: false,
+                // 优化背景图片处理
+                proxy: undefined,
+                letterRendering: true,
+                // 处理CSS滤镜
+                ignoreElements: function(element) {
+                    // 忽略可能导致问题的元素
+                    return element.classList && element.classList.contains('problematic-element');
+                }
             }).then(canvas => {
+                // 恢复原始样式
+                poster.style.filter = originalFilter;
+                poster.style.backdropFilter = originalBackdropFilter;
+                bubbles.forEach((bubble, index) => {
+                    bubble.style.backdropFilter = originalBubbleFilters[index];
+                });
+                
+                // 创建下载链接
                 const link = document.createElement('a');
                 link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png');
+                link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
             }).catch(error => {
+                // 恢复原始样式（即使出错也要恢复）
+                poster.style.filter = originalFilter;
+                poster.style.backdropFilter = originalBackdropFilter;
+                bubbles.forEach((bubble, index) => {
+                    bubble.style.backdropFilter = originalBubbleFilters[index];
+                });
+                
                 console.error('下载失败:', error);
-                alert('下载失败，请检查浏览器权限');
+                
+                // 尝试备用方法
+                tryAlternativeDownload();
+            });
+        }
+
+        // 备用下载方法
+        function tryAlternativeDownload() {
+            const poster = document.getElementById('poster');
+            
+            // 使用更简单的配置重试
+            html2canvas(poster, {
+                width: 1080,
+                height: 1920,
+                scale: 1,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#000000', // 设置黑色背景
+                logging: true,
+                removeContainer: false,
+                foreignObjectRendering: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}-backup.png`;
+                link.href = canvas.toDataURL('image/png', 0.9);
+                link.click();
+                alert('使用备用方法下载成功！如果背景仍有问题，请尝试在不同浏览器中下载。');
+            }).catch(error => {
+                console.error('备用下载也失败:', error);
+                alert('下载失败。建议：\n1. 尝试刷新页面后重试\n2. 使用Chrome或Firefox浏览器\n3. 检查浏览器是否阻止了下载');
             });
         }
 
