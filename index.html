@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 1600px; /* 调整以适应70%预览大小 */
+            max-width: 1800px; /* Increased to accommodate 1080px poster + form */
             margin: 0 auto;
             background: #ffffff;
             border-radius: 10px;
@@ -36,7 +36,7 @@
         }
 
         .left-panel {
-            flex: 0 0 784px; /* Width to accommodate 756px poster + padding */
+            flex: 0 0 1120px; /* Width to accommodate 1080px poster + padding */
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -127,8 +127,8 @@
         }
 
         .poster-container {
-            width: 756px;  /* 1080 * 0.7 = 756px */
-            height: 1344px; /* 1920 * 0.7 = 1344px */
+            width: 1080px;  /* 100% actual size */
+            height: 1920px; /* 100% actual size */
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
@@ -334,7 +334,7 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
             border-radius: 35px; /* 稍微减小圆角 */
-            padding: 25px 35px 55px 35px; /* 进一步减少内边距 */
+            padding: 20px 35px 40px 35px; /* 调整内边距：上20px，下40px */
             width: 100%;
             height: calc((100% - 20px) / 3); /* 调整为5px间隔 * 2 = 10px，加上容器边距 */
             min-height: 240px; /* 减少最小高度以适应版面 */
@@ -384,6 +384,19 @@
             left: 20px;
         }
 
+        /* 板块3的标签容器 - 位于右下角 */
+        .section-3 .tag-container {
+            left: auto;
+            right: 20px;
+            max-width: calc(100% - 140px); /* 为verdict留出空间 */
+        }
+
+        /* 板块3的判断容器 - 位于左下角 */
+        .section-3 .verdict-container {
+            right: auto;
+            left: 20px;
+        }
+
         /* 判断容器样式 - 默认位于气泡右下角 */
         .verdict-container {
             position: absolute;
@@ -393,7 +406,7 @@
             color: #000 !important;
             font-size: 20px !important; /* 减小字体 */
             font-weight: 600 !important;
-            padding: 6px 12px; /* 减小内边距 */
+            padding: 0px 12px 6px 12px; /* 上padding改为0px */
             border-radius: 16px; /* 减小圆角 */
             border: 1px solid rgba(243, 187, 44, 1);
             text-shadow: none !important;
@@ -418,7 +431,7 @@
             -webkit-line-clamp: 6; /* 调整为6行以平衡内容和版面 */
             line-clamp: 6;
             -webkit-box-orient: vertical;
-            margin-bottom: 45px; /* 减少底部边距 */
+            margin-bottom: 5px; /* 调整为5px */
             padding-right: 8px; /* 减少右侧间距 */
         }
 
@@ -759,7 +772,6 @@
         <div class="header">
             <h1>VIP Institutional Insight</h1>
             <div class="update-section">
-                <button class="update-btn generate-btn" onclick="generatePoster()">生成 Poster</button>
                 <button class="update-btn" onclick="downloadPoster()">下载 Poster</button>
             </div>
         </div>
@@ -782,17 +794,17 @@
                                 <div class="section-content">
                                     <div class="triple-bubble-container" id="poster-section2-content">
                                         <div class="triple-bubble" id="poster-section2-bubble-container1">
-                                            <div class="triple-bubble-text" id="poster-section2-bubble1">Market Decoupling - The market decoupled from traditional equities this week. Bitcoin corrected from $93,800 to a low of $90,300, while the S&P 500 and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets.</div>
+                                            <div class="triple-bubble-text" id="poster-section2-bubble1"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                                             <div class="tag-container" id="poster-section2-tag1"></div>
                                             <div class="verdict-container" id="poster-section2-verdict1">VERDICT: ⚪ FULLY PRICED-IN</div>
                                         </div>
                                         <div class="triple-bubble" id="poster-section2-bubble-container2">
-                                            <div class="triple-bubble-text" id="poster-section2-bubble2">Flight to Safety - A strengthening U.S. Dollar (99.13) and surging Gold prices exerted heavy downward pressure on crypto, confirming a flight to safety that drained capital from riskier categories.</div>
+                                            <div class="triple-bubble-text" id="poster-section2-bubble2"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                                             <div class="tag-container" id="poster-section2-tag2"></div>
                                             <div class="verdict-container" id="poster-section2-verdict2">VERDICT: ⚪ FULLY PRICED-IN</div>
                                         </div>
                                         <div class="triple-bubble" id="poster-section2-bubble-container3">
-                                            <div class="triple-bubble-text" id="poster-section2-bubble3">Liquidity Contraction: Liquidity conditions deteriorated sharply. Spot ETFs recorded net outflows of $749.5 million, alongside a $748 million contraction in stablecoin supply, erasing the previous week's inflows.</div>
+                                            <div class="triple-bubble-text" id="poster-section2-bubble3"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                                             <div class="tag-container" id="poster-section2-tag3"></div>
                                             <div class="verdict-container" id="poster-section2-verdict3">VERDICT: ⚪ FULLY PRICED-IN</div>
                                         </div>
@@ -806,19 +818,19 @@
                                 <div class="section-content">
                                     <div class="triple-bubble-container" id="poster-section3-content">
                                         <div class="triple-bubble" id="poster-section3-bubble-container1">
-                                            <div class="triple-bubble-text" id="poster-section3-bubble1">Bank of Japan Rate Decision (Jan 23 11:00am) - Should Governor Ueda signal a hawkish pivot toward further policy tightening, potential Yen Carry Trade.</div>
+                                            <div class="triple-bubble-text" id="poster-section3-bubble1"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                                             <div class="tag-container" id="poster-section3-tag1"></div>
-                                            <div class="verdict-container" id="poster-section3-verdict1"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict1">STRATEGY 🔄 ROTATE TO BETA</div>
                                         </div>
                                         <div class="triple-bubble" id="poster-section3-bubble-container2">
-                                            <div class="triple-bubble-text" id="poster-section3-bubble2">U.S. December CPI Data Release (Jan 13, 21:30) - If Core CPI demonstrates sticky persistence or an upside surprise.</div>
+                                            <div class="triple-bubble-text" id="poster-section3-bubble2"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                                             <div class="tag-container" id="poster-section3-tag2"></div>
-                                            <div class="verdict-container" id="poster-section3-verdict2"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict2">STRATEGY 🔄 ROTATE TO BETA</div>
                                         </div>
                                         <div class="triple-bubble" id="poster-section3-bubble-container3">
-                                            <div class="triple-bubble-text" id="poster-section3-bubble3">Monero (XMR) - Driven by internal turmoil within ZEC's ECC team, significant capital is fleeing Zcash. This "rigid demand for privacy" is aggressively rotating into XMR, presenting short-term trading opportunity.</div>
+                                            <div class="triple-bubble-text" id="poster-section3-bubble3"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                                             <div class="tag-container" id="poster-section3-tag3"></div>
-                                            <div class="verdict-container" id="poster-section3-verdict3"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict3">STRATEGY 🔄 ROTATE TO BETA</div>
                                         </div>
                                     </div>
                                 </div>
@@ -835,15 +847,13 @@
                     <ul>
                         <li>使用Brand Color色系：#0EAD98 (Bamboo Green)、#00D9D9 (Bright Cyan)等</li>
                         <li>现在有2个板块平均分配空间</li>
-                        <li>每个板块有3个优化大小的气泡框</li>
+                        <li>每个板块有3个自动根据文字多少优化大小的气泡框，删除全部文字气泡框会消失</li>
                         <li>标题左对齐，气泡内容左对齐显示</li>
-                        <li><strong>富文本支持</strong>：直接从Google Docs等应用复制粘贴格式化文字</li>
-                        <li>点击"生成 Poster"更新预览，"下载 Poster"保存图片</li>
+                        <li>点击"下载 Poster"保存图片</li>
                     </ul>
                     
                     <h4>富文本功能：</h4>
                     <ul>
-                        <li>支持从Google Docs、Word等应用直接复制粘贴格式化文字</li>
                         <li>自动应用Brand Color调色板：</li>
                         <li style="margin-left: 15px;">• <strong style="color: #0EAD98;">加粗文字</strong> - 使用Bamboo Green</li>
                         <li style="margin-left: 15px;">• <em style="color: #00D9D9;">斜体文字</em> - 使用Bright Cyan</li>
@@ -878,7 +888,7 @@
                         </div>
                         <div class="input-group">
                             <label for="section2-content1">气泡框1内容</label>
-                            <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Market Decoupling - The market decoupled from traditional equities this week. Bitcoin corrected from $93,800 to a low of $90,300, while the S&P 500 and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets.</div>
+                            <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字..."><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                         </div>
                         <div class="input-group">
                             <label>气泡框1标签 (最多3个)</label>
@@ -903,7 +913,7 @@
                         </div>
                         <div class="input-group">
                             <label for="section2-content2">气泡框2内容</label>
-                            <div class="rich-text-input" id="section2-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Flight to Safety - A strengthening U.S. Dollar (99.13) and surging Gold prices exerted heavy downward pressure on crypto, confirming a flight to safety that drained capital from riskier categories.</div>
+                            <div class="rich-text-input" id="section2-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字..."><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                         </div>
                         <div class="input-group">
                             <label>气泡框2标签 (最多3个)</label>
@@ -928,7 +938,7 @@
                         </div>
                         <div class="input-group">
                             <label for="section2-content3">气泡框3内容</label>
-                            <div class="rich-text-input" id="section2-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Liquidity Contraction: Liquidity conditions deteriorated sharply. Spot ETFs recorded net outflows of $749.5 million, alongside a $748 million contraction in stablecoin supply, erasing the previous week's inflows.</div>
+                            <div class="rich-text-input" id="section2-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字..."><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                         </div>
                         <div class="input-group">
                             <label>气泡框3标签 (最多3个)</label>
@@ -961,7 +971,7 @@
                         </div>
                         <div class="input-group">
                             <label for="section3-content1">气泡框1内容</label>
-                            <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Bank of Japan Rate Decision (Jan 23 11:00am) - Should Governor Ueda signal a hawkish pivot toward further policy tightening, potential Yen Carry Trade.</div>
+                            <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="输入内容或粘贴格式化文字..."><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                         </div>
                         <div class="input-group">
                             <label>气泡框1标签 (最多3个)</label>
@@ -982,11 +992,11 @@
                         </div>
                         <div class="input-group">
                             <label for="section3-verdict1">气泡框1判断</label>
-                            <input type="text" id="section3-verdict1" value="" placeholder="输入判断内容">
+                            <input type="text" id="section3-verdict1" value="STRATEGY 🔄 ROTATE TO BETA" placeholder="输入判断内容">
                         </div>
                         <div class="input-group">
                             <label for="section3-content2">气泡框2内容</label>
-                            <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">U.S. December CPI Data Release (Jan 13, 21:30) - If Core CPI demonstrates sticky persistence or an upside surprise.</div>
+                            <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="输入内容或粘贴格式化文字..."><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                         </div>
                         <div class="input-group">
                             <label>气泡框2标签 (最多3个)</label>
@@ -1007,11 +1017,11 @@
                         </div>
                         <div class="input-group">
                             <label for="section3-verdict2">气泡框2判断</label>
-                            <input type="text" id="section3-verdict2" value="" placeholder="输入判断内容">
+                            <input type="text" id="section3-verdict2" value="STRATEGY 🔄 ROTATE TO BETA" placeholder="输入判断内容">
                         </div>
                         <div class="input-group">
                             <label for="section3-content3">气泡框3内容</label>
-                            <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字...">Monero (XMR) - Driven by internal turmoil within ZEC's ECC team, significant capital is fleeing Zcash. This "rigid demand for privacy" is aggressively rotating into XMR, presenting short-term trading opportunity.</div>
+                            <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="输入内容或粘贴格式化文字..."><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
                         </div>
                         <div class="input-group">
                             <label>气泡框3标签 (最多3个)</label>
@@ -1032,7 +1042,7 @@
                         </div>
                         <div class="input-group">
                             <label for="section3-verdict3">气泡框3判断</label>
-                            <input type="text" id="section3-verdict3" value="" placeholder="输入判断内容">
+                            <input type="text" id="section3-verdict3" value="STRATEGY 🔄 ROTATE TO BETA" placeholder="输入判断内容">
                         </div>
                     </div>
                 </div>
@@ -1075,9 +1085,9 @@
             const poster = document.getElementById('poster');
             
             html2canvas(poster, {
-                width: 1080,  // 保持原始尺寸用于下载
-                height: 1920, // 保持原始尺寸用于下载
-                scale: 1080 / 756, // 缩放比例：原始尺寸 / 显示尺寸
+                width: 1080,
+                height: 1920,
+                scale: 1, // No scaling needed since display is already 1080x1920
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
