@@ -134,6 +134,7 @@
             background-position: center;
             background-repeat: no-repeat;
             margin: 10px auto;
+            padding: 0; /* 确保没有内边距 */
             border-radius: 15px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             position: relative;
@@ -143,6 +144,8 @@
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             transform: translateZ(0); /* 启用硬件加速 */
+            /* 确保盒模型一致 */
+            box-sizing: border-box;
         }
 
         .poster-content {
@@ -152,6 +155,9 @@
             display: flex;
             flex-direction: column;
             color: white;
+            padding: 0; /* 确保没有内边距 */
+            margin: 0; /* 确保没有外边距 */
+            box-sizing: border-box;
         }
         .poster-header {
             height: 100px; /* 减少header高度 */
@@ -1093,11 +1099,14 @@
         function downloadPoster() {
             const poster = document.getElementById('poster');
             
-            // 临时禁用一些可能导致渲染问题的CSS效果
-            const originalFilter = poster.style.filter;
-            const originalBackdropFilter = poster.style.backdropFilter;
+            // 临时调整可能影响布局的样式
+            const posterSections = poster.querySelector('.poster-sections');
+            const originalPadding = posterSections.style.padding;
             
-            // 获取所有气泡框元素并临时调整backdrop-filter
+            // 临时移除padding，确保截图时布局一致
+            posterSections.style.padding = '0 15px';
+            
+            // 临时禁用一些可能导致渲染问题的CSS效果
             const bubbles = poster.querySelectorAll('.triple-bubble');
             const originalBubbleFilters = [];
             bubbles.forEach((bubble, index) => {
@@ -1105,29 +1114,38 @@
                 bubble.style.backdropFilter = 'none';
             });
             
+            // 确保容器尺寸精确
+            const originalWidth = poster.style.width;
+            const originalHeight = poster.style.height;
+            poster.style.width = '1080px';
+            poster.style.height = '1920px';
+            
             html2canvas(poster, {
                 width: 1080,
                 height: 1920,
-                scale: 2, // 提高分辨率
+                scale: 1, // 使用1:1比例确保像素精确
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null,
                 logging: false,
                 imageTimeout: 15000,
-                removeContainer: true,
+                removeContainer: false,
                 foreignObjectRendering: false,
-                // 优化背景图片处理
-                proxy: undefined,
+                // 确保精确的像素渲染
+                pixelRatio: 1,
+                dpi: 96,
+                // 优化文字渲染
                 letterRendering: true,
-                // 处理CSS滤镜
-                ignoreElements: function(element) {
-                    // 忽略可能导致问题的元素
-                    return element.classList && element.classList.contains('problematic-element');
-                }
+                // 处理边距和padding
+                x: 0,
+                y: 0,
+                scrollX: 0,
+                scrollY: 0
             }).then(canvas => {
                 // 恢复原始样式
-                poster.style.filter = originalFilter;
-                poster.style.backdropFilter = originalBackdropFilter;
+                posterSections.style.padding = originalPadding;
+                poster.style.width = originalWidth;
+                poster.style.height = originalHeight;
                 bubbles.forEach((bubble, index) => {
                     bubble.style.backdropFilter = originalBubbleFilters[index];
                 });
@@ -1139,8 +1157,9 @@
                 link.click();
             }).catch(error => {
                 // 恢复原始样式（即使出错也要恢复）
-                poster.style.filter = originalFilter;
-                poster.style.backdropFilter = originalBackdropFilter;
+                posterSections.style.padding = originalPadding;
+                poster.style.width = originalWidth;
+                poster.style.height = originalHeight;
                 bubbles.forEach((bubble, index) => {
                     bubble.style.backdropFilter = originalBubbleFilters[index];
                 });
@@ -1163,16 +1182,19 @@
                 scale: 1,
                 useCORS: true,
                 allowTaint: false,
-                backgroundColor: '#000000', // 设置黑色背景
+                backgroundColor: null,
                 logging: true,
                 removeContainer: false,
-                foreignObjectRendering: true
+                foreignObjectRendering: true,
+                // 精确像素设置
+                pixelRatio: 1,
+                dpi: 96
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}-backup.png`;
                 link.href = canvas.toDataURL('image/png', 0.9);
                 link.click();
-                alert('使用备用方法下载成功！如果背景仍有问题，请尝试在不同浏览器中下载。');
+                alert('使用备用方法下载成功！');
             }).catch(error => {
                 console.error('备用下载也失败:', error);
                 alert('下载失败。建议：\n1. 尝试刷新页面后重试\n2. 使用Chrome或Firefox浏览器\n3. 检查浏览器是否阻止了下载');
