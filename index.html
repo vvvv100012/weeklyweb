@@ -1848,6 +1848,26 @@
         // Initialize on page load
         window.onload = function() {
             generatePoster();
+
+            // Apply default verdict colors on load
+            [2, 3].forEach(sectionNum => {
+                for (let j = 1; j <= 3; j++) {
+                    const colorInput = document.getElementById(`section${sectionNum}-verdict${j}-color`);
+                    const verdictContainer = document.getElementById(`poster-section${sectionNum}-verdict${j}`);
+                    if (colorInput && verdictContainer) {
+                        const color = colorInput.value;
+                        verdictContainer.style.background = color;
+                        verdictContainer.style.borderColor = color;
+                        // Adjust text color based on background brightness
+                        const rgb = parseInt(color.slice(1), 16);
+                        const r = (rgb >> 16) & 0xff;
+                        const g = (rgb >>  8) & 0xff;
+                        const b = (rgb >>  0) & 0xff;
+                        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                        verdictContainer.style.color = brightness > 128 ? '#000' : '#fff';
+                    }
+                }
+            });
         };
     </script>
 </body>
