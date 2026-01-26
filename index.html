@@ -770,6 +770,31 @@
             margin-bottom: 8px;
         }
 
+        .save-defaults-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .save-defaults-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+            background: #34495e;
+        }
+
         .instructions {
             background: #e8f4fd;
             border-radius: 8px;
@@ -847,6 +872,9 @@
 </head>
 <body>
     <div class="container">
+        <button class="save-defaults-btn" onclick="saveDefaults()" title="Download updated results.json">
+            <span>💾</span> 保存默认配置 (Save JSON)
+        </button>
         <div class="header">
             <h1>VIP Institutional Insight</h1>
             <div class="update-section">
@@ -1189,14 +1217,14 @@
             const originalButtonText = button.textContent;
             button.textContent = '生成中...';
             button.disabled = true;
-            
+
             try {
                 // 1. 首先加载背景图片并转换为 Base64
                 const backgroundImage = await loadImageAsBase64('background.png');
-                
+
                 // 获取原始 poster 的内容
                 const originalPoster = document.getElementById('poster');
-                
+
                 // 创建一个完全独立的容器，放在屏幕外
                 const renderContainer = document.createElement('div');
                 renderContainer.style.position = 'fixed';
@@ -1205,7 +1233,7 @@
                 renderContainer.style.width = '1080px';
                 renderContainer.style.height = '1920px';
                 document.body.appendChild(renderContainer);
-                
+
                 // 创建新的 poster 副本
                 const newPoster = document.createElement('div');
                 newPoster.id = 'temp-poster';
@@ -1221,13 +1249,13 @@
                 newPoster.style.backgroundSize = 'cover';
                 newPoster.style.backgroundPosition = 'center';
                 newPoster.style.backgroundRepeat = 'no-repeat';
-                
+
                 // 克隆 poster-content
                 const originalContent = originalPoster.querySelector('.poster-content');
                 const newContent = originalContent.cloneNode(true);
                 newPoster.appendChild(newContent);
                 renderContainer.appendChild(newPoster);
-                
+
                 // 添加专门用于渲染的样式
                 const renderStyle = document.createElement('style');
                 renderStyle.id = 'render-style';
@@ -1502,10 +1530,10 @@
                     }
                 `;
                 document.head.appendChild(renderStyle);
-                
+
                 // 等待样式应用和DOM更新
                 await new Promise(resolve => setTimeout(resolve, 300));
-                
+
                 // 使用 html2canvas 渲染
                 const canvas = await html2canvas(newPoster, {
                     width: 1080,
@@ -1525,22 +1553,22 @@
                     windowWidth: 1080,
                     windowHeight: 1920
                 });
-                
+
                 // 清理临时元素
                 document.body.removeChild(renderContainer);
                 document.head.removeChild(renderStyle);
-                
+
                 // 下载图片
                 const link = document.createElement('a');
                 link.download = `vip-institutional-insight-${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-                
+
                 button.textContent = originalButtonText;
                 button.disabled = false;
             } catch (error) {
                 console.error('下载失败:', error);
-                
+
                 // 清理可能残留的元素
                 const tempContainer = document.querySelector('#temp-poster');
                 if (tempContainer && tempContainer.parentElement) {
@@ -1550,13 +1578,98 @@
                 if (tempStyle) {
                     tempStyle.remove();
                 }
-                
+
                 button.textContent = '下载失败，请重试';
                 button.disabled = false;
                 setTimeout(() => {
                     button.textContent = originalButtonText;
                 }, 2000);
             }
+        }
+
+        function saveDefaults() {
+            const data = {
+                result_ahead: [],
+                result_past: []
+            };
+
+            // Collect Section 3 (Ahead)
+            for (let i = 1; i <= 3; i++) {
+                const contentEl = document.getElementById(`section3-content${i}`);
+                if (!contentEl) continue;
+
+                // Parse "<em>Event</em> - Summary"
+                const html = contentEl.innerHTML;
+                let event = "";
+                let summary = "";
+
+                // Regex to extract text inside <em> and the rest
+                const match = html.match(/<em>(.*?)<\/em>\s*-\s*(.*)/);
+                if (match) {
+                    event = match[1].replace(/<[^>]*>/g, ""); // strip tags for event name
+                    summary = match[2]; // keep HTML in summary
+                } else {
+                    summary = html;
+                }
+
+                const tag1 = document.getElementById(`section3-tag${i}-1`).value;
+                let tag2 = document.getElementById(`section3-tag${i}-2`).value;
+                const tag3 = document.getElementById(`section3-tag${i}-3`).value;
+                const verdict = document.getElementById(`section3-verdict${i}`).value;
+
+                // Strip consensus prefix
+                if (tag2.startsWith("Consensus (Prev / Est): ")) {
+                    tag2 = tag2.replace("Consensus (Prev / Est): ", "");
+                }
+
+                if (event || summary) {
+                    data.result_ahead.push({
+                        event_name: event,
+                        event_time: tag3,
+                        consensus_data: tag2,
+                        verdict_tag: verdict,
+                        summary: summary,
+                        type: tag1
+                    });
+                }
+            }
+
+            // Collect Section 2 (Past)
+            for (let i = 1; i <= 3; i++) {
+                const contentEl = document.getElementById(`section2-content${i}`);
+                if (!contentEl) continue;
+
+                const html = contentEl.innerHTML;
+                let title = "";
+                let content = "";
+
+                const match = html.match(/<em>(.*?)<\/em>\s*-\s*(.*)/);
+                if (match) {
+                    title = match[1]; // keep HTML for title (it has strong tags often)
+                    content = match[2];
+                } else {
+                    content = html;
+                }
+
+                const verdict = document.getElementById(`section2-verdict${i}`).value;
+
+                if (title || content) {
+                    data.result_past.push({
+                        title: title,
+                        content: content,
+                        verdict: verdict
+                    });
+                }
+            }
+
+            // Download
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "results.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
         }
 
         // 辅助函数：加载图片并转换为 Base64
