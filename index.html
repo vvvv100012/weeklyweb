@@ -1591,7 +1591,12 @@
             }
         }
 
-        function saveDefaults() {
+        async function saveDefaults() {
+            const button = document.querySelector('.save-defaults-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span>⏳</span> Saving...';
+            button.disabled = true;
+
             const data = {
                 result_ahead: [],
                 result_past: []
@@ -1666,14 +1671,35 @@
                 }
             }
 
-            // Download
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "results.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+            try {
+                // Try to send to local server
+                const response = await fetch('/save-defaults', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('✅ Saved locally and pushed to GitHub successfully!');
+                } else {
+                    throw new Error('Server returned error');
+                }
+            } catch (e) {
+                console.log('Local server not found, falling back to download');
+                // Fallback to download
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "results.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
         }
 
         // 辅助函数：加载图片并转换为 Base64
