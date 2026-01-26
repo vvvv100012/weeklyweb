@@ -902,7 +902,10 @@
                 <div class="poster-container" id="poster">
                     <div class="poster-content">
                         <div class="poster-header">
-                            <h1 class="poster-title" id="poster-title-display">CoinEx VIP Weekly</h1>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="CoinEx logo_CoinEx logo文字反白.png" class="header-logo" style="height: 60px; width: auto;" alt="CoinEx">
+                                <h1 class="poster-title" id="poster-title-display">VIP Weekly</h1>
+                            </div>
                             <div class="poster-date" id="poster-date-display">January 21, 2026</div>
                         </div>
 
@@ -993,7 +996,7 @@
                         <h3>Basic Information</h3>
                         <div class="input-group">
                             <label for="poster-title">Title</label>
-                            <input type="text" id="poster-title" value="CoinEx VIP Weekly" placeholder="Enter title">
+                            <input type="text" id="poster-title" value="VIP Weekly" placeholder="Enter title">
                         </div>
                         <div class="input-group">
                             <label for="date">Date</label>
@@ -1238,6 +1241,8 @@
                 const backgroundImage = await loadImageAsBase64('background4.png');
                 // Load logo as Base64
                 const logoImage = await loadImageAsBase64('logo.png');
+                // Load header logo as Base64
+                const headerLogoImage = await loadImageAsBase64('CoinEx logo_CoinEx logo文字反白.png');
 
                 // 获取原始 poster 的内容
                 const originalPoster = document.getElementById('poster');
@@ -1274,6 +1279,12 @@
                 const newLogo = newPoster.querySelector('.poster-logo');
                 if (newLogo) {
                     newLogo.src = logoImage;
+                }
+
+                // Update header logo src in the new poster to base64
+                const newHeaderLogo = newPoster.querySelector('.header-logo');
+                if (newHeaderLogo) {
+                    newHeaderLogo.src = headerLogoImage;
                 }
 
                 renderContainer.appendChild(newPoster);
@@ -1557,6 +1568,10 @@
                         width: 150px;
                         height: auto;
                         z-index: 10;
+                    }
+                    #temp-poster .header-logo {
+                        height: 60px !important;
+                        width: auto !important;
                     }
                 `;
                 document.head.appendChild(renderStyle);
