@@ -226,6 +226,15 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
+        .poster-logo {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            width: 150px; /* Adjust size as needed */
+            height: auto;
+            z-index: 10;
+        }
+
         /* Poster Sections with proportional heights - 现在只有2个板块 */
         .poster-section {
             display: flex;
@@ -947,7 +956,9 @@
                             </div>
                         </div>
 
-                        <div class="poster-footer"></div>
+                        <div class="poster-footer">
+                            <img src="logo.png" class="poster-logo" id="poster-logo-img" alt="Logo">
+                        </div>
                     </div>
                 </div>
 
@@ -1225,6 +1236,8 @@
             try {
                 // 1. 首先加载背景图片并转换为 Base64
                 const backgroundImage = await loadImageAsBase64('background4.png');
+                // Load logo as Base64
+                const logoImage = await loadImageAsBase64('logo.png');
 
                 // 获取原始 poster 的内容
                 const originalPoster = document.getElementById('poster');
@@ -1257,7 +1270,12 @@
                 // 克隆 poster-content
                 const originalContent = originalPoster.querySelector('.poster-content');
                 const newContent = originalContent.cloneNode(true);
-                newPoster.appendChild(newContent);
+                // Update logo src in the new poster to base64
+                const newLogo = newPoster.querySelector('.poster-logo');
+                if (newLogo) {
+                    newLogo.src = logoImage;
+                }
+
                 renderContainer.appendChild(newPoster);
 
                 // 添加专门用于渲染的样式
@@ -1531,6 +1549,14 @@
                         height: 1px;
                         background: rgba(255, 255, 255, 0.4);
                         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                    }
+                    #temp-poster .poster-logo {
+                        position: absolute;
+                        bottom: 30px;
+                        right: 40px;
+                        width: 150px;
+                        height: auto;
+                        z-index: 10;
                     }
                 `;
                 document.head.appendChild(renderStyle);
