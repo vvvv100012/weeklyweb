@@ -130,7 +130,7 @@
             width: 1080px;  /* 100% actual size */
             height: 1920px; /* 100% actual size */
             background-image: url('background3.png');
-            background-size: cover;
+            background-size: 100% 100%; /* Force stretch to fit */
             background-position: center;
             background-repeat: no-repeat;
             margin: 10px auto;
@@ -1250,7 +1250,7 @@
                 newPoster.style.boxSizing = 'border-box';
                 // 使用 Base64 背景图片
                 newPoster.style.backgroundImage = `url(${backgroundImage})`;
-                newPoster.style.backgroundSize = 'cover';
+                newPoster.style.backgroundSize = '100% 100%'; /* Force stretch to fit */
                 newPoster.style.backgroundPosition = 'center';
                 newPoster.style.backgroundRepeat = 'no-repeat';
 
@@ -1265,7 +1265,7 @@
                 renderStyle.id = 'render-style';
                 renderStyle.textContent = `
                     #temp-poster {
-                        background-size: cover !important;
+                        background-size: 100% 100% !important; /* Force stretch to fit */
                         background-position: center !important;
                         background-repeat: no-repeat !important;
                     }
