@@ -127,10 +127,10 @@
         }
 
         .poster-container {
-            width: 1080px;  /* Fixed width */
-            height: 1528px; /* Adjusted height for background4.png aspect ratio (1080 * 2500/1768) */
+            width: 1080px;  /* 100% actual size */
+            height: 1920px; /* 100% actual size */
             background-image: url('background4.png');
-            background-size: cover; /* Cover is safe now as aspect ratios match */
+            background-size: 100% 100%; /* Force stretch to fit */
             background-position: center;
             background-repeat: no-repeat;
             margin: 10px auto;
@@ -145,9 +145,9 @@
             image-rendering: crisp-edges;
             transform: translateZ(0) scale(0.67); /* 启用硬件加速并缩放 */
             transform-origin: top left;
-            /* 调整布局占用空间: 1080*0.67=723.6, 1528*0.67=1023.76 */
+            /* 调整布局占用空间: 1080*0.67=723.6, 1920*0.67=1286.4 */
             margin-right: -356px; /* 1080 - 724 */
-            margin-bottom: -504px; /* 1528 - 1024 */
+            margin-bottom: -633px; /* 1920 - 1287 */
             /* 确保盒模型一致 */
             box-sizing: border-box;
         }
@@ -1235,14 +1235,14 @@
                 renderContainer.style.left = '-9999px';
                 renderContainer.style.top = '0';
                 renderContainer.style.width = '1080px';
-                renderContainer.style.height = '1528px'; // Adjusted height
+                renderContainer.style.height = '1920px';
                 document.body.appendChild(renderContainer);
 
                 // 创建新的 poster 副本
                 const newPoster = document.createElement('div');
                 newPoster.id = 'temp-poster';
                 newPoster.style.width = '1080px';
-                newPoster.style.height = '1528px'; // Adjusted height
+                newPoster.style.height = '1920px';
                 newPoster.style.position = 'relative';
                 newPoster.style.overflow = 'hidden';
                 newPoster.style.margin = '0';
@@ -1250,7 +1250,7 @@
                 newPoster.style.boxSizing = 'border-box';
                 // 使用 Base64 背景图片
                 newPoster.style.backgroundImage = `url(${backgroundImage})`;
-                newPoster.style.backgroundSize = 'cover';
+                newPoster.style.backgroundSize = '100% 100%'; /* Force stretch to fit */
                 newPoster.style.backgroundPosition = 'center';
                 newPoster.style.backgroundRepeat = 'no-repeat';
 
@@ -1265,7 +1265,7 @@
                 renderStyle.id = 'render-style';
                 renderStyle.textContent = `
                     #temp-poster {
-                        background-size: cover !important;
+                        background-size: 100% 100% !important; /* Force stretch to fit */
                         background-position: center !important;
                         background-repeat: no-repeat !important;
                     }
@@ -1541,7 +1541,7 @@
                 // 使用 html2canvas 渲染
                 const canvas = await html2canvas(newPoster, {
                     width: 1080,
-                    height: 1528, // Adjusted height
+                    height: 1920,
                     scale: 2,
                     backgroundColor: null,
                     logging: false,
@@ -1555,7 +1555,7 @@
                     scrollX: 0,
                     scrollY: 0,
                     windowWidth: 1080,
-                    windowHeight: 1528 // Adjusted height
+                    windowHeight: 1920
                 });
 
                 // 清理临时元素
