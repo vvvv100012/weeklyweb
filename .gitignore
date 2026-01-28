@@ -17,3 +17,4 @@ content_generator.py
 credentials.json
 results.json
 update_site.py
+local_editor.py

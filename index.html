@@ -84,19 +84,128 @@
         }
 
         .module {
-            background: rgba(248, 249, 250, 0.95);
+            background: #fff;
             border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            border-left: 3px solid #0EAD98;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #e1e8ed;
         }
 
         .module h3 {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: #0EAD98;
             margin-bottom: 10px;
             font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 折叠式卡片样式 */
+        .collapsible-card {
+            background: #fff;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: #e9ecef;
+        }
+
+        .collapsible-header .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .collapsible-header .card-preview {
+            font-size: 0.75rem;
+            color: #666;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .collapsible-header .toggle-icon {
+            font-size: 0.8rem;
+            color: #999;
+            transition: transform 0.2s;
+        }
+
+        .collapsible-card.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            display: none;
+            padding: 12px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .collapsible-card.expanded .collapsible-body {
+            display: block;
+        }
+
+        .collapsible-body .input-group {
+            margin-bottom: 8px;
+        }
+
+        .collapsible-body .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 简化的标签输入行 */
+        .compact-tag-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .compact-tag-row input[type="text"] {
+            flex: 1;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+        }
+
+        .compact-tag-row input[type="color"] {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* 紧凑的verdict行 */
+        .verdict-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .verdict-row input[type="text"] {
+            flex: 1;
+        }
+
+        .verdict-row input[type="color"] {
+            width: 32px;
+            height: 32px;
         }
 
         .input-group input:focus,
@@ -1011,92 +1120,85 @@
                             <label for="section2-title">Section Title</label>
                             <input type="text" id="section2-title" value="MARKET RECAP" placeholder="Enter section title">
                         </div>
-                        <div class="input-group">
-                            <label for="section2-content1">Bubble 1 Content</label>
-                            <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Enter content or paste formatted text..."><em>Bitcoin's Safe Haven Thesis Fails</em> - The US-Greenland/NATO geopolitical tension caused Bitcoin to fall while Gold hit an all-time high, decoupling the two assets. This invalidates the 'digital gold' narrative, forcing <b>Bitcoin to be re-evaluated as a high-beta risk asset during the crisis</b>.</div>
-                        </div>
-                        <div class="input-group">
-                            <label>Bubble 1 Tags (Max 3)</label>
-                            <div class="tag-inputs">
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag1-1" value="" placeholder="Tag 1">
-                                    <input type="color" id="section2-tag1-color1" value="#0EAD98" title="Tag 1 Color">
+                        <!-- Bubble 1 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 1 <span class="card-preview" id="s2b1-preview">Bitcoin's Safe Haven...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Enter content..."><em>Bitcoin's Safe Haven Thesis Fails</em> - The US-Greenland/NATO geopolitical tension caused Bitcoin to fall while Gold hit an all-time high, decoupling the two assets. This invalidates the 'digital gold' narrative, forcing <b>Bitcoin to be re-evaluated as a high-beta risk asset during the crisis</b>.</div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag1-2" value="" placeholder="Tag 2">
-                                    <input type="color" id="section2-tag1-color2" value="#00D9D9" title="Tag 2 Color">
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-1" placeholder="Tag 1"><input type="color" id="section2-tag1-color1" value="#0EAD98"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-2" placeholder="Tag 2"><input type="color" id="section2-tag1-color2" value="#00D9D9"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-3" placeholder="Tag 3"><input type="color" id="section2-tag1-color3" value="#F3BB2C"></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag1-3" value="" placeholder="Tag 3">
-                                    <input type="color" id="section2-tag1-color3" value="#F3BB2C" title="Tag 3 Color">
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section2-verdict1" value="🟣 [STRUCTURAL SHIFT]" placeholder="Verdict">
+                                        <input type="color" id="section2-verdict1-color" value="#2fc3f4">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group">
-                            <label for="section2-verdict1">Bubble 1 Verdict</label>
-                            <input type="text" id="section2-verdict1" value="🟣 [STRUCTURAL SHIFT]" placeholder="Enter verdict">
-                        </div>
-                        <div class="input-group">
-                            <label for="section2-verdict1-color">Color</label>
-                            <input type="color" id="section2-verdict1-color" value="#2fc3f4" title="Verdict Color">
-                        </div>
-                        <div class="input-group">
-                            <label for="section2-content2">Bubble 2 Content</label>
-                            <div class="rich-text-input" id="section2-content2" contenteditable="true" placeholder="Enter content or paste formatted text..."><em>Rates Impact Already Priced In</em> - Japan's 30-year yield hitting a record high signals a rising global cost of capital. This mechanically pressures zero-yield assets like crypto, but prices have already adjusted to the 'higher-for-longer' rate environment, limiting further downside.</div>
-                        </div>
-                        <div class="input-group">
-                            <label>Bubble 2 Tags (Max 3)</label>
-                            <div class="tag-inputs">
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag2-1" value="" placeholder="Tag 1">
-                                    <input type="color" id="section2-tag2-color1" value="#0EAD98" title="Tag 1 Color">
+
+                        <!-- Bubble 2 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 2 <span class="card-preview" id="s2b2-preview">Rates Impact Already...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section2-content2" contenteditable="true" placeholder="Enter content..."><em>Rates Impact Already Priced In</em> - Japan's 30-year yield hitting a record high signals a rising global cost of capital. This mechanically pressures zero-yield assets like crypto, but prices have already adjusted to the 'higher-for-longer' rate environment, limiting further downside.</div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag2-2" value="" placeholder="Tag 2">
-                                    <input type="color" id="section2-tag2-color2" value="#00D9D9" title="Tag 2 Color">
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag2-1" placeholder="Tag 1"><input type="color" id="section2-tag2-color1" value="#0EAD98"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag2-2" placeholder="Tag 2"><input type="color" id="section2-tag2-color2" value="#00D9D9"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag2-3" placeholder="Tag 3"><input type="color" id="section2-tag2-color3" value="#F3BB2C"></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag2-3" value="" placeholder="Tag 3">
-                                    <input type="color" id="section2-tag2-color3" value="#F3BB2C" title="Tag 3 Color">
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section2-verdict2" value="⚪ [FULLY PRICED IN]" placeholder="Verdict">
+                                        <input type="color" id="section2-verdict2-color" value="#2fc3f4">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group">
-                            <label for="section2-verdict2">Bubble 2 Verdict</label>
-                            <input type="text" id="section2-verdict2" value="⚪ [FULLY PRICED IN]" placeholder="Enter verdict">
-                        </div>
-                        <div class="input-group">
-                            <label for="section2-verdict2-color">Color</label>
-                            <input type="color" id="section2-verdict2-color" value="#2fc3f4" title="Verdict Color">
-                        </div>
-                        <div class="input-group">
-                            <label for="section2-content3">Bubble 3 Content</label>
-                            <div class="rich-text-input" id="section2-content3" contenteditable="true" placeholder="Enter content or paste formatted text..."><em>Onchain Speculation Awakens</em> - Elon Musk liking a Grok-generated video triggered a <b>massive pump for the PENGUIN token on Solana</b>. This demonstrates the power of the attention economy and proves that onchain speculative trading was merely dormant, not dead.</div>
-                        </div>
-                        <div class="input-group">
-                            <label>Bubble 3 Tags (Max 3)</label>
-                            <div class="tag-inputs">
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag3-1" value="" placeholder="Tag 1">
-                                    <input type="color" id="section2-tag3-color1" value="#0EAD98" title="Tag 1 Color">
+
+                        <!-- Bubble 3 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 3 <span class="card-preview" id="s2b3-preview">Onchain Speculation...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section2-content3" contenteditable="true" placeholder="Enter content..."><em>Onchain Speculation Awakens</em> - Elon Musk liking a Grok-generated video triggered a <b>massive pump for the PENGUIN token on Solana</b>. This demonstrates the power of the attention economy and proves that onchain speculative trading was merely dormant, not dead.</div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag3-2" value="" placeholder="Tag 2">
-                                    <input type="color" id="section2-tag3-color2" value="#00D9D9" title="Tag 2 Color">
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag3-1" placeholder="Tag 1"><input type="color" id="section2-tag3-color1" value="#0EAD98"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag3-2" placeholder="Tag 2"><input type="color" id="section2-tag3-color2" value="#00D9D9"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag3-3" placeholder="Tag 3"><input type="color" id="section2-tag3-color3" value="#F3BB2C"></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section2-tag3-3" value="" placeholder="Tag 3">
-                                    <input type="color" id="section2-tag3-color3" value="#F3BB2C" title="Tag 3 Color">
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section2-verdict3" value="🟣 [STRUCTURAL SHIFT]" placeholder="Verdict">
+                                        <input type="color" id="section2-verdict3-color" value="#2fc3f4">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="section2-verdict3">Bubble 3 Verdict</label>
-                            <input type="text" id="section2-verdict3" value="🟣 [STRUCTURAL SHIFT]" placeholder="Enter verdict">
-                        </div>
-                        <div class="input-group">
-                            <label for="section2-verdict3-color">Color</label>
-                            <input type="color" id="section2-verdict3-color" value="#2fc3f4" title="Verdict Color">
                         </div>
                     </div>
                     <!-- Section 3 -->
@@ -1106,92 +1208,85 @@
                             <label for="section3-title">Section Title</label>
                             <input type="text" id="section3-title" value="THE WEEK AHEAD" placeholder="Enter section title">
                         </div>
-                        <div class="input-group">
-                            <label for="section3-content1">Bubble 1 Content</label>
-                            <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="Enter content or paste formatted text..."><em>Microsoft (MSFT) &amp; Tesla (TSLA) Earnings</em> - This event presents a high-beta correlation with AI-themed crypto assets (e.g., RNDR, FET), where a strong earnings beat may triggers immediate buying.&nbsp;</div>
-                        </div>
-                        <div class="input-group">
-                            <label>Bubble 1 Tags (Max 3)</label>
-                            <div class="tag-inputs">
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag1-1" value="" placeholder="Tag 1">
-                                    <input type="color" id="section3-tag1-color1" value="#0EAD98" title="Tag 1 Color">
+                        <!-- Bubble 1 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 1 <span class="card-preview" id="s3b1-preview">Microsoft & Tesla...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="Enter content..."><em>Microsoft (MSFT) &amp; Tesla (TSLA) Earnings</em> - This event presents a high-beta correlation with AI-themed crypto assets (e.g., RNDR, FET), where a strong earnings beat may triggers immediate buying.&nbsp;</div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag1-2" value="Consensus (Prev / Est): [EPS: Est High volatility]" placeholder="Tag 2">
-                                    <input type="color" id="section3-tag1-color2" value="#00D9D9" title="Tag 2 Color">
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag1-1" placeholder="Tag 1"><input type="color" id="section3-tag1-color1" value="#0EAD98"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag1-2" value="Consensus (Prev / Est): [EPS: Est High volatility]" placeholder="Tag 2"><input type="color" id="section3-tag1-color2" value="#00D9D9"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag1-3" value="Tue Jan 27 21:00 UTC" placeholder="Tag 3"><input type="color" id="section3-tag1-color3" value="#F3BB2C"></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag1-3" value="Tue Jan 27 21:00 UTC" placeholder="Tag 3">
-                                    <input type="color" id="section3-tag1-color3" value="#F3BB2C" title="Tag 3 Color">
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict1" value="🚀 [Momentum Capture]" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict1-color" value="#cbae7c">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group">
-                            <label for="section3-verdict1">Bubble 1 Verdict</label>
-                            <input type="text" id="section3-verdict1" value="🚀 [Momentum Capture]" placeholder="Enter verdict">
-                        </div>
-                        <div class="input-group">
-                            <label for="section3-verdict1-color">Color</label>
-                            <input type="color" id="section3-verdict1-color" value="#cbae7c" title="Verdict Color">
-                        </div>
-                        <div class="input-group">
-                            <label for="section3-content2">Bubble 2 Content</label>
-                            <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="Enter content or paste formatted text..."><em>FOMC Interest Rate Decision</em> - The core risk correlation is an inverse relationship with the DXY; dovish guidance weakens the dollar, pushing BTC to test upper resistance levels. Market reflexivity involves high leverage, where a dovish pivot could flush late shorts and confirm an upward trend, while a hawkish pause may induce volatility before continuation.</div>
-                        </div>
-                        <div class="input-group">
-                            <label>Bubble 2 Tags (Max 3)</label>
-                            <div class="tag-inputs">
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag2-1" value="" placeholder="Tag 1">
-                                    <input type="color" id="section3-tag2-color1" value="#0EAD98" title="Tag 1 Color">
+
+                        <!-- Bubble 2 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 2 <span class="card-preview" id="s3b2-preview">FOMC Interest Rate...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="Enter content..."><em>FOMC Interest Rate Decision</em> - The core risk correlation is an inverse relationship with the DXY; dovish guidance weakens the dollar, pushing BTC to test upper resistance levels. Market reflexivity involves high leverage, where a dovish pivot could flush late shorts and confirm an upward trend, while a hawkish pause may induce volatility before continuation.</div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag2-2" value="Consensus (Prev / Est): [3.75% / 3.75%]" placeholder="Tag 2">
-                                    <input type="color" id="section3-tag2-color2" value="#00D9D9" title="Tag 2 Color">
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag2-1" placeholder="Tag 1"><input type="color" id="section3-tag2-color1" value="#0EAD98"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag2-2" value="Consensus (Prev / Est): [3.75% / 3.75%]" placeholder="Tag 2"><input type="color" id="section3-tag2-color2" value="#00D9D9"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag2-3" value="Thu Jan 29 19:00 UTC" placeholder="Tag 3"><input type="color" id="section3-tag2-color3" value="#F3BB2C"></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag2-3" value="Thu Jan 29 19:00 UTC" placeholder="Tag 3">
-                                    <input type="color" id="section3-tag2-color3" value="#F3BB2C" title="Tag 3 Color">
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict2" value="📰 [Event Realization]" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict2-color" value="#cbae7c">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group">
-                            <label for="section3-verdict2">Bubble 2 Verdict</label>
-                            <input type="text" id="section3-verdict2" value="📰 [Event Realization]" placeholder="Enter verdict">
-                        </div>
-                        <div class="input-group">
-                            <label for="section3-verdict2-color">Color</label>
-                            <input type="color" id="section3-verdict2-color" value="#cbae7c" title="Verdict Color">
-                        </div>
-                        <div class="input-group">
-                            <label for="section3-content3">Bubble 3 Content</label>
-                            <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="Enter content or paste formatted text..."><em>Hyperliquid (HYPE)</em> - The transmission logic centers on market reflexivity rather than direct macro correlations. HYPE acts as a volatility beta, with its DEX volume outperforming CEXs during high-volatility periods. <b>Post-Jan 6 unlock absorption complete. New "Gold Trading" feature attracting trad-fi flows.</b></div>
-                        </div>
-                        <div class="input-group">
-                            <label>Bubble 3 Tags (Max 3)</label>
-                            <div class="tag-inputs">
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag3-1" value="" placeholder="Tag 1">
-                                    <input type="color" id="section3-tag3-color1" value="#0EAD98" title="Tag 1 Color">
+
+                        <!-- Bubble 3 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 3 <span class="card-preview" id="s3b3-preview">Hyperliquid (HYPE)...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="Enter content..."><em>Hyperliquid (HYPE)</em> - The transmission logic centers on market reflexivity rather than direct macro correlations. HYPE acts as a volatility beta, with its DEX volume outperforming CEXs during high-volatility periods. <b>Post-Jan 6 unlock absorption complete. New "Gold Trading" feature attracting trad-fi flows.</b></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag3-2" value="" placeholder="Tag 2">
-                                    <input type="color" id="section3-tag3-color2" value="#00D9D9" title="Tag 2 Color">
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag3-1" placeholder="Tag 1"><input type="color" id="section3-tag3-color1" value="#0EAD98"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag3-2" placeholder="Tag 2"><input type="color" id="section3-tag3-color2" value="#00D9D9"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag3-3" value="Thu Jan 29 12:00 UTC" placeholder="Tag 3"><input type="color" id="section3-tag3-color3" value="#F3BB2C"></div>
                                 </div>
-                                <div class="tag-input-row">
-                                    <input type="text" id="section3-tag3-3" value="Thu Jan 29 12:00 UTC" placeholder="Tag 3">
-                                    <input type="color" id="section3-tag3-color3" value="#F3BB2C" title="Tag 3 Color">
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict3" value="📈 [Value Entry]" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict3-color" value="#cbae7c">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="section3-verdict3">Bubble 3 Verdict</label>
-                            <input type="text" id="section3-verdict3" value="📈 [Value Entry]" placeholder="Enter verdict">
-                        </div>
-                        <div class="input-group">
-                            <label for="section3-verdict3-color">Color</label>
-                            <input type="color" id="section3-verdict3-color" value="#cbae7c" title="Verdict Color">
                         </div>
                     </div>
                 </div>
@@ -1201,9 +1296,40 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
+        // 折叠卡片切换函数
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // 更新卡片预览文字
+        function updateCardPreviews() {
+            const previewMap = {
+                's2b1-preview': 'section2-content1',
+                's2b2-preview': 'section2-content2',
+                's2b3-preview': 'section2-content3',
+                's3b1-preview': 'section3-content1',
+                's3b2-preview': 'section3-content2',
+                's3b3-preview': 'section3-content3'
+            };
+            for (const [previewId, contentId] of Object.entries(previewMap)) {
+                const preview = document.getElementById(previewId);
+                const content = document.getElementById(contentId);
+                if (preview && content) {
+                    const text = content.textContent || content.innerText;
+                    preview.textContent = text.substring(0, 25) + (text.length > 25 ? '...' : '');
+                }
+            }
+        }
+
+        // 监听内容变化更新预览
+        document.querySelectorAll('.rich-text-input').forEach(el => {
+            el.addEventListener('input', updateCardPreviews);
+        });
+
         // Set current date
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
         updatePosterDate();
+        updateCardPreviews();
 
         function updatePosterDate() {
             const dateInput = document.getElementById('date').value;
