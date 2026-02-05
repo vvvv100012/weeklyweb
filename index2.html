@@ -488,9 +488,9 @@
             padding-bottom: 110px; /* 增加底部空间以容纳两排标签 */
         }
 
-        /* Section 3: 4 Bubbles */
+        /* Section 3: 3 Bubbles */
         .poster-section.section-3 .triple-bubble {
-            height: calc((100% - 15px) / 4); /* 5px gap * 3 = 15px */
+            height: calc((100% - 10px) / 3); /* 5px gap * 2 = 10px */
             min-height: auto;
             padding: 15px 25px;
         }
@@ -1064,11 +1064,6 @@
                                             <div class="tag-container" id="poster-section3-tag3"></div>
                                             <div class="verdict-container" id="poster-section3-verdict3">STRATEGY 🔄 ROTATE TO BETA</div>
                                         </div>
-                                        <div class="triple-bubble" id="poster-section3-bubble-container4">
-                                            <div class="triple-bubble-text" id="poster-section3-bubble4"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week.</div>
-                                            <div class="tag-container" id="poster-section3-tag4"></div>
-                                            <div class="verdict-container" id="poster-section3-verdict4">STRATEGY 🔄 ROTATE TO BETA</div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1152,7 +1147,7 @@
                     </div>
                     <!-- Section 3 -->
                     <div class="module">
-                        <h3>Section 3 - 4 Bubbles</h3>
+                        <h3>Section 3 - 3 Bubbles</h3>
                         <div class="input-group">
                             <label for="section3-title">Section Title</label>
                             <input type="text" id="section3-title" value="THE WEEK AHEAD" placeholder="Enter section title">
@@ -1259,41 +1254,7 @@
                             </div>
                         </div>
 
-                        <!-- Bubble 4 -->
-                        <div class="collapsible-card" onclick="toggleCard(this)">
-                            <div class="collapsible-header">
-                                <div class="card-title">Bubble 4 <span class="card-preview" id="s3b4-preview">Content...</span></div>
-                                <span class="toggle-icon">▼</span>
-                            </div>
-                            <div class="collapsible-body" onclick="event.stopPropagation()">
-                                <div class="input-group">
-                                    <label>Content</label>
-                                    <div class="rich-text-input" id="section3-content4" contenteditable="true" placeholder="Enter content..."><em>Content 4</em> - Description here.</div>
-                                </div>
-                                <div class="input-group">
-                                    <label>Bubble Background Color</label>
-                                    <div class="verdict-row">
-                                        <input type="color" id="section3-bubble4-bg-color" value="#1a514e">
-                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
-                                    </div>
-                                </div>
-                                <div class="input-group">
-                                    <label>Tags</label>
-                                    <div class="compact-tag-row"><input type="text" id="section3-tag4-1" placeholder="Tag 1"><input type="color" id="section3-tag4-color1" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section3-tag4-2" placeholder="Tag 2"><input type="color" id="section3-tag4-color2" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section3-tag4-3" placeholder="Tag 3"><input type="color" id="section3-tag4-color3" value="#000000"></div>
-                                </div>
-                                <div class="input-group">
-                                    <label>Verdict</label>
-                                    <div class="verdict-row">
-                                        <input type="text" id="section3-verdict4" value="Verdict" placeholder="Verdict">
-                                        <input type="color" id="section3-verdict4-color" value="#000000">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Bubble 5 removed -->
+                        <!-- Bubble 4 removed -->
                     </div>
                 </div>
             </div>
@@ -1312,11 +1273,10 @@
             const previewMap = {
                 // Section 2: 1 Bubble
                 's2b1-preview': 'section2-content1',
-                // Section 3: 5 Bubbles
+                // Section 3: 3 Bubbles
                 's3b1-preview': 'section3-content1',
                 's3b2-preview': 'section3-content2',
-                's3b3-preview': 'section3-content3',
-                's3b4-preview': 'section3-content4'
+                's3b3-preview': 'section3-content3'
             };
             for (const [previewId, contentId] of Object.entries(previewMap)) {
                 const preview = document.getElementById(previewId);
@@ -1358,8 +1318,8 @@
             // Update Section 2 (1 Bubble)
             updateBubbleVisibility(2, 1);
 
-            // Update Section 3 (4 Bubbles)
-            for (let j = 1; j <= 4; j++) {
+            // Update Section 3 (3 Bubbles)
+            for (let j = 1; j <= 3; j++) {
                 updateBubbleVisibility(3, j);
             }
 
@@ -1504,9 +1464,9 @@
                         height: 100% !important;
                         padding-bottom: 110px !important;
                     }
-                    /* Section 3 Bubble Height: 1/4th */
+                    /* Section 3 Bubble Height: 1/3rd */
                     #temp-poster .poster-section.section-3 .triple-bubble {
-                        height: calc((100% - 15px) / 4) !important;
+                        height: calc((100% - 10px) / 3) !important;
                         min-height: 0 !important; /* Allow shrinking */
                         padding: 15px 25px !important;
                     }
@@ -1643,8 +1603,8 @@
                 result_past: []
             };
 
-            // Collect Section 3 (Ahead) - 4 Bubbles
-            for (let i = 1; i <= 4; i++) {
+            // Collect Section 3 (Ahead) - 3 Bubbles
+            for (let i = 1; i <= 3; i++) {
                 const contentEl = document.getElementById(`section3-content${i}`);
                 if (!contentEl) continue;
 
@@ -1750,11 +1710,11 @@
             try {
                 const data = JSON.parse(savedData);
 
-                // Load Section 3 (Ahead) - 4 Bubbles
+                // Load Section 3 (Ahead) - 3 Bubbles
                 if (data.result_ahead && Array.isArray(data.result_ahead)) {
                     data.result_ahead.forEach((item, index) => {
                         const i = index + 1;
-                        if (i > 4) return;
+                        if (i > 3) return;
 
                         // Content
                         const contentEl = document.getElementById(`section3-content${i}`);
@@ -2084,12 +2044,12 @@
             }
         }
 
-        // Section 3: 5 Bubbles, 3 Tags each
+        // Section 3: 3 Bubbles, 3 Tags each
         document.getElementById('section3-title').addEventListener('input', function() {
             document.getElementById('poster-section3-title').textContent = this.value;
         });
 
-        for (let j = 1; j <= 5; j++) {
+        for (let j = 1; j <= 3; j++) {
             const contentInput = document.getElementById(`section3-content${j}`);
             if(contentInput) {
                 contentInput.addEventListener('input', function() {
@@ -2156,7 +2116,7 @@
                 if (bgInput) bgInput.dispatchEvent(new Event('input'));
             }
             // S3
-            for (let j = 1; j <= 5; j++) {
+            for (let j = 1; j <= 3; j++) {
                 const colorInput = document.getElementById(`section3-verdict${j}-color`);
                 if (colorInput) colorInput.dispatchEvent(new Event('input'));
                 const bgInput = document.getElementById(`section3-bubble${j}-bg-color`);
