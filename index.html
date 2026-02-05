@@ -900,31 +900,6 @@
             margin-bottom: 8px;
         }
 
-        .save-defaults-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .save-defaults-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-            background: #34495e;
-        }
-
         .instructions {
             background: #e8f4fd;
             border-radius: 8px;
@@ -1002,9 +977,6 @@
 </head>
 <body>
     <div class="container">
-        <button class="save-defaults-btn" onclick="saveDefaults()" title="Download updated results.json">
-            <span>💾</span> Save Defaults (JSON)
-        </button>
         <div class="header">
             <h1>CoinEx VIP Weekly</h1>
             <div class="update-section">
@@ -1585,117 +1557,6 @@
                 button.textContent = '下载失败，请重试';
                 button.disabled = false;
                 setTimeout(() => button.textContent = originalButtonText, 2000);
-            }
-        }
-
-        async function saveDefaults() {
-            const button = document.querySelector('.save-defaults-btn');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<span>⏳</span> Saving...';
-            button.disabled = true;
-
-            const data = {
-                result_ahead: [],
-                result_past: []
-            };
-
-            // Collect Section 3 (Ahead) - 3 Bubbles
-            for (let i = 1; i <= 3; i++) {
-                const contentEl = document.getElementById(`section3-content${i}`);
-                if (!contentEl) continue;
-
-                const html = contentEl.innerHTML;
-                let event = "";
-                let summary = "";
-
-                const match = html.match(/<em>(.*?)<\/em>\s*-\s*(.*)/);
-                if (match) {
-                    event = match[1].replace(/<[^>]*>/g, "");
-                    summary = match[2];
-                } else {
-                    summary = html;
-                }
-
-                const tag1 = document.getElementById(`section3-tag${i}-1`).value;
-                let tag2 = document.getElementById(`section3-tag${i}-2`).value;
-                const tag3 = document.getElementById(`section3-tag${i}-3`).value;
-                const verdict = document.getElementById(`section3-verdict${i}`).value;
-                const bgColor = document.getElementById(`section3-bubble${i}-bg-color`).value;
-
-                if (tag2.startsWith("Consensus (Prev / Est): ")) {
-                    tag2 = tag2.replace("Consensus (Prev / Est): ", "");
-                }
-
-                if (event || summary) {
-                    data.result_ahead.push({
-                        event_name: event,
-                        event_time: tag3,
-                        consensus_data: tag2,
-                        verdict_tag: verdict,
-                        summary: summary,
-                        type: tag1,
-                        bg_color: bgColor // Save background color
-                    });
-                }
-            }
-
-            // Collect Section 2 (Past) - 1 Bubble
-            // Although it's 1 bubble, we keep the loop structure if logic allows, or simplify.
-            // Using loop 1 to 1 for consistency.
-            for (let i = 1; i <= 1; i++) {
-                const contentEl = document.getElementById(`section2-content${i}`);
-                if (!contentEl) continue;
-
-                const html = contentEl.innerHTML;
-                let title = "";
-                let content = "";
-
-                const match = html.match(/<em>(.*?)<\/em>\s*-\s*(.*)/);
-                if (match) {
-                    title = match[1];
-                    content = match[2];
-                } else {
-                    content = html;
-                }
-
-                const bgColor = document.getElementById(`section2-bubble${i}-bg-color`).value;
-
-                if (title || content) {
-                    data.result_past.push({
-                        title: title,
-                        content: content,
-                        bg_color: bgColor // Save background color
-                    });
-                }
-            }
-
-            // Save to LocalStorage for persistence
-            localStorage.setItem('weekly_poster_defaults_v2', JSON.stringify(data));
-
-            try {
-                const response = await fetch('/save-defaults', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    alert('✅ Saved locally and pushed to GitHub successfully!');
-                } else {
-                    throw new Error('Server returned error');
-                }
-            } catch (e) {
-                console.log('Local server not found, falling back to download');
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "results.json");
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-            } finally {
-                button.innerHTML = originalText;
-                button.disabled = false;
             }
         }
 
