@@ -1873,7 +1873,13 @@
                 if (tagInput && tagInput.value.trim() !== '') {
                     const tagItem = document.createElement('div');
                     tagItem.className = 'tag-item';
-                    tagItem.innerHTML = tagInput.value.trim(); // Changed to innerHTML to support colored text
+
+                    // Force text variant for Up Arrow to ensure it respects CSS color
+                    let tagContent = tagInput.value.trim();
+                    // Replace plain arrow with arrow+text_variant, avoiding double replacement
+                    tagContent = tagContent.replace(/⬆(?!&#xFE0E;|\\uFE0E)/g, '⬆&#xFE0E;');
+
+                    tagItem.innerHTML = tagContent;
                     tagItem.style.backgroundColor = colorInput ? colorInput.value : '#0EAD98';
                     tagContainer.appendChild(tagItem);
                 }
