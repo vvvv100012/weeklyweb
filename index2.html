@@ -409,8 +409,8 @@
         }
 
         .bubble-text {
-            font-size: 20px !important; /* 单个气泡框内容 20px */
-            line-height: 1.3 !important;
+            font-size: 24px !important; /* Increased from 20px to 24px */
+            line-height: 1.35 !important; /* Increased line-height */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             font-weight: 500;
@@ -492,7 +492,7 @@
         .poster-section.section-3 .triple-bubble {
             height: calc((100% - 10px) / 3); /* 5px gap * 2 = 10px */
             min-height: auto;
-            padding: 15px 25px;
+            padding: 15px 35px; /* 增加左右内边距到 35px */
         }
 
         .poster-section.section-3 .triple-bubble-text {
@@ -639,8 +639,8 @@
         }
 
         .triple-bubble-text {
-            font-size: 23px !important; /* 气泡框内容 23px */
-            line-height: 1.2 !important; /* 调整行高 */
+            font-size: 26px !important; /* 增加到 26px */
+            line-height: 1.35 !important; /* 增加行高到 1.35 */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             font-weight: 500;
@@ -651,8 +651,8 @@
             flex: 1;
             overflow: hidden;
             /* Removed line-clamp to show full content */
-            margin-bottom: 5px; /* 调整为5px */
-            padding-right: 8px; /* 减少右侧间距 */
+            margin-bottom: 8px; /* 稍微增加底部间距 */
+            padding-right: 5px;
         }
 
         /* 强制覆盖三气泡框中所有粘贴文字的颜色和字体大小 */
@@ -1468,7 +1468,7 @@
                     #temp-poster .poster-section.section-3 .triple-bubble {
                         height: calc((100% - 10px) / 3) !important;
                         min-height: 0 !important; /* Allow shrinking */
-                        padding: 15px 25px !important;
+                        padding: 15px 35px !important;
                     }
                     #temp-poster .bubble-text,
                     #temp-poster .triple-bubble-text {
@@ -1477,14 +1477,14 @@
                         word-wrap: break-word;
                     }
                     #temp-poster .bubble-text {
-                        font-size: 20px !important;
-                        line-height: 1.3 !important;
+                        font-size: 24px !important;
+                        line-height: 1.35 !important;
                         overflow: hidden;
                     }
                     #temp-poster .triple-bubble-text {
-                        font-size: 23px !important; line-height: 1.2 !important;
+                        font-size: 26px !important; line-height: 1.35 !important;
                         width: 100%; flex: 1; overflow: hidden;
-                        margin-bottom: 5px; padding-right: 8px;
+                        margin-bottom: 8px; padding-right: 5px;
                     }
                     #temp-poster .bubble-text *, #temp-poster .triple-bubble-text * {
                         color: inherit !important; font-size: inherit !important;
