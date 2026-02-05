@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinEx VIP Weekly</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            min-height: 100vh;
+            color: #333;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1800px; /* Increased to accommodate 1080px poster + form */
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+
+        .left-panel {
+            flex: 0 0 760px; /* Width adapted for 67% scale (1080*0.67 + padding) */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        .right-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            min-width: 400px; /* Ensure minimum width for form inputs */
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0EAD98;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .update-btn {
+            background: linear-gradient(135deg, #0EAD98 0%, #00C0B3 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .update-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 173, 152, 0.3);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #00D9D9 0%, #00C0B3 100%);
+        }
+
+        .module {
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .module h3 {
+            font-size: 0.95rem;
+            color: #0EAD98;
+            margin-bottom: 10px;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 折叠式卡片样式 */
+        .collapsible-card {
+            background: #fff;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: #e9ecef;
+        }
+
+        .collapsible-header .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .collapsible-header .card-preview {
+            font-size: 0.75rem;
+            color: #666;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .collapsible-header .toggle-icon {
+            font-size: 0.8rem;
+            color: #999;
+            transition: transform 0.2s;
+        }
+
+        .collapsible-card.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            display: none;
+            padding: 12px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .collapsible-card.expanded .collapsible-body {
+            display: block;
+        }
+
+        .collapsible-body .input-group {
+            margin-bottom: 8px;
+        }
+
+        .collapsible-body .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 简化的标签输入行 */
+        .compact-tag-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .compact-tag-row input[type="text"] {
+            flex: 1;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+        }
+
+        .compact-tag-row input[type="color"] {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* 紧凑的verdict行 */
+        .verdict-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .verdict-row input[type="text"] {
+            flex: 1;
+        }
+
+        .verdict-row input[type="color"] {
+            width: 32px;
+            height: 32px;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #0EAD98;
+        }
+
+        .instructions {
+            background: rgba(14, 173, 152, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            border-left: 3px solid #0EAD98;
+            font-size: 0.85rem;
+        }
+
+        .instructions h3, .instructions h4 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .instructions ul {
+            margin-bottom: 10px;
+        }
+
+        .instructions li {
+            margin-bottom: 4px;
+        }
+
+        .poster-container {
+            width: 1080px;  /* 100% actual size */
+            height: 1920px; /* 100% actual size */
+            background-image: url('background4.png');
+            background-size: 100% 100%; /* Force stretch to fit */
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 10px auto;
+            padding: 0; /* 确保没有内边距 */
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            /* 改善渲染质量 */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            transform: translateZ(0) scale(0.67); /* 启用硬件加速并缩放 */
+            transform-origin: top left;
+            /* 调整布局占用空间: 1080*0.67=723.6, 1920*0.67=1286.4 */
+            margin-right: -356px; /* 1080 - 724 */
+            margin-bottom: -633px; /* 1920 - 1287 */
+            /* 确保盒模型一致 */
+            box-sizing: border-box;
+        }
+
+        .poster-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            padding: 0; /* 确保没有内边距 */
+            margin: 0; /* 确保没有外边距 */
+            box-sizing: border-box;
+        }
+        .poster-header {
+            height: 100px; /* 减少header高度 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px 5px 40px; /* 保持与预览一致的padding */
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .poster-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .poster-title {
+            font-size: 60px; /* 主标题 60px */
+            font-weight: 800;
+            color: #00D9D9 !important; /* Bright Cyan - 用于主标题 */
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            line-height: 1.1;
+            text-align: left;
+        }
+
+        .poster-date {
+            font-size: 20px; /* 日期 20px */
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin: 0;
+            text-align: right;
+        }
+
+        .poster-sections {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+        }
+
+        .poster-footer {
+            height: 80px; /* 减少footer高度 */
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .poster-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .poster-logo {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            width: 150px; /* Adjust size as needed */
+            height: auto;
+            z-index: 10;
+        }
+
+        /* Poster Sections with proportional heights - 现在只有2个板块 */
+        .poster-section {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        .poster-section.section-2 {
+            flex: 1; /* 1/4 空间 */
+        }
+
+        .poster-section.section-3 {
+            flex: 3; /* 3/4 空间 */
+        }
+
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 40px; /* 板块标题 40px */
+            font-weight: 700;
+            color: #0EAD98 !important; /* Bamboo Green - 主题色用于标题 */
+            margin-bottom: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-align: left;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            height: 70px; /* 进一步减少标题高度 */
+        }
+
+        .section-content {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 0; /* 移除额外的padding */
+        }
+
+        /* 单个气泡框设计 */
+        .single-bubble {
+            background: rgba(14, 173, 152, 0.25); /* 使用Bamboo Green透明背景 */
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
+            border-radius: 40px;
+            padding: 40px 50px;
+            width: 100%;
+            height: 100%;
+            max-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .bubble-text {
+            font-size: 20px !important; /* 单个气泡框内容 20px */
+            line-height: 1.3 !important;
+            color: white !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        /* 强制覆盖所有粘贴文字的颜色和字体大小，使用poster默认样式 */
+        .bubble-text * {
+            color: inherit !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+            font-family: inherit !important;
+        }
+
+        /* Brand Color文字样式 - 用于重要文字突出显示 */
+        .bubble-text strong,
+        .bubble-text b {
+            color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
+            font-weight: 700 !important;
+            font-size: inherit !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        .bubble-text em,
+        .bubble-text i {
+            color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
+            font-style: italic !important;
+            font-size: inherit !important;
+        }
+
+        .bubble-text u {
+            color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
+            text-decoration: underline !important;
+            font-size: inherit !important;
+        }
+
+        /* 三个气泡框布局 - 用于板块2和3 */
+        .triple-bubble-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px; /* 设置气泡间隔为5px */
+            height: 100%;
+            width: 100%;
+            justify-content: flex-start;
+            padding: 0;
+        }
+
+        .triple-bubble {
+            background: rgba(0, 192, 179, 0.25); /* 使用New Bamboo Green透明背景 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* Safari支持 */
+            border: 2px solid rgba(0, 217, 217, 0.6); /* 使用Bright Cyan边框 */
+            border-radius: 35px; /* 稍微减小圆角 */
+            padding: 20px 35px 40px 35px; /* 调整内边距：上20px，下40px */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            text-align: left;
+            overflow: hidden;
+            position: relative;
+            /* 改善渲染 */
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        /* Section 2: 1 Bubble */
+        .poster-section.section-2 .triple-bubble {
+            height: 100%;
+            min-height: auto;
+            padding-bottom: 110px; /* 增加底部空间以容纳两排标签 */
+        }
+
+        /* Section 3: 5 Bubbles */
+        .poster-section.section-3 .triple-bubble {
+            height: calc((100% - 20px) / 5); /* 5px gap * 4 = 20px */
+            min-height: auto;
+            padding: 15px 25px;
+        }
+
+        .poster-section.section-3 .triple-bubble-text {
+            font-size: 18px !important;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+        }
+
+        /* 标签容器样式 - 支持多个标签 */
+        .tag-container {
+            position: absolute;
+            bottom: 12px;
+            left: 20px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-width: calc(100% - 140px); /* 为verdict留出空间 */
+            z-index: 10;
+        }
+
+        .tag-item {
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-shadow: none !important;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tag color options */
+        .tag-item.tag-bamboo {
+            background: rgba(14, 173, 152, 0.9);
+            border: 1px solid rgba(14, 173, 152, 1);
+            color: white !important;
+        }
+
+        .tag-item.tag-cyan {
+            background: rgba(0, 217, 217, 0.9);
+            border: 1px solid rgba(0, 217, 217, 1);
+            color: #000 !important;
+        }
+
+        .tag-item.tag-sunset {
+            background: rgba(243, 187, 44, 0.9);
+            border: 1px solid rgba(243, 187, 44, 1);
+            color: #000 !important;
+        }
+
+        .tag-item.tag-red {
+            background: rgba(231, 76, 60, 0.9);
+            border: 1px solid rgba(231, 76, 60, 1);
+            color: white !important;
+        }
+
+        .tag-item.tag-green {
+            background: rgba(46, 204, 113, 0.9);
+            border: 1px solid rgba(46, 204, 113, 1);
+            color: white !important;
+        }
+
+        /* 板块2的标签容器 - 位于左下角，两排四列 */
+        .section-2 .tag-container {
+            left: 35px; /* 对齐左侧padding */
+            right: auto;
+            bottom: 20px;
+            max-width: calc(100% - 70px); /* 全宽，减去左右padding */
+            display: grid;
+            grid-template-columns: repeat(4, max-content); /* 4列，宽度自适应 */
+            gap: 8px 12px; /* 行间距8px，列间距12px */
+            justify-content: start;
+        }
+
+        /* 板块2 Verdict已删除 */
+
+        /* 板块3的标签容器 - 位于右下角 */
+        .section-3 .tag-container {
+            left: auto;
+            right: 20px;
+            max-width: calc(100% - 140px); /* 为verdict留出空间 */
+        }
+
+        /* 板块3的判断容器 - 位于左下角 */
+        .section-3 .verdict-container {
+            right: auto;
+            left: 20px;
+        }
+
+        /* Verdict container styles - matched to tag-item style */
+        .verdict-container {
+            position: absolute;
+            bottom: 12px;
+            right: 20px;
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-shadow: none !important;
+            white-space: nowrap;
+            z-index: 10;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Verdict color options */
+        .verdict-container.verdict-sunset {
+            background: rgba(243, 187, 44, 0.9);
+            border: 1px solid rgba(243, 187, 44, 1);
+            color: #000 !important;
+        }
+
+        .verdict-container.verdict-bamboo {
+            background: rgba(14, 173, 152, 0.9);
+            border: 1px solid rgba(14, 173, 152, 1);
+            color: white !important;
+        }
+
+        .verdict-container.verdict-cyan {
+            background: rgba(0, 217, 217, 0.9);
+            border: 1px solid rgba(0, 217, 217, 1);
+            color: #000 !important;
+        }
+
+        .verdict-container.verdict-red {
+            background: rgba(231, 76, 60, 0.9);
+            border: 1px solid rgba(231, 76, 60, 1);
+            color: white !important;
+        }
+
+        .verdict-container.verdict-green {
+            background: rgba(46, 204, 113, 0.9);
+            border: 1px solid rgba(46, 204, 113, 1);
+            color: white !important;
+        }
+
+        .triple-bubble-text {
+            font-size: 23px !important; /* 气泡框内容 23px */
+            line-height: 1.2 !important; /* 调整行高 */
+            color: white !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 6; /* 调整为6行以平衡内容和版面 */
+            line-clamp: 6;
+            -webkit-box-orient: vertical;
+            margin-bottom: 5px; /* 调整为5px */
+            padding-right: 8px; /* 减少右侧间距 */
+        }
+
+        /* 当内容过多时允许滚动 */
+        .triple-bubble-text.overflow-scroll {
+            -webkit-line-clamp: unset;
+            line-clamp: unset;
+            overflow-y: auto;
+            max-height: calc(100% - 50px);
+        }
+
+        /* 强制覆盖三气泡框中所有粘贴文字的颜色和字体大小 */
+        .triple-bubble-text * {
+            color: inherit !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+            font-family: inherit !important;
+        }
+
+        /* Brand Color文字样式 - 三气泡框 */
+        .triple-bubble-text strong,
+        .triple-bubble-text b {
+            color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
+            font-weight: 700 !important;
+            font-size: inherit !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        .triple-bubble-text em,
+        .triple-bubble-text i {
+            color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
+            font-style: italic !important;
+            font-size: inherit !important;
+        }
+
+        .triple-bubble-text u {
+            color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
+            text-decoration: underline !important;
+            font-size: inherit !important;
+        }
+
+        /* 空白区域样式 - 用于板块4 */
+        .empty-area {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+        /* 气泡框样式 - 统一设计 */
+        .bubble-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .bubble {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .bubble-large {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .bubble-medium {
+            flex: 0 1 45%;
+            min-width: 100px;
+        }
+
+        .bubble-small {
+            flex: 0 1 22%;
+            min-width: 80px;
+        }
+
+        .bubble-title {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bubble-value {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .bubble-value.large {
+            font-size: 1rem;
+        }
+
+        .bubble-value.positive { color: #27ae60; }
+        .bubble-value.negative { color: #e74c3c; }
+        .bubble-value.warning { color: #f39c12; }
+        /* 新闻气泡特殊样式 */
+        .news-bubbles {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .news-bubble {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 8px 12px;
+            font-size: 0.6rem;
+            line-height: 1.2;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .news-bubble::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            background: #f39c12;
+            border-radius: 50%;
+        }
+
+        /* 表单样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .update-section {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* 富文本输入框样式 */
+        .rich-text-input {
+            width: 100%;
+            min-height: 60px;
+            padding: 8px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            line-height: 1.3;
+            transition: border-color 0.3s ease;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .rich-text-input:focus {
+            outline: none;
+            border-color: #0EAD98;
+        }
+
+        .rich-text-input[placeholder]:empty::before {
+            content: attr(placeholder);
+            color: #999;
+            font-style: italic;
+        }
+
+        .rich-text-input[placeholder]:empty:focus::before {
+            content: "";
+        }
+
+        /* 标签输入样式 */
+        .tag-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tag-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .tag-input-row input[type="text"] {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tag-input-row input[type="color"] {
+            width: 40px;
+            height: 32px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .tag-input-row input[type="color"]:focus {
+            border-color: #0EAD98;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .token-grid .input-group input {
+            margin-bottom: 8px;
+        }
+
+        .save-defaults-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .save-defaults-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+            background: #34495e;
+        }
+
+        .instructions {
+            background: #e8f4fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "•";
+            color: #0EAD98;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .left-panel {
+                flex: none;
+                order: 2;
+            }
+            
+            .right-panel {
+                flex: none;
+                order: 1;
+            }
+            
+            .poster-container {
+                width: 270px;  /* 1080 * 0.25 */
+                height: 480px; /* 1920 * 0.25 */
+                margin: 10px auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 5px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .poster-container {
+                width: 216px;  /* 1080 * 0.2 */
+                height: 384px; /* 1920 * 0.2 */
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="save-defaults-btn" onclick="saveDefaults()" title="Download updated results.json">
+            <span>💾</span> Save Defaults (JSON)
+        </button>
+        <div class="header">
+            <h1>CoinEx VIP Weekly</h1>
+            <div class="update-section">
+                <button class="update-btn" onclick="downloadPoster()">Download Poster</button>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <!-- 左侧面板：Poster预览和使用说明 -->
+            <div class="left-panel">
+                <!-- Poster 预览 -->
+                <div class="poster-container" id="poster">
+                    <div class="poster-content">
+                        <div class="poster-header">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="log_white.png" class="header-logo" style="height: 60px; width: auto;" alt="CoinEx">
+                                <h1 class="poster-title" id="poster-title-display">VIP Weekly</h1>
+                            </div>
+                            <div class="poster-date" id="poster-date-display">January 21, 2026</div>
+                        </div>
+
+                        <div class="poster-sections">
+                            <!-- Section 2 (1/4 space) -->
+                            <div class="poster-section section-2">
+                                <h2 class="section-title" id="poster-section2-title">MARKET RECAP</h2>
+                                <div class="section-content">
+                                    <div class="triple-bubble-container" id="poster-section2-content">
+                                        <div class="triple-bubble" id="poster-section2-bubble-container1">
+                                            <div class="triple-bubble-text" id="poster-section2-bubble1"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week. <em>Bitcoin</em> corrected from $93,800 to a low of $90,300, while the <em>S&P 500</em> and Gold pushed to local highs, signaling a distinct risk-off rotation specific to digital assets. A strengthening <em>U.S. Dollar</em> (99.13) and surging Gold prices exerted heavy downward pressure on crypto.</div>
+                                            <div class="tag-container" id="poster-section2-tag1"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 3 (3/4 space) -->
+                            <div class="poster-section section-3">
+                                <h2 class="section-title" id="poster-section3-title">THE WEEK AHEAD</h2>
+                                <div class="section-content">
+                                    <div class="triple-bubble-container" id="poster-section3-content">
+                                        <div class="triple-bubble" id="poster-section3-bubble-container1">
+                                            <div class="triple-bubble-text" id="poster-section3-bubble1"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week.</div>
+                                            <div class="tag-container" id="poster-section3-tag1"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict1">STRATEGY 🔄 ROTATE TO BETA</div>
+                                        </div>
+                                        <div class="triple-bubble" id="poster-section3-bubble-container2">
+                                            <div class="triple-bubble-text" id="poster-section3-bubble2"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week.</div>
+                                            <div class="tag-container" id="poster-section3-tag2"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict2">STRATEGY 🔄 ROTATE TO BETA</div>
+                                        </div>
+                                        <div class="triple-bubble" id="poster-section3-bubble-container3">
+                                            <div class="triple-bubble-text" id="poster-section3-bubble3"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week.</div>
+                                            <div class="tag-container" id="poster-section3-tag3"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict3">STRATEGY 🔄 ROTATE TO BETA</div>
+                                        </div>
+                                        <div class="triple-bubble" id="poster-section3-bubble-container4">
+                                            <div class="triple-bubble-text" id="poster-section3-bubble4"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week.</div>
+                                            <div class="tag-container" id="poster-section3-tag4"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict4">STRATEGY 🔄 ROTATE TO BETA</div>
+                                        </div>
+                                        <div class="triple-bubble" id="poster-section3-bubble-container5">
+                                            <div class="triple-bubble-text" id="poster-section3-bubble5"><strong>Market Decoupling</strong> - The market decoupled from traditional equities this week.</div>
+                                            <div class="tag-container" id="poster-section3-tag5"></div>
+                                            <div class="verdict-container" id="poster-section3-verdict5">STRATEGY 🔄 ROTATE TO BETA</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="poster-footer">
+                            <img src="logo.png" class="poster-logo" id="poster-logo-img" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor Features -->
+                <div class="instructions">
+                    <h4>Editor Features:</h4>
+                    <ul>
+                        <li>Auto-apply Brand Color palette:</li>
+                        <li style="margin-left: 15px;">• <strong style="color: #0EAD98;">Bold text</strong> - Uses Bamboo Green</li>
+                        <li style="margin-left: 15px;">• <em style="color: #00D9D9;">Italic text</em> - Uses Bright Cyan</li>
+                        <li style="margin-left: 15px;">• <u style="color: #F3BB2C;">Underlined text</u> - Uses Sunset</li>
+                        <li>Real-time preview: Content updates immediately in the left poster</li>
+                        <li>Verdict colors: Use color picker to customize verdict bubble colors</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel: Input Form -->
+            <div class="right-panel">
+                <div class="content-modules">
+                    <!-- Basic Information -->
+                    <div class="module">
+                        <h3>Basic Information</h3>
+                        <div class="input-group">
+                            <label for="poster-title">Title</label>
+                            <input type="text" id="poster-title" value="VIP Weekly" placeholder="Enter title">
+                        </div>
+                        <div class="input-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" name="date">
+                        </div>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div class="module">
+                        <h3>Section 2 - 1 Bubble (8 Tags)</h3>
+                        <div class="input-group">
+                            <label for="section2-title">Section Title</label>
+                            <input type="text" id="section2-title" value="MARKET RECAP" placeholder="Enter section title">
+                        </div>
+                        <!-- Bubble 1 折叠卡片 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 1 <span class="card-preview" id="s2b1-preview">Bitcoin's Safe Haven...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Enter content..."><em>Fed Hawkish Shift Breaks Bitcoin Support</em> - The nomination of a hawkish Fed Chair triggered a repricing of interest rate expectations, reducing the outlook for future cuts. This structural shift undermines the 'cheap money' thesis for crypto, causing Bitcoin to decisively break below key institutional cost levels for the first time in years.</div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bubble Background Color</label>
+                                    <div class="verdict-row">
+                                        <input type="color" id="section2-bubble1-bg-color" value="#00c0b3">
+                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tags (Up to 8)</label>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-1" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 1"><input type="color" id="section2-tag1-color1" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-2" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 2"><input type="color" id="section2-tag1-color2" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-3" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 3"><input type="color" id="section2-tag1-color3" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-4" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 4"><input type="color" id="section2-tag1-color4" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-5" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 5"><input type="color" id="section2-tag1-color5" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-6" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 6"><input type="color" id="section2-tag1-color6" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-7" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 7"><input type="color" id="section2-tag1-color7" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-8" value='S&P 500 6,988 <span style="color: #46cc71;">⬆ 0.51%</span>' placeholder="Tag 8"><input type="color" id="section2-tag1-color8" value="#000000"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Section 3 -->
+                    <div class="module">
+                        <h3>Section 3 - 5 Bubbles</h3>
+                        <div class="input-group">
+                            <label for="section3-title">Section Title</label>
+                            <input type="text" id="section3-title" value="THE WEEK AHEAD" placeholder="Enter section title">
+                        </div>
+                        <!-- Bubble 1 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 1 <span class="card-preview" id="s3b1-preview">Microsoft & Tesla...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="Enter content..."><em>GOLD & SILVER</em> - The severe correction in precious metals poses immediate contagion risk for crypto.</div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bubble Background Color</label>
+                                    <div class="verdict-row">
+                                        <input type="color" id="section3-bubble1-bg-color" value="#00c0b3">
+                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag1-1" placeholder="Tag 1"><input type="color" id="section3-tag1-color1" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag1-2" placeholder="Tag 2"><input type="color" id="section3-tag1-color2" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag1-3" placeholder="Tag 3"><input type="color" id="section3-tag1-color3" value="#000000"></div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict1" value="⏳ [Wait & See]" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict1-color" value="#000000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bubble 2 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 2 <span class="card-preview" id="s3b2-preview">Content...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="Enter content..."><em>Content 2</em> - Description here.</div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bubble Background Color</label>
+                                    <div class="verdict-row">
+                                        <input type="color" id="section3-bubble2-bg-color" value="#00c0b3">
+                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag2-1" placeholder="Tag 1"><input type="color" id="section3-tag2-color1" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag2-2" placeholder="Tag 2"><input type="color" id="section3-tag2-color2" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag2-3" placeholder="Tag 3"><input type="color" id="section3-tag2-color3" value="#000000"></div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict2" value="Verdict" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict2-color" value="#000000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bubble 3 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 3 <span class="card-preview" id="s3b3-preview">Content...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="Enter content..."><em>Content 3</em> - Description here.</div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bubble Background Color</label>
+                                    <div class="verdict-row">
+                                        <input type="color" id="section3-bubble3-bg-color" value="#00c0b3">
+                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag3-1" placeholder="Tag 1"><input type="color" id="section3-tag3-color1" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag3-2" placeholder="Tag 2"><input type="color" id="section3-tag3-color2" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag3-3" placeholder="Tag 3"><input type="color" id="section3-tag3-color3" value="#000000"></div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict3" value="Verdict" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict3-color" value="#000000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bubble 4 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 4 <span class="card-preview" id="s3b4-preview">Content...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content4" contenteditable="true" placeholder="Enter content..."><em>Content 4</em> - Description here.</div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bubble Background Color</label>
+                                    <div class="verdict-row">
+                                        <input type="color" id="section3-bubble4-bg-color" value="#00c0b3">
+                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag4-1" placeholder="Tag 1"><input type="color" id="section3-tag4-color1" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag4-2" placeholder="Tag 2"><input type="color" id="section3-tag4-color2" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag4-3" placeholder="Tag 3"><input type="color" id="section3-tag4-color3" value="#000000"></div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict4" value="Verdict" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict4-color" value="#000000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bubble 5 -->
+                        <div class="collapsible-card" onclick="toggleCard(this)">
+                            <div class="collapsible-header">
+                                <div class="card-title">Bubble 5 <span class="card-preview" id="s3b5-preview">Content...</span></div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="collapsible-body" onclick="event.stopPropagation()">
+                                <div class="input-group">
+                                    <label>Content</label>
+                                    <div class="rich-text-input" id="section3-content5" contenteditable="true" placeholder="Enter content..."><em>Content 5</em> - Description here.</div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bubble Background Color</label>
+                                    <div class="verdict-row">
+                                        <input type="color" id="section3-bubble5-bg-color" value="#00c0b3">
+                                        <span style="font-size: 0.8rem; color: #666; align-self: center;">(Opacity: 25%)</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tags</label>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag5-1" placeholder="Tag 1"><input type="color" id="section3-tag5-color1" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag5-2" placeholder="Tag 2"><input type="color" id="section3-tag5-color2" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section3-tag5-3" placeholder="Tag 3"><input type="color" id="section3-tag5-color3" value="#000000"></div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Verdict</label>
+                                    <div class="verdict-row">
+                                        <input type="text" id="section3-verdict5" value="Verdict" placeholder="Verdict">
+                                        <input type="color" id="section3-verdict5-color" value="#000000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 折叠卡片切换函数
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // 更新卡片预览文字
+        function updateCardPreviews() {
+            const previewMap = {
+                // Section 2: 1 Bubble
+                's2b1-preview': 'section2-content1',
+                // Section 3: 5 Bubbles
+                's3b1-preview': 'section3-content1',
+                's3b2-preview': 'section3-content2',
+                's3b3-preview': 'section3-content3',
+                's3b4-preview': 'section3-content4',
+                's3b5-preview': 'section3-content5'
+            };
+            for (const [previewId, contentId] of Object.entries(previewMap)) {
+                const preview = document.getElementById(previewId);
+                const content = document.getElementById(contentId);
+                if (preview && content) {
+                    const text = content.textContent || content.innerText;
+                    preview.textContent = text.substring(0, 25) + (text.length > 25 ? '...' : '');
+                }
+            }
+        }
+
+        // 监听内容变化更新预览
+        document.querySelectorAll('.rich-text-input').forEach(el => {
+            el.addEventListener('input', updateCardPreviews);
+        });
+
+        // Set current date
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        updatePosterDate();
+        updateCardPreviews();
+
+        function updatePosterDate() {
+            const dateInput = document.getElementById('date').value;
+            const date = new Date(dateInput);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('poster-date-display').textContent = date.toLocaleDateString('en-US', options);
+        }
+
+        function generatePoster() {
+            // Update title and date
+            document.getElementById('poster-title-display').textContent = document.getElementById('poster-title').value;
+            updatePosterDate();
+
+            // Update section titles (sections 2 and 3)
+            for (let i = 2; i <= 3; i++) {
+                document.getElementById(`poster-section${i}-title`).textContent = document.getElementById(`section${i}-title`).value;
+            }
+
+            // Update Section 2 (1 Bubble)
+            updateBubbleVisibility(2, 1);
+
+            // Update Section 3 (5 Bubbles)
+            for (let j = 1; j <= 5; j++) {
+                updateBubbleVisibility(3, j);
+            }
+
+            alert('Poster updated!');
+        }
+
+        async function downloadPoster() {
+            const button = event.target;
+            const originalButtonText = button.textContent;
+            button.textContent = '生成中...';
+            button.disabled = true;
+
+            try {
+                // 1. 首先加载背景图片并转换为 Base64
+                const backgroundImage = await loadImageAsBase64('background4.png');
+                const logoImage = await loadImageAsBase64('logo.png');
+                const headerLogoImage = await loadImageAsBase64('log_white.png');
+
+                // 获取原始 poster 的内容
+                const originalPoster = document.getElementById('poster');
+
+                // 创建一个完全独立的容器，放在屏幕外
+                const renderContainer = document.createElement('div');
+                renderContainer.style.position = 'fixed';
+                renderContainer.style.left = '-9999px';
+                renderContainer.style.top = '0';
+                renderContainer.style.width = '1080px';
+                renderContainer.style.height = '1920px';
+                document.body.appendChild(renderContainer);
+
+                // 创建新的 poster 副本
+                const newPoster = document.createElement('div');
+                newPoster.id = 'temp-poster';
+                newPoster.style.width = '1080px';
+                newPoster.style.height = '1920px';
+                newPoster.style.position = 'relative';
+                newPoster.style.overflow = 'hidden';
+                newPoster.style.margin = '0';
+                newPoster.style.padding = '0';
+                newPoster.style.boxSizing = 'border-box';
+                newPoster.style.backgroundImage = `url(${backgroundImage})`;
+                newPoster.style.backgroundSize = '100% 100%';
+                newPoster.style.backgroundPosition = 'center';
+                newPoster.style.backgroundRepeat = 'no-repeat';
+
+                // 克隆 poster-content
+                const originalContent = originalPoster.querySelector('.poster-content');
+                const newContent = originalContent.cloneNode(true);
+
+                // Update logo src in the new poster to base64
+                const newLogo = newPoster.querySelector('.poster-logo');
+                if (newLogo) newLogo.src = logoImage;
+
+                const newHeaderLogo = newPoster.querySelector('.header-logo');
+                if (newHeaderLogo) newHeaderLogo.src = headerLogoImage;
+
+                renderContainer.appendChild(newPoster);
+                newPoster.appendChild(newContent);
+
+                // 添加专门用于渲染的样式
+                const renderStyle = document.createElement('style');
+                renderStyle.id = 'render-style';
+                renderStyle.textContent = `
+                    #temp-poster {
+                        background-size: 100% 100% !important;
+                        background-position: center !important;
+                        background-repeat: no-repeat !important;
+                    }
+                    #temp-poster::before {
+                        content: '';
+                        position: absolute;
+                        top: 0; left: 0; right: 0; bottom: 0;
+                        background: rgba(0, 0, 0, 0.3);
+                        z-index: 1;
+                    }
+                    #temp-poster * { box-sizing: border-box !important; }
+                    #temp-poster .poster-content {
+                        position: relative; z-index: 2; height: 100%;
+                        display: flex; flex-direction: column; color: white;
+                        padding: 0; margin: 0;
+                    }
+                    #temp-poster .poster-header {
+                        height: 100px; display: flex; justify-content: space-between;
+                        align-items: center; padding: 10px 40px 5px 40px; flex-shrink: 0;
+                        position: relative; background: transparent;
+                    }
+                    #temp-poster .poster-header::after {
+                        content: ''; position: absolute; bottom: 0; left: 10px; right: 10px;
+                        height: 1px; background: rgba(255, 255, 255, 0.4);
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                    }
+                    #temp-poster .poster-title {
+                        font-size: 60px; font-weight: 800; color: #00D9D9 !important;
+                        margin: 0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                        line-height: 1.1; text-align: left;
+                    }
+                    #temp-poster .poster-date {
+                        font-size: 20px; color: rgba(255, 255, 255, 0.9);
+                        font-weight: 500; margin: 0; text-align: right;
+                    }
+                    #temp-poster .poster-sections {
+                        flex: 1; display: flex; flex-direction: column;
+                        padding: 0 15px; margin: 0;
+                    }
+                    #temp-poster .poster-section {
+                        display: flex; flex-direction: column; margin-bottom: 10px;
+                    }
+                    /* Flex Ratios: Section 2 (1/4), Section 3 (3/4) */
+                    #temp-poster .poster-section.section-2 { flex: 1; }
+                    #temp-poster .poster-section.section-3 { flex: 3; }
+
+                    #temp-poster .section-title {
+                        font-size: 40px; font-weight: 700; color: #0EAD98 !important;
+                        margin-bottom: 1px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                        text-align: left; padding-left: 10px; display: flex; align-items: center;
+                        height: 70px;
+                    }
+                    #temp-poster .section-content {
+                        flex: 1; display: flex; align-items: flex-start;
+                        justify-content: center; padding: 0; margin: 0;
+                    }
+                    #temp-poster .triple-bubble-container {
+                        display: flex; flex-direction: column; gap: 5px;
+                        height: 100%; width: 100%; justify-content: flex-start;
+                        padding: 0; margin: 0;
+                    }
+                    #temp-poster .triple-bubble {
+                        /* Remove background !important to allow inline style override */
+                        background-image: none !important;
+                        backdrop-filter: none !important;
+                        -webkit-backdrop-filter: none !important;
+                        border: 2px solid rgba(0, 217, 217, 0.6); /* Default border, can be overridden by inline style */
+                        border-radius: 35px;
+                        padding: 20px 35px 40px 35px;
+                        width: 100%;
+                        display: flex; flex-direction: column; justify-content: flex-start;
+                        text-align: left; overflow: hidden; position: relative;
+                        box-sizing: border-box; margin: 0;
+                    }
+                    /* Section 2 Bubble Height: Full */
+                    #temp-poster .poster-section.section-2 .triple-bubble {
+                        height: 100% !important;
+                        padding-bottom: 110px !important;
+                    }
+                    /* Section 3 Bubble Height: 1/5th */
+                    #temp-poster .poster-section.section-3 .triple-bubble {
+                        height: calc((100% - 20px) / 5) !important;
+                        min-height: 0 !important; /* Allow shrinking */
+                        padding: 15px 25px !important;
+                    }
+                    #temp-poster .bubble-text,
+                    #temp-poster .triple-bubble-text {
+                        color: white !important; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                        font-weight: 500; text-align: left; white-space: pre-wrap;
+                        word-wrap: break-word;
+                    }
+                    #temp-poster .bubble-text { font-size: 20px !important; line-height: 1.3 !important; }
+                    #temp-poster .triple-bubble-text {
+                        font-size: 23px !important; line-height: 1.2 !important;
+                        width: 100%; flex: 1; overflow: hidden;
+                        display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical;
+                        margin-bottom: 5px; padding-right: 8px;
+                    }
+                    #temp-poster .bubble-text *, #temp-poster .triple-bubble-text * {
+                        color: inherit !important; font-size: inherit !important;
+                        line-height: inherit !important; font-family: inherit !important;
+                    }
+                    #temp-poster .bubble-text strong, #temp-poster .bubble-text b,
+                    #temp-poster .triple-bubble-text strong, #temp-poster .triple-bubble-text b {
+                        color: #0EAD98 !important; font-weight: 700 !important;
+                        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+                    }
+                    #temp-poster .bubble-text em, #temp-poster .bubble-text i,
+                    #temp-poster .triple-bubble-text em, #temp-poster .triple-bubble-text i {
+                        color: #00D9D9 !important; font-style: italic !important;
+                    }
+                    #temp-poster .bubble-text u, #temp-poster .triple-bubble-text u {
+                        color: #F3BB2C !important; text-decoration: underline !important;
+                    }
+                    #temp-poster .tag-container {
+                        position: absolute; bottom: 12px; left: 20px;
+                        display: flex; gap: 6px; flex-wrap: wrap;
+                        max-width: calc(100% - 140px); z-index: 10;
+                    }
+                    #temp-poster .section-2 .tag-container {
+                        left: 35px !important; right: auto !important;
+                        bottom: 20px !important;
+                        max-width: calc(100% - 280px) !important;
+                        display: grid !important;
+                        grid-template-columns: repeat(4, max-content) !important;
+                        gap: 8px 12px !important;
+                        justify-content: start !important;
+                    }
+                    #temp-poster .section-3 .tag-container {
+                        left: auto !important; right: 20px !important;
+                    }
+                    #temp-poster .tag-item {
+                        color: white !important; font-size: 18px !important;
+                        font-weight: 600 !important; padding: 4px 10px;
+                        border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
+                        text-shadow: none !important; white-space: nowrap;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); text-align: center;
+                        display: flex; align-items: center; justify-content: center;
+                    }
+                    #temp-poster .verdict-container {
+                        position: absolute; bottom: 12px; right: 20px;
+                        color: white !important; font-size: 18px !important;
+                        font-weight: 600 !important; padding: 4px 10px;
+                        border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
+                        text-shadow: none !important; white-space: nowrap;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); text-align: center;
+                        display: flex; align-items: center; justify-content: center;
+                        z-index: 10;
+                    }
+                    /* Section 2 Verdict removed */
+                    #temp-poster .section-3 .verdict-container {
+                        right: auto !important; left: 20px !important;
+                    }
+                    #temp-poster .poster-footer {
+                        height: 80px; flex-shrink: 0; position: relative; background: transparent;
+                    }
+                    #temp-poster .poster-footer::before {
+                        content: ''; position: absolute; top: 0; left: 10px; right: 10px;
+                        height: 1px; background: rgba(255, 255, 255, 0.4);
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                    }
+                    #temp-poster .poster-logo {
+                        position: absolute; bottom: 20px; right: 40px;
+                        width: 150px; height: auto; z-index: 10;
+                    }
+                    #temp-poster .header-logo {
+                        height: 60px !important; width: auto !important;
+                    }
+                `;
+                document.head.appendChild(renderStyle);
+
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                const canvas = await html2canvas(newPoster, {
+                    width: 1080, height: 1920, scale: 2, backgroundColor: null,
+                    logging: false, useCORS: true, allowTaint: true,
+                    removeContainer: false, foreignObjectRendering: false,
+                    imageTimeout: 15000,
+                    windowWidth: 1080, windowHeight: 1920
+                });
+
+                document.body.removeChild(renderContainer);
+                document.head.removeChild(renderStyle);
+
+                const link = document.createElement('a');
+                link.download = `coinex-vip-weekly-${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                button.textContent = originalButtonText;
+                button.disabled = false;
+            } catch (error) {
+                console.error('下载失败:', error);
+                const tempContainer = document.querySelector('#temp-poster');
+                if (tempContainer && tempContainer.parentElement) tempContainer.parentElement.remove();
+                const tempStyle = document.getElementById('render-style');
+                if (tempStyle) tempStyle.remove();
+
+                button.textContent = '下载失败，请重试';
+                button.disabled = false;
+                setTimeout(() => button.textContent = originalButtonText, 2000);
+            }
+        }
+
+        async function saveDefaults() {
+            const button = document.querySelector('.save-defaults-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span>⏳</span> Saving...';
+            button.disabled = true;
+
+            const data = {
+                result_ahead: [],
+                result_past: []
+            };
+
+            // Collect Section 3 (Ahead) - 5 Bubbles
+            for (let i = 1; i <= 5; i++) {
+                const contentEl = document.getElementById(`section3-content${i}`);
+                if (!contentEl) continue;
+
+                const html = contentEl.innerHTML;
+                let event = "";
+                let summary = "";
+
+                const match = html.match(/<em>(.*?)<\/em>\s*-\s*(.*)/);
+                if (match) {
+                    event = match[1].replace(/<[^>]*>/g, "");
+                    summary = match[2];
+                } else {
+                    summary = html;
+                }
+
+                const tag1 = document.getElementById(`section3-tag${i}-1`).value;
+                let tag2 = document.getElementById(`section3-tag${i}-2`).value;
+                const tag3 = document.getElementById(`section3-tag${i}-3`).value;
+                const verdict = document.getElementById(`section3-verdict${i}`).value;
+                const bgColor = document.getElementById(`section3-bubble${i}-bg-color`).value;
+
+                if (tag2.startsWith("Consensus (Prev / Est): ")) {
+                    tag2 = tag2.replace("Consensus (Prev / Est): ", "");
+                }
+
+                if (event || summary) {
+                    data.result_ahead.push({
+                        event_name: event,
+                        event_time: tag3,
+                        consensus_data: tag2,
+                        verdict_tag: verdict,
+                        summary: summary,
+                        type: tag1,
+                        bg_color: bgColor // Save background color
+                    });
+                }
+            }
+
+            // Collect Section 2 (Past) - 1 Bubble
+            // Although it's 1 bubble, we keep the loop structure if logic allows, or simplify.
+            // Using loop 1 to 1 for consistency.
+            for (let i = 1; i <= 1; i++) {
+                const contentEl = document.getElementById(`section2-content${i}`);
+                if (!contentEl) continue;
+
+                const html = contentEl.innerHTML;
+                let title = "";
+                let content = "";
+
+                const match = html.match(/<em>(.*?)<\/em>\s*-\s*(.*)/);
+                if (match) {
+                    title = match[1];
+                    content = match[2];
+                } else {
+                    content = html;
+                }
+
+                const bgColor = document.getElementById(`section2-bubble${i}-bg-color`).value;
+
+                if (title || content) {
+                    data.result_past.push({
+                        title: title,
+                        content: content,
+                        bg_color: bgColor // Save background color
+                    });
+                }
+            }
+
+            // Save to LocalStorage for persistence
+            localStorage.setItem('weekly_poster_defaults_v2', JSON.stringify(data));
+
+            try {
+                const response = await fetch('/save-defaults', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('✅ Saved locally and pushed to GitHub successfully!');
+                } else {
+                    throw new Error('Server returned error');
+                }
+            } catch (e) {
+                console.log('Local server not found, falling back to download');
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "results.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function loadDefaults() {
+            const savedData = localStorage.getItem('weekly_poster_defaults_v2');
+            if (!savedData) return;
+
+            try {
+                const data = JSON.parse(savedData);
+
+                // Load Section 3 (Ahead) - 5 Bubbles
+                if (data.result_ahead && Array.isArray(data.result_ahead)) {
+                    data.result_ahead.forEach((item, index) => {
+                        const i = index + 1;
+                        if (i > 5) return;
+
+                        // Content
+                        const contentEl = document.getElementById(`section3-content${i}`);
+                        if (contentEl) {
+                            // Reconstruct content HTML: <em>Event</em> - Summary
+                            let contentHtml = item.summary;
+                            if (item.event_name) {
+                                contentHtml = `<em>${item.event_name}</em> - ${item.summary}`;
+                            }
+                            contentEl.innerHTML = contentHtml;
+                        }
+
+                        // Tags
+                        if (item.type) document.getElementById(`section3-tag${i}-1`).value = item.type;
+                        if (item.consensus_data) {
+                            // Add prefix back if needed, but simple value restoration is better
+                            document.getElementById(`section3-tag${i}-2`).value = item.consensus_data;
+                        }
+                        if (item.event_time) document.getElementById(`section3-tag${i}-3`).value = item.event_time;
+
+                        // Verdict
+                        if (item.verdict_tag) document.getElementById(`section3-verdict${i}`).value = item.verdict_tag;
+
+                        // Background Color
+                        if (item.bg_color) {
+                            const bgInput = document.getElementById(`section3-bubble${i}-bg-color`);
+                            if (bgInput) bgInput.value = item.bg_color;
+                        }
+                    });
+                }
+
+                // Load Section 2 (Past) - 1 Bubble
+                if (data.result_past && Array.isArray(data.result_past)) {
+                    data.result_past.forEach((item, index) => {
+                        const i = index + 1;
+                        if (i > 1) return; // Only 1 bubble in section 2
+
+                        // Content
+                        const contentEl = document.getElementById(`section2-content${i}`);
+                        if (contentEl) {
+                            let contentHtml = item.content;
+                            if (item.title) {
+                                contentHtml = `<em>${item.title}</em> - ${item.content}`;
+                            }
+                            contentEl.innerHTML = contentHtml;
+                        }
+
+                        // Background Color
+                        if (item.bg_color) {
+                            const bgInput = document.getElementById(`section2-bubble${i}-bg-color`);
+                            if (bgInput) bgInput.value = item.bg_color;
+                        }
+                    });
+                }
+
+                // Note: Tags for Section 2 are not strictly structured in the legacy data format (result_past)
+                // If we want to persist Section 2 tags, we should have included them in saveDefaults.
+                // Currently saveDefaults does NOT save Section 2 tags explicitly in the JSON structure
+                // used for 'result_past' (which seems designed for a different purpose originally).
+                // To fully support saving/loading ALL form state, we might need a separate localStorage object
+                // that maps 1:1 to form IDs, rather than this derived 'result' format.
+                // But for now, this loads what was saved.
+
+                alert('Last saved session loaded!');
+
+            } catch (e) {
+                console.error('Error loading defaults:', e);
+            }
+        }
+
+        function loadImageAsBase64(imageUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    try {
+                        const dataURL = canvas.toDataURL('image/png');
+                        resolve(dataURL);
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+                img.onerror = function() {
+                    reject(new Error('Failed to load image: ' + imageUrl));
+                };
+                img.src = imageUrl + '?t=' + new Date().getTime();
+            });
+        }
+
+        // 实时更新功能
+        document.getElementById('poster-title').addEventListener('input', function() {
+            document.getElementById('poster-title-display').textContent = this.value;
+        });
+
+        document.getElementById('date').addEventListener('change', updatePosterDate);
+
+        // Function to update tag display
+        function updateTagDisplay(sectionNum, bubbleNum) {
+            const tagContainer = document.getElementById(`poster-section${sectionNum}-tag${bubbleNum}`);
+            if (!tagContainer) return;
+
+            tagContainer.innerHTML = '';
+
+            // Section 2 has 8 tags, Section 3 has 3 tags
+            const maxTags = (sectionNum === 2) ? 8 : 3;
+
+            for (let k = 1; k <= maxTags; k++) {
+                const tagInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-${k}`);
+                const colorInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-color${k}`);
+
+                if (tagInput && tagInput.value.trim() !== '') {
+                    const tagItem = document.createElement('div');
+                    tagItem.className = 'tag-item';
+                    tagItem.innerHTML = tagInput.value.trim(); // Changed to innerHTML to support colored text
+                    tagItem.style.backgroundColor = colorInput ? colorInput.value : '#0EAD98';
+                    tagContainer.appendChild(tagItem);
+                }
+            }
+
+            if (tagContainer.children.length === 0) {
+                tagContainer.style.display = 'none';
+            } else {
+                tagContainer.style.display = 'flex';
+            }
+        }
+
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // Function to check content and control bubble visibility
+        function updateBubbleVisibility(sectionNum, bubbleNum) {
+            const contentElement = document.getElementById(`section${sectionNum}-content${bubbleNum}`);
+            if (!contentElement) return; // Guard clause
+
+            const content = contentElement.innerHTML;
+            const textContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').replace(/\s/g, '').trim();
+            const bubbleContainer = document.getElementById(`poster-section${sectionNum}-bubble-container${bubbleNum}`);
+
+            // Get background color
+            const bgColorInput = document.getElementById(`section${sectionNum}-bubble${bubbleNum}-bg-color`);
+            const bgColor = bgColorInput ? hexToRgba(bgColorInput.value, 0.25) : 'rgba(0, 192, 179, 0.25)';
+
+            if (textContent === '' || textContent.length === 0) {
+                if (bubbleContainer) bubbleContainer.remove();
+            } else {
+                const parentContainer = document.getElementById(`poster-section${sectionNum}-content`);
+                if (!bubbleContainer && parentContainer) {
+                    const newBubble = document.createElement('div');
+                    newBubble.className = 'triple-bubble';
+                    newBubble.id = `poster-section${sectionNum}-bubble-container${bubbleNum}`;
+                    // Apply background color
+                    newBubble.style.backgroundColor = bgColor;
+                    newBubble.style.borderColor = bgColorInput ? bgColorInput.value : 'rgba(0, 217, 217, 0.6)'; // Use solid color for border or keep default? Keeping consistent with previous style which used specific border. Let's make border consistent with bg hue but solid?
+                    // Actually original CSS had specific border colors. Let's stick to changing background color as requested.
+                    // But if background changes to red, green border looks weird.
+                    // Let's use the input color for border too, but with higher opacity or just solid.
+                    // The CSS has border: 2px solid rgba(0, 217, 217, 0.6);
+                    // Let's set border color to the selected color with 0.6 opacity.
+                    if (bgColorInput) {
+                         newBubble.style.borderColor = hexToRgba(bgColorInput.value, 0.6);
+                    }
+
+                    const bubbleText = document.createElement('div');
+                    bubbleText.className = 'triple-bubble-text';
+                    bubbleText.id = `poster-section${sectionNum}-bubble${bubbleNum}`;
+
+                    const tagContainer = document.createElement('div');
+                    tagContainer.className = 'tag-container';
+                    tagContainer.id = `poster-section${sectionNum}-tag${bubbleNum}`;
+
+                    const verdictContainer = document.createElement('div');
+                    verdictContainer.className = 'verdict-container';
+                    verdictContainer.id = `poster-section${sectionNum}-verdict${bubbleNum}`;
+
+                    newBubble.appendChild(bubbleText);
+                    newBubble.appendChild(tagContainer);
+                    newBubble.appendChild(verdictContainer);
+
+                    const existingBubbles = parentContainer.children;
+                    if (bubbleNum <= existingBubbles.length) {
+                        parentContainer.insertBefore(newBubble, existingBubbles[bubbleNum - 1]);
+                    } else {
+                        parentContainer.appendChild(newBubble);
+                    }
+                }
+
+                // Update styles for existing or new bubble
+                const currentBubble = document.getElementById(`poster-section${sectionNum}-bubble-container${bubbleNum}`);
+                if (currentBubble) {
+                    currentBubble.style.backgroundColor = bgColor;
+                    if (bgColorInput) {
+                         currentBubble.style.borderColor = hexToRgba(bgColorInput.value, 0.6);
+                    }
+                }
+
+                const bubbleText = document.getElementById(`poster-section${sectionNum}-bubble${bubbleNum}`);
+                const tagContainer = document.getElementById(`poster-section${sectionNum}-tag${bubbleNum}`);
+                const verdictContainer = document.getElementById(`poster-section${sectionNum}-verdict${bubbleNum}`);
+
+                if (bubbleText) {
+                    bubbleText.innerHTML = content;
+                    const plainText = content.replace(/<[^>]*>/g, '');
+                    if (plainText.length > 150) {
+                        bubbleText.classList.add('overflow-scroll');
+                        bubbleText.title = '内容较长，可滚动查看完整内容';
+                    } else {
+                        bubbleText.classList.remove('overflow-scroll');
+                        bubbleText.title = '';
+                    }
+                }
+
+                if (tagContainer) {
+                    tagContainer.innerHTML = '';
+                    const maxTags = (sectionNum === 2) ? 8 : 3;
+                    for (let k = 1; k <= maxTags; k++) {
+                        const tagInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-${k}`);
+                        const colorInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-color${k}`);
+
+                        if (tagInput && tagInput.value.trim() !== '') {
+                            const tagItem = document.createElement('div');
+                            tagItem.className = 'tag-item';
+                            tagItem.innerHTML = tagInput.value.trim();
+                            tagItem.style.backgroundColor = colorInput ? colorInput.value : '#0EAD98';
+                            tagContainer.appendChild(tagItem);
+                        }
+                    }
+                    if (tagContainer.children.length === 0) {
+                        tagContainer.style.display = 'none';
+                    } else {
+                        tagContainer.style.display = 'flex';
+                    }
+                }
+
+                if (verdictContainer) {
+                    const verdictInput = document.getElementById(`section${sectionNum}-verdict${bubbleNum}`);
+                    const verdictValue = verdictInput ? verdictInput.value.trim() : '';
+                    if (verdictValue === '') {
+                        verdictContainer.style.display = 'none';
+                    } else {
+                        verdictContainer.style.display = 'block';
+                        verdictContainer.textContent = verdictValue;
+
+                        const colorInput = document.getElementById(`section${sectionNum}-verdict${bubbleNum}-color`);
+                        if (colorInput) {
+                            const color = colorInput.value;
+                            verdictContainer.style.background = color;
+                            verdictContainer.style.borderColor = color;
+                            const rgb = parseInt(color.slice(1), 16);
+                            const r = (rgb >> 16) & 0xff;
+                            const g = (rgb >>  8) & 0xff;
+                            const b = (rgb >>  0) & 0xff;
+                            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                            verdictContainer.style.color = brightness > 128 ? '#000' : '#fff';
+                        }
+                    }
+                }
+            }
+        }
+
+        // Real-time Event Listeners
+
+        // Section 2: 1 Bubble, 8 Tags
+        document.getElementById('section2-title').addEventListener('input', function() {
+            document.getElementById('poster-section2-title').textContent = this.value;
+        });
+
+        // S2 Bubble 1
+        {
+            const j = 1;
+            document.getElementById(`section2-content${j}`).addEventListener('input', function() {
+                const bubbleText = document.getElementById(`poster-section2-bubble${j}`);
+                if (bubbleText) bubbleText.innerHTML = this.innerHTML;
+                updateBubbleVisibility(2, j);
+            });
+
+            // 8 Tags for S2 Bubble 1
+            for (let k = 1; k <= 8; k++) {
+                ['input', 'change'].forEach(eventType => {
+                    const tagInput = document.getElementById(`section2-tag${j}-${k}`);
+                    const colorInput = document.getElementById(`section2-tag${j}-color${k}`);
+                    if(tagInput) tagInput.addEventListener(eventType, () => updateTagDisplay(2, j));
+                    if(colorInput) colorInput.addEventListener(eventType, () => updateTagDisplay(2, j));
+                });
+            }
+
+            // Verdict
+            const verdictInput = document.getElementById(`section2-verdict${j}`);
+            const verdictColor = document.getElementById(`section2-verdict${j}-color`);
+            // Background Color
+            const bgInput = document.getElementById(`section2-bubble${j}-bg-color`);
+            if (bgInput) {
+                bgInput.addEventListener('input', function() {
+                    updateBubbleVisibility(2, j);
+                });
+            }
+
+            if(verdictInput) {
+                verdictInput.addEventListener('input', function() {
+                    const container = document.getElementById(`poster-section2-verdict${j}`);
+                    if (container) {
+                        const val = this.value.trim();
+                        container.style.display = val === '' ? 'none' : 'block';
+                        container.textContent = val;
+                    }
+                });
+            }
+            if(verdictColor) {
+                verdictColor.addEventListener('input', function() {
+                    const container = document.getElementById(`poster-section2-verdict${j}`);
+                    if (container) {
+                        const color = this.value;
+                        container.style.background = color;
+                        container.style.borderColor = color;
+                        const rgb = parseInt(color.slice(1), 16);
+                        const brightness = ((rgb >> 16) & 0xff) * 0.299 + ((rgb >> 8) & 0xff) * 0.587 + (rgb & 0xff) * 0.114;
+                        container.style.color = brightness > 128 ? '#000' : '#fff';
+                    }
+                });
+            }
+        }
+
+        // Section 3: 5 Bubbles, 3 Tags each
+        document.getElementById('section3-title').addEventListener('input', function() {
+            document.getElementById('poster-section3-title').textContent = this.value;
+        });
+
+        for (let j = 1; j <= 5; j++) {
+            const contentInput = document.getElementById(`section3-content${j}`);
+            if(contentInput) {
+                contentInput.addEventListener('input', function() {
+                    const bubbleText = document.getElementById(`poster-section3-bubble${j}`);
+                    if (bubbleText) bubbleText.innerHTML = this.innerHTML;
+                    updateBubbleVisibility(3, j);
+                });
+            }
+
+            for (let k = 1; k <= 3; k++) {
+                ['input', 'change'].forEach(eventType => {
+                    const tagInput = document.getElementById(`section3-tag${j}-${k}`);
+                    const colorInput = document.getElementById(`section3-tag${j}-color${k}`);
+                    if(tagInput) tagInput.addEventListener(eventType, () => updateTagDisplay(3, j));
+                    if(colorInput) colorInput.addEventListener(eventType, () => updateTagDisplay(3, j));
+                });
+            }
+
+            // Background Color
+            const bgInput = document.getElementById(`section3-bubble${j}-bg-color`);
+            if (bgInput) {
+                bgInput.addEventListener('input', function() {
+                    updateBubbleVisibility(3, j);
+                });
+            }
+
+            const verdictInput = document.getElementById(`section3-verdict${j}`);
+            const verdictColor = document.getElementById(`section3-verdict${j}-color`);
+
+            if(verdictInput) {
+                verdictInput.addEventListener('input', function() {
+                    const container = document.getElementById(`poster-section3-verdict${j}`);
+                    if (container) {
+                        const val = this.value.trim();
+                        container.style.display = val === '' ? 'none' : 'block';
+                        container.textContent = val;
+                    }
+                });
+            }
+            if(verdictColor) {
+                verdictColor.addEventListener('input', function() {
+                    const container = document.getElementById(`poster-section3-verdict${j}`);
+                    if (container) {
+                        const color = this.value;
+                        container.style.background = color;
+                        container.style.borderColor = color;
+                        const rgb = parseInt(color.slice(1), 16);
+                        const brightness = ((rgb >> 16) & 0xff) * 0.299 + ((rgb >> 8) & 0xff) * 0.587 + (rgb & 0xff) * 0.114;
+                        container.style.color = brightness > 128 ? '#000' : '#fff';
+                    }
+                });
+            }
+        }
+
+        window.onload = function() {
+            loadDefaults(); // Load saved data first
+            generatePoster();
+
+            // Trigger color events to apply styles
+            // S2
+            {
+                // section2-verdict1-color removed
+                const bgInput = document.getElementById(`section2-bubble1-bg-color`);
+                if (bgInput) bgInput.dispatchEvent(new Event('input'));
+            }
+            // S3
+            for (let j = 1; j <= 5; j++) {
+                const colorInput = document.getElementById(`section3-verdict${j}-color`);
+                if (colorInput) colorInput.dispatchEvent(new Event('input'));
+                const bgInput = document.getElementById(`section3-bubble${j}-bg-color`);
+                if (bgInput) bgInput.dispatchEvent(new Event('input'));
+            }
+        };
+    </script>
+</body>
+</html>
