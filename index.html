@@ -1350,20 +1350,21 @@
             }
 
             // ==========================================
-            // 2. Load Section 3 (Ahead Sheet) - Using JSON for better reliability
+            // 2. Load Section 3 (Ahead Sheet) - Using GID=0 (Explicitly Confirmed)
             // ==========================================
             try {
-                const sheetNameAhead = 'ahead';
-                // Use JSON format instead of CSV to avoid parsing issues
-                const targetUrlAhead = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetNameAhead}&t=${timestamp}`;
+                // Since user confirmed gid=0 is the 'ahead' sheet, we use gid directly.
+                // This bypasses any sheet name ambiguity and avoids CORS issues related to sheet lookup.
+                const targetUrlAhead = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=0&t=${timestamp}`;
                 const proxyUrlAhead = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrlAhead)}`;
+
+                console.log('Loading Section 3 from GID=0...');
 
                 const responseAhead = await fetch(proxyUrlAhead);
                 if (!responseAhead.ok) throw new Error('Network response was not ok for Ahead sheet');
                 let textAhead = await responseAhead.text();
 
-                // Google JSON response usually starts with "/*O_o*/ google.visualization.Query.setResponse(" and ends with ");"
-                // We need to extract the JSON object
+                // Google JSON response extraction
                 const jsonStart = textAhead.indexOf('({');
                 const jsonEnd = textAhead.lastIndexOf('})');
 
@@ -1372,15 +1373,12 @@
                     const jsonData = JSON.parse(jsonString);
                     const rows = jsonData.table.rows;
 
-                    console.log('Ahead JSON Rows:', rows.length);
+                    console.log('Ahead (GID=0) JSON Rows:', rows.length);
 
                     if (rows.length >= 1) {
-                        // Loop for 3 bubbles (Rows 0, 1, 2... in JSON data array)
-                        // Note: gviz JSON data rows start from index 0 (which is the first data row, header is separate)
-                        // So Row 1 in Excel (Header) is not in 'rows'.
-                        // Row 2 in Excel is rows[0]
-                        // Row 3 in Excel is rows[1]
-                        // Row 4 in Excel is rows[2]
+                        // Loop for 3 bubbles
+                        // Note: If gviz parses headers correctly, 'rows' array starts with Data Row 1 (Excel Row 2).
+                        // So dataIndex should be 0, 1, 2 for Bubble 1, 2, 3.
 
                         for (let i = 1; i <= 3; i++) {
                             const dataIndex = i - 1; // 0, 1, 2
@@ -1391,19 +1389,13 @@
                             }
 
                             const rowCells = rows[dataIndex].c;
-                            console.log(`Processing Ahead Bubble ${i} with JSON Row ${dataIndex}:`, rowCells);
+                            console.log(`Processing Ahead Bubble ${i}:`, rowCells);
 
-                            // Helper to safely get value. c[index] might be null, or v might be null
-                            const getVal = (idx) => (rowCells[idx] && rowCells[idx].v) ? String(rowCells[idx].v) : '';
+                            // Helper to safely get value
+                            const getVal = (idx) => (rowCells && rowCells[idx] && rowCells[idx].v) ? String(rowCells[idx].v) : '';
 
-                            // Mapping based on user instruction:
-                            // Tag 2 (Time): Col A (0)
-                            // Tag 1 (Type): Col B (1)
-                            // Title: Col C (2)
-                            // Tag 3 (Consensus): Col D (3)
-                            // Content: Col E (4)
-                            // Verdict: Col F (5)
-
+                            // Mapping:
+                            // 0: Time, 1: Type, 2: Title, 3: Consensus, 4: Content, 5: Verdict
                             const time = getVal(0);
                             const type = getVal(1);
                             const title = getVal(2);
@@ -1411,7 +1403,7 @@
                             const contentText = getVal(4);
                             const verdict = getVal(5);
 
-                            // 1. Construct Content HTML
+                            // 1. Content
                             let htmlContent = '';
                             if (title) htmlContent += `<strong>${title}</strong>`;
                             if (title && contentText) htmlContent += '<br>';
@@ -1423,7 +1415,7 @@
                                 contentEl.dispatchEvent(new Event('input'));
                             }
 
-                            // 2. Fill Tags
+                            // 2. Tags
                             const tag1Input = document.getElementById(`section3-tag${i}-1`);
                             if (tag1Input) { tag1Input.value = type; tag1Input.dispatchEvent(new Event('input')); }
 
@@ -1437,7 +1429,9 @@
                             const verdictInput = document.getElementById(`section3-verdict${i}`);
                             if (verdictInput) { verdictInput.value = verdict; verdictInput.dispatchEvent(new Event('input')); }
                         }
-                        console.log('Section 3 loaded successfully from JSON');
+                        console.log('Section 3 loaded successfully from GID=0');
+                    } else {
+                        console.warn('Ahead sheet (GID=0) JSON has no rows.');
                     }
                 } else {
                     console.error('Failed to parse Google JSON response');
