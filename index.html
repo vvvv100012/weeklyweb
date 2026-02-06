@@ -409,7 +409,7 @@
         }
 
         .bubble-text {
-            font-size: 30px !important; /* Increased to 30px */
+            font-size: 27px !important; /* Changed from 30px to 27px */
             line-height: 1.4 !important; /* Increased line-height */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -635,7 +635,7 @@
         }
 
         .triple-bubble-text {
-            font-size: 30px !important; /* Increased to 30px */
+            font-size: 27px !important; /* Changed from 30px to 27px */
             line-height: 1.4 !important; /* Increased line-height */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -1313,8 +1313,8 @@
                     const summary = row[1] || '';
                     let htmlContent = '';
 
-                    // Bold title if exists, add break
-                    if (title) htmlContent += `<strong>${title}</strong>`;
+                    // Italic title if exists, add break
+                    if (title) htmlContent += `<em>${title}</em>`;
                     if (title && summary) htmlContent += '<br>';
                     if (summary) htmlContent += summary;
 
@@ -1418,8 +1418,8 @@
 
                             // 1. Construct Content HTML
                             let htmlContent = '';
-                            if (title) htmlContent += `<strong>${title}</strong>`;
-                            if (title && contentText) htmlContent += '<br>';
+                            if (title) htmlContent += `<em>${title}</em>`;
+                            if (title && contentText) htmlContent += ' - ';
                             if (contentText) htmlContent += contentText;
 
                             const contentEl = document.getElementById(`section3-content${i}`);
