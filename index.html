@@ -1341,7 +1341,15 @@
 
                 for (let i = 0; i < 8; i++) {
                     const colIndex = i + 2; // Start from column index 2
-                    const val = row[colIndex];
+                    let val = row[colIndex];
+
+                    // Special handling for ETF and Stablecoin columns (Index 6, 7, 8 in loop => Col 7, 8, 9)
+                    // If value exists but doesn't have the prefix, add it.
+                    if (val) {
+                        if (i === 5 && !val.includes('BTC ETF')) val = `BTC ETF ${val}`;
+                        if (i === 6 && !val.includes('ETH ETF')) val = `ETH ETF ${val}`;
+                        if (i === 7 && !val.includes('Stablecoin')) val = `Stablecoin ${val}`;
+                    }
 
                     const tagInput = document.getElementById(`section2-tag1-${i+1}`);
                     if (tagInput) {
