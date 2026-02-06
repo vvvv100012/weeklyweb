@@ -1278,7 +1278,7 @@
             return rows;
         }
 
-        // Load Defaults from Google Sheet (Past Sheet -> Section 2)
+        // Load Defaults from Google Sheet (Past Sheet -> Section 2, Ahead Sheet -> Section 3)
         async function loadGoogleSheetData() {
             const btn = document.querySelector('button[onclick="loadGoogleSheetData()"]');
             const originalText = btn ? btn.textContent : 'Load Data';
@@ -1288,91 +1288,168 @@
             }
 
             const sheetId = '1AgjQ07PQeyp6UzVRnjNG8lHebW2zKr6PqRur3hNQDBo';
-            const sheetName = 'past';
-            // 使用 encodeURIComponent 处理 URL，并通过 allorigins 代理访问
-            // 添加 timestamp 防止缓存
             const timestamp = new Date().getTime();
-            const targetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}&t=${timestamp}`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
+            // ==========================================
+            // 1. Load Section 2 (Past Sheet)
+            // ==========================================
             try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const text = await response.text();
-                const data = parseCSV(text);
+                const sheetNamePast = 'past';
+                const targetUrlPast = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetNamePast}&t=${timestamp}`;
+                const proxyUrlPast = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrlPast)}`;
 
-                // 假设第一行是表头，第二行是数据
-                if (data.length < 2) throw new Error('No data found in sheet');
+                const responsePast = await fetch(proxyUrlPast);
+                if (!responsePast.ok) throw new Error('Network response was not ok for Past sheet');
+                const textPast = await responsePast.text();
+                const dataPast = parseCSV(textPast);
 
-                // 获取最新的一行数据（这里取第二行，即 index 1）
-                const row = data[1];
-                console.log('Loaded Row Data:', row); // Debug: Check loaded data
+                if (dataPast.length >= 2) {
+                    const row = dataPast[1];
+                    console.log('Loaded Past Row Data:', row);
 
-                // 1. Fill Content (Title + Summary)
-                // Column 0: title, Column 1: summary
-                const title = row[0] || '';
-                const summary = row[1] || '';
-                let htmlContent = '';
+                    // 1. Fill Content (Title + Summary)
+                    const title = row[0] || '';
+                    const summary = row[1] || '';
+                    let htmlContent = '';
 
-                // Bold title if exists
-                if (title) htmlContent += `<strong>${title}</strong>`;
-                if (title && summary) htmlContent += ' - ';
-                if (summary) htmlContent += summary;
+                    // Bold title if exists, add break
+                    if (title) htmlContent += `<strong>${title}</strong>`;
+                    if (title && summary) htmlContent += '<br>';
+                    if (summary) htmlContent += summary;
 
-                if (htmlContent) {
-                    const contentEl = document.getElementById('section2-content1');
-                    if (contentEl) {
-                        contentEl.innerHTML = htmlContent;
-                        contentEl.dispatchEvent(new Event('input'));
-                    }
-                }
-
-                // 2. Fill Tags (Columns 2-9)
-                // Columns 2 to 9 correspond to the 8 tags
-                // Mapping check:
-                // Col 2 (BTC) -> Tag 1
-                // Col 3 (SPX500) -> Tag 2
-                // Col 4 (GC/GOLD) -> Tag 3
-                // Col 5 (VIX) -> Tag 4
-                // Col 6 (DXY) -> Tag 5
-                // Col 7 (BTC ETF) -> Tag 6
-                // Col 8 (ETH ETF) -> Tag 7
-                // Col 9 (Stablecoin) -> Tag 8
-
-                for (let i = 0; i < 8; i++) {
-                    const colIndex = i + 2; // Start from column index 2
-                    let val = row[colIndex];
-
-                    // Special handling for ETF and Stablecoin columns (Index 6, 7, 8 in loop => Col 7, 8, 9)
-                    // If value exists but doesn't have the prefix, add it.
-                    if (val) {
-                        if (i === 5 && !val.includes('BTC ETF')) val = `BTC ETF ${val}`;
-                        if (i === 6 && !val.includes('ETH ETF')) val = `ETH ETF ${val}`;
-                        if (i === 7 && !val.includes('Stablecoin')) val = `Stablecoin ${val}`;
-                    }
-
-                    const tagInput = document.getElementById(`section2-tag1-${i+1}`);
-                    if (tagInput) {
-                        if (val) {
-                            tagInput.value = val;
-                        } else {
-                            tagInput.value = ''; // Clear if empty
+                    if (htmlContent) {
+                        const contentEl = document.getElementById('section2-content1');
+                        if (contentEl) {
+                            contentEl.innerHTML = htmlContent;
+                            contentEl.dispatchEvent(new Event('input'));
                         }
-                        tagInput.dispatchEvent(new Event('input'));
                     }
+
+                    // 2. Fill Tags (Columns 2-9)
+                    for (let i = 0; i < 8; i++) {
+                        const colIndex = i + 2;
+                        let val = row[colIndex];
+
+                        if (val) {
+                            if (i === 5 && !val.includes('BTC ETF')) val = `BTC ETF ${val}`;
+                            if (i === 6 && !val.includes('ETH ETF')) val = `ETH ETF ${val}`;
+                            if (i === 7 && !val.includes('Stablecoin Flow')) val = `Stablecoin Flow ${val}`;
+                        }
+
+                        const tagInput = document.getElementById(`section2-tag1-${i+1}`);
+                        if (tagInput) {
+                            tagInput.value = val || '';
+                            tagInput.dispatchEvent(new Event('input'));
+                        }
+                    }
+                    console.log('Section 2 loaded successfully');
                 }
-
-                console.log('Data loaded successfully from "past" sheet!');
-
             } catch (error) {
-                console.error(error);
-                // alert('Error loading data: ' + error.message); // Disable alert for auto-load
-            } finally {
-                if (btn) {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                }
+                console.error('Error loading Section 2:', error);
             }
+
+            // ==========================================
+            // 2. Load Section 3 (Ahead Sheet)
+            // ==========================================
+            try {
+                const sheetNameAhead = 'ahead';
+                const targetUrlAhead = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetNameAhead}&t=${timestamp}`;
+                const proxyUrlAhead = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrlAhead)}`;
+
+                const responseAhead = await fetch(proxyUrlAhead);
+                if (!responseAhead.ok) throw new Error('Network response was not ok for Ahead sheet');
+                const textAhead = await responseAhead.text();
+                const dataAhead = parseCSV(textAhead);
+
+                // Need at least header + 1 row
+                if (dataAhead.length >= 2) {
+                    console.log('Ahead data rows found:', dataAhead.length - 1);
+
+                    // Loop for 3 bubbles (Rows 2, 3, 4 -> Indices 1, 2, 3)
+                    for (let i = 1; i <= 3; i++) {
+                        const rowIndex = i; // Data row index (1, 2, 3)
+
+                        // Check if row exists
+                        if (rowIndex >= dataAhead.length) {
+                            console.log(`Ahead data row ${rowIndex} not found, skipping Bubble ${i}`);
+                            continue;
+                        }
+
+                        const row = dataAhead[rowIndex];
+                        console.log(`Loaded Ahead Bubble ${i} Data:`, row);
+
+                        // Mapping based on user instruction:
+                        // Tag 2 (Time): Col A (0)
+                        // Tag 1 (Type): Col B (1)
+                        // Title: Col C (2)
+                        // Tag 3 (Consensus): Col D (3)
+                        // Content: Col E (4)
+                        // Verdict: Col F (5)
+
+                        const time = row[0] || '';
+                        const type = row[1] || '';
+                        const title = row[2] || '';
+                        const consensus = row[3] || '';
+                        const contentText = row[4] || '';
+                        const verdict = row[5] || '';
+
+                        // 1. Construct Content HTML: <strong>Title</strong> - Content
+                        let htmlContent = '';
+                        if (title) htmlContent += `<strong>${title}</strong>`;
+                        if (title && contentText) htmlContent += ' - ';
+                        if (contentText) htmlContent += contentText;
+
+                        const contentEl = document.getElementById(`section3-content${i}`);
+                        if (contentEl) {
+                            contentEl.innerHTML = htmlContent;
+                            contentEl.dispatchEvent(new Event('input'));
+                        } else {
+                            console.warn(`Element section3-content${i} not found!`);
+                        }
+
+                        // 2. Fill Tags
+                        // Tag 1: Type (Col B/1)
+                        const tag1Input = document.getElementById(`section3-tag${i}-1`);
+                        if (tag1Input) {
+                            tag1Input.value = type;
+                            tag1Input.dispatchEvent(new Event('input'));
+                        }
+
+                        // Tag 2: Time (Col A/0)
+                        const tag2Input = document.getElementById(`section3-tag${i}-2`);
+                        if (tag2Input) {
+                            tag2Input.value = time;
+                            tag2Input.dispatchEvent(new Event('input'));
+                        }
+
+                        // Tag 3: Consensus (Col D/3)
+                        const tag3Input = document.getElementById(`section3-tag${i}-3`);
+                        if (tag3Input) {
+                            tag3Input.value = consensus;
+                            tag3Input.dispatchEvent(new Event('input'));
+                        }
+
+                        // 3. Verdict (Col F/5)
+                        const verdictInput = document.getElementById(`section3-verdict${i}`);
+                        if (verdictInput) {
+                            verdictInput.value = verdict;
+                            verdictInput.dispatchEvent(new Event('input'));
+                        }
+                    }
+                    console.log('Section 3 loaded successfully');
+                } else {
+                    console.warn('Ahead sheet has no data rows');
+                }
+            } catch (error) {
+                console.error('Error loading Section 3:', error);
+            }
+
+            if (btn) {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+
+            alert('Data load process completed!');
         }
 
         // 折叠卡片切换函数
