@@ -973,6 +973,34 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        #floating-load-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #0EAD98 0%, #00C0B3 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #floating-load-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 173, 152, 0.4);
+        }
+
+        #floating-load-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -980,7 +1008,6 @@
         <div class="header">
             <h1>CoinEx VIP Weekly</h1>
             <div class="update-section">
-                <button class="update-btn" onclick="loadGoogleSheetData()">🔄 Load Data</button>
                 <button class="update-btn" onclick="downloadPoster()">Download Poster</button>
             </div>
         </div>
@@ -1090,7 +1117,10 @@
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
                                     <label>Content</label>
-                                    <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Loading data from Google Sheets..."></div>
+                                    <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Loading data from Google Sheets..."><em>Macro Regime Change: The End of Cheap Money & Structural Repricing</em><br>
+The market has undergone a decisive structural shift driven by the Federal Reserve's hawkish pivot, which shattered the "cheap money" thesis and forced Bitcoin to break critical institutional support levels. 
+
+In contrast to this monetary tightening, the partial U.S. government shutdown was treated as a fully priced-in technicality, failing to generate systemic shock as traders focused entirely on the grim reality of interest rate repricing rather than temporary political stalemates.</div>
                                 </div>
                                 <div class="input-group">
                                     <label>Bubble Background Color</label>
@@ -1130,7 +1160,7 @@
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
                                     <label>Content</label>
-                                    <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="Loading..."></div>
+                                    <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="Loading..."><em>GOLD & SILVER</em><br>The severe correction in precious metals poses immediate contagion risk for crypto via liquidity shocks and forced selling to cover margins. Conversely, <b>market stabilization may prompt capital rotation back into digital assets.</b> Expect elevated volatility; monitoring the Bitcoin-Gold correlation is critical to gauging immediate market direction.</div>
                                 </div>
                                 <div class="input-group">
                                     <label>Bubble Background Color</label>
@@ -1148,7 +1178,7 @@
                                 <div class="input-group">
                                     <label>Verdict</label>
                                     <div class="verdict-row">
-                                        <input type="text" id="section3-verdict1" value="⏳ [Wait & See]" placeholder="Verdict">
+                                        <input type="text" id="section3-verdict1" value="⚪ [Wait & See]" placeholder="Verdict">
                                         <input type="color" id="section3-verdict1-color" value="#000000">
                                     </div>
                                 </div>
@@ -1164,7 +1194,7 @@
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
                                     <label>Content</label>
-                                    <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="Loading..."></div>
+                                    <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="Loading..."><em>US Nonfarm Payrolls</em><br>The upcoming Nonfarm Payrolls report may serves as a critical macro catalyst, directly influencing the Federal Reserve’s rate cut trajectory. Strong labor data may delay monetary easing, pressuring risk assets, while a cooling trend could bolster liquidity optimism.</div>
                                 </div>
                                 <div class="input-group">
                                     <label>Bubble Background Color</label>
@@ -1182,7 +1212,7 @@
                                 <div class="input-group">
                                     <label>Verdict</label>
                                     <div class="verdict-row">
-                                        <input type="text" id="section3-verdict2" value="Verdict" placeholder="Verdict">
+                                        <input type="text" id="section3-verdict2" value="🔶 [Momentum Capture]" placeholder="Verdict">
                                         <input type="color" id="section3-verdict2-color" value="#000000">
                                     </div>
                                 </div>
@@ -1198,7 +1228,7 @@
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
                                     <label>Content</label>
-                                    <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="Loading..."></div>
+                                    <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="Loading..."><em>Jupiter (JUP)</em><br>Jupiter bolsters its ecosystem by integrating Polymarket and launching GUM. These strategic product expansions, coupled with significant on-chain accumulation, highlight robust fundamentals. With enhanced utility and growing market conviction, <b>JUP is solidifying its dominance as a premier Solana infrastructure play.</b></div>
                                 </div>
                                 <div class="input-group">
                                     <label>Bubble Background Color</label>
@@ -1216,7 +1246,7 @@
                                 <div class="input-group">
                                     <label>Verdict</label>
                                     <div class="verdict-row">
-                                        <input type="text" id="section3-verdict3" value="Verdict" placeholder="Verdict">
+                                        <input type="text" id="section3-verdict3" value="🟢 [Value Entry]" placeholder="Verdict">
                                         <input type="color" id="section3-verdict3-color" value="#000000">
                                     </div>
                                 </div>
@@ -1229,6 +1259,8 @@
             </div>
         </div>
     </div>
+
+    <button id="floating-load-btn" onclick="loadGoogleSheetData()">🔄 Load Data</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
@@ -1463,7 +1495,8 @@
                 btn.disabled = false;
             }
 
-            alert('Data load process completed!');
+            // alert('Data load process completed!');
+            console.log('Data load process completed!');
         }
 
         // 折叠卡片切换函数
@@ -1527,7 +1560,7 @@
                 updateBubbleVisibility(3, j);
             }
 
-            alert('Poster updated!');
+            // alert('Poster updated!');
         }
 
         async function downloadPoster() {
