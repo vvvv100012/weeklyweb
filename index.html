@@ -1232,7 +1232,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        // CSV Parser
+        // CSV Parser - Improved to handle empty fields better
         function parseCSV(text) {
             const rows = [];
             let currentRow = [];
@@ -1259,8 +1259,8 @@
                         currentRow.push(currentCell.trim());
                         currentCell = '';
                     } else if (char === '\n' || char === '\r') {
-                        if (currentCell || currentRow.length > 0) {
-                            currentRow.push(currentCell.trim());
+                        currentRow.push(currentCell.trim()); // Always push the last cell
+                        if (currentRow.length > 0) { // Keep even empty rows to maintain index structure
                             rows.push(currentRow);
                         }
                         currentRow = [];
@@ -1271,8 +1271,9 @@
                     }
                 }
             }
-            if (currentCell || currentRow.length > 0) {
-                currentRow.push(currentCell.trim());
+            // Handle last row
+            currentRow.push(currentCell.trim());
+            if (currentRow.length > 0) {
                 rows.push(currentRow);
             }
             return rows;
@@ -1349,96 +1350,97 @@
             }
 
             // ==========================================
-            // 2. Load Section 3 (Ahead Sheet)
+            // 2. Load Section 3 (Ahead Sheet) - Using JSON for better reliability
             // ==========================================
             try {
                 const sheetNameAhead = 'ahead';
-                const targetUrlAhead = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetNameAhead}&t=${timestamp}`;
+                // Use JSON format instead of CSV to avoid parsing issues
+                const targetUrlAhead = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetNameAhead}&t=${timestamp}`;
                 const proxyUrlAhead = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrlAhead)}`;
 
                 const responseAhead = await fetch(proxyUrlAhead);
                 if (!responseAhead.ok) throw new Error('Network response was not ok for Ahead sheet');
-                const textAhead = await responseAhead.text();
-                const dataAhead = parseCSV(textAhead);
+                let textAhead = await responseAhead.text();
 
-                // Need at least header + 1 row
-                if (dataAhead.length >= 2) {
-                    console.log('Ahead data rows found:', dataAhead.length - 1);
+                // Google JSON response usually starts with "/*O_o*/ google.visualization.Query.setResponse(" and ends with ");"
+                // We need to extract the JSON object
+                const jsonStart = textAhead.indexOf('({');
+                const jsonEnd = textAhead.lastIndexOf('})');
 
-                    // Loop for 3 bubbles (Rows 2, 3, 4 -> Indices 1, 2, 3)
-                    for (let i = 1; i <= 3; i++) {
-                        const rowIndex = i; // Data row index (1, 2, 3)
+                if (jsonStart >= 0 && jsonEnd >= 0) {
+                    const jsonString = textAhead.substring(jsonStart + 1, jsonEnd + 1);
+                    const jsonData = JSON.parse(jsonString);
+                    const rows = jsonData.table.rows;
 
-                        // Check if row exists
-                        if (rowIndex >= dataAhead.length) {
-                            console.log(`Ahead data row ${rowIndex} not found, skipping Bubble ${i}`);
-                            continue;
+                    console.log('Ahead JSON Rows:', rows.length);
+
+                    if (rows.length >= 1) {
+                        // Loop for 3 bubbles (Rows 0, 1, 2... in JSON data array)
+                        // Note: gviz JSON data rows start from index 0 (which is the first data row, header is separate)
+                        // So Row 1 in Excel (Header) is not in 'rows'.
+                        // Row 2 in Excel is rows[0]
+                        // Row 3 in Excel is rows[1]
+                        // Row 4 in Excel is rows[2]
+
+                        for (let i = 1; i <= 3; i++) {
+                            const dataIndex = i - 1; // 0, 1, 2
+
+                            if (dataIndex >= rows.length) {
+                                console.warn(`Not enough rows in Ahead sheet for Bubble ${i}. Max index: ${rows.length - 1}`);
+                                break;
+                            }
+
+                            const rowCells = rows[dataIndex].c;
+                            console.log(`Processing Ahead Bubble ${i} with JSON Row ${dataIndex}:`, rowCells);
+
+                            // Helper to safely get value. c[index] might be null, or v might be null
+                            const getVal = (idx) => (rowCells[idx] && rowCells[idx].v) ? String(rowCells[idx].v) : '';
+
+                            // Mapping based on user instruction:
+                            // Tag 2 (Time): Col A (0)
+                            // Tag 1 (Type): Col B (1)
+                            // Title: Col C (2)
+                            // Tag 3 (Consensus): Col D (3)
+                            // Content: Col E (4)
+                            // Verdict: Col F (5)
+
+                            const time = getVal(0);
+                            const type = getVal(1);
+                            const title = getVal(2);
+                            const consensus = getVal(3);
+                            const contentText = getVal(4);
+                            const verdict = getVal(5);
+
+                            // 1. Construct Content HTML
+                            let htmlContent = '';
+                            if (title) htmlContent += `<strong>${title}</strong>`;
+                            if (title && contentText) htmlContent += '<br>';
+                            if (contentText) htmlContent += contentText;
+
+                            const contentEl = document.getElementById(`section3-content${i}`);
+                            if (contentEl) {
+                                contentEl.innerHTML = htmlContent;
+                                contentEl.dispatchEvent(new Event('input'));
+                            }
+
+                            // 2. Fill Tags
+                            const tag1Input = document.getElementById(`section3-tag${i}-1`);
+                            if (tag1Input) { tag1Input.value = type; tag1Input.dispatchEvent(new Event('input')); }
+
+                            const tag2Input = document.getElementById(`section3-tag${i}-2`);
+                            if (tag2Input) { tag2Input.value = time; tag2Input.dispatchEvent(new Event('input')); }
+
+                            const tag3Input = document.getElementById(`section3-tag${i}-3`);
+                            if (tag3Input) { tag3Input.value = consensus; tag3Input.dispatchEvent(new Event('input')); }
+
+                            // 3. Verdict
+                            const verdictInput = document.getElementById(`section3-verdict${i}`);
+                            if (verdictInput) { verdictInput.value = verdict; verdictInput.dispatchEvent(new Event('input')); }
                         }
-
-                        const row = dataAhead[rowIndex];
-                        console.log(`Loaded Ahead Bubble ${i} Data:`, row);
-
-                        // Mapping based on user instruction:
-                        // Tag 2 (Time): Col A (0)
-                        // Tag 1 (Type): Col B (1)
-                        // Title: Col C (2)
-                        // Tag 3 (Consensus): Col D (3)
-                        // Content: Col E (4)
-                        // Verdict: Col F (5)
-
-                        const time = row[0] || '';
-                        const type = row[1] || '';
-                        const title = row[2] || '';
-                        const consensus = row[3] || '';
-                        const contentText = row[4] || '';
-                        const verdict = row[5] || '';
-
-                        // 1. Construct Content HTML: <strong>Title</strong> - Content
-                        let htmlContent = '';
-                        if (title) htmlContent += `<strong>${title}</strong>`;
-                        if (title && contentText) htmlContent += ' - ';
-                        if (contentText) htmlContent += contentText;
-
-                        const contentEl = document.getElementById(`section3-content${i}`);
-                        if (contentEl) {
-                            contentEl.innerHTML = htmlContent;
-                            contentEl.dispatchEvent(new Event('input'));
-                        } else {
-                            console.warn(`Element section3-content${i} not found!`);
-                        }
-
-                        // 2. Fill Tags
-                        // Tag 1: Type (Col B/1)
-                        const tag1Input = document.getElementById(`section3-tag${i}-1`);
-                        if (tag1Input) {
-                            tag1Input.value = type;
-                            tag1Input.dispatchEvent(new Event('input'));
-                        }
-
-                        // Tag 2: Time (Col A/0)
-                        const tag2Input = document.getElementById(`section3-tag${i}-2`);
-                        if (tag2Input) {
-                            tag2Input.value = time;
-                            tag2Input.dispatchEvent(new Event('input'));
-                        }
-
-                        // Tag 3: Consensus (Col D/3)
-                        const tag3Input = document.getElementById(`section3-tag${i}-3`);
-                        if (tag3Input) {
-                            tag3Input.value = consensus;
-                            tag3Input.dispatchEvent(new Event('input'));
-                        }
-
-                        // 3. Verdict (Col F/5)
-                        const verdictInput = document.getElementById(`section3-verdict${i}`);
-                        if (verdictInput) {
-                            verdictInput.value = verdict;
-                            verdictInput.dispatchEvent(new Event('input'));
-                        }
+                        console.log('Section 3 loaded successfully from JSON');
                     }
-                    console.log('Section 3 loaded successfully');
                 } else {
-                    console.warn('Ahead sheet has no data rows');
+                    console.error('Failed to parse Google JSON response');
                 }
             } catch (error) {
                 console.error('Error loading Section 3:', error);
