@@ -1278,16 +1278,21 @@
             return rows;
         }
 
+        // Load Defaults from Google Sheet (Past Sheet -> Section 2)
         async function loadGoogleSheetData() {
             const btn = document.querySelector('button[onclick="loadGoogleSheetData()"]');
-            const originalText = btn.textContent;
-            btn.textContent = 'Loading...';
-            btn.disabled = true;
+            const originalText = btn ? btn.textContent : 'Load Data';
+            if (btn) {
+                btn.textContent = 'Loading...';
+                btn.disabled = true;
+            }
 
             const sheetId = '1AgjQ07PQeyp6UzVRnjNG8lHebW2zKr6PqRur3hNQDBo';
             const sheetName = 'past';
             // 使用 encodeURIComponent 处理 URL，并通过 allorigins 代理访问
-            const targetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+            // 添加 timestamp 防止缓存
+            const timestamp = new Date().getTime();
+            const targetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}&t=${timestamp}`;
             const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
             try {
@@ -1301,6 +1306,7 @@
 
                 // 获取最新的一行数据（这里取第二行，即 index 1）
                 const row = data[1];
+                console.log('Loaded Row Data:', row); // Debug: Check loaded data
 
                 // 1. Fill Content (Title + Summary)
                 // Column 0: title, Column 1: summary
@@ -1315,35 +1321,49 @@
 
                 if (htmlContent) {
                     const contentEl = document.getElementById('section2-content1');
-                    contentEl.innerHTML = htmlContent;
-                    contentEl.dispatchEvent(new Event('input'));
+                    if (contentEl) {
+                        contentEl.innerHTML = htmlContent;
+                        contentEl.dispatchEvent(new Event('input'));
+                    }
                 }
 
                 // 2. Fill Tags (Columns 2-9)
                 // Columns 2 to 9 correspond to the 8 tags
+                // Mapping check:
+                // Col 2 (BTC) -> Tag 1
+                // Col 3 (SPX500) -> Tag 2
+                // Col 4 (GC/GOLD) -> Tag 3
+                // Col 5 (VIX) -> Tag 4
+                // Col 6 (DXY) -> Tag 5
+                // Col 7 (BTC ETF) -> Tag 6
+                // Col 8 (ETH ETF) -> Tag 7
+                // Col 9 (Stablecoin) -> Tag 8
+
                 for (let i = 0; i < 8; i++) {
-                    const colIndex = i + 2; // Start from column index 2 (BTC)
+                    const colIndex = i + 2; // Start from column index 2
                     const val = row[colIndex];
 
                     const tagInput = document.getElementById(`section2-tag1-${i+1}`);
-                    if (tagInput && val) {
-                        tagInput.value = val;
-                        tagInput.dispatchEvent(new Event('input'));
-                    } else if (tagInput) {
-                        // Clear if empty
-                        tagInput.value = '';
+                    if (tagInput) {
+                        if (val) {
+                            tagInput.value = val;
+                        } else {
+                            tagInput.value = ''; // Clear if empty
+                        }
                         tagInput.dispatchEvent(new Event('input'));
                     }
                 }
 
-                alert('Data loaded successfully from "past" sheet!');
+                console.log('Data loaded successfully from "past" sheet!');
 
             } catch (error) {
                 console.error(error);
-                alert('Error loading data: ' + error.message + '\n\n如果是跨域问题，请尝试使用本地服务器 (python -m http.server) 或检查代理服务是否可用。');
+                // alert('Error loading data: ' + error.message); // Disable alert for auto-load
             } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
+                if (btn) {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }
             }
         }
 
@@ -2079,7 +2099,8 @@
         }
 
         window.onload = function() {
-            loadDefaults(); // Load saved data first
+            // loadDefaults(); // Legacy defaults disabled in favor of Google Sheets
+            loadGoogleSheetData(); // Auto-load data on page load
             generatePoster();
 
             // Trigger color events to apply styles
