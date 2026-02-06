@@ -1714,12 +1714,13 @@ In contrast to this monetary tightening, the partial U.S. government shutdown wa
                         word-wrap: break-word;
                     }
                     #temp-poster .bubble-text {
-                        font-size: 30px !important;
+                        font-size: 27px !important; /* Synced with Preview */
                         line-height: 1.4 !important;
                         overflow: hidden;
                     }
                     #temp-poster .triple-bubble-text {
-                        font-size: 30px !important; line-height: 1.4 !important;
+                        font-size: 27px !important; /* Synced with Preview */
+                        line-height: 1.4 !important;
                         width: 100%; flex: 1; overflow: hidden;
                         margin-bottom: 8px; padding-right: 5px;
                     }
@@ -1747,11 +1748,11 @@ In contrast to this monetary tightening, the partial U.S. government shutdown wa
                     #temp-poster .section-2 .tag-container {
                         left: 35px !important; right: auto !important;
                         bottom: 20px !important;
-                        max-width: calc(100% - 280px) !important;
-                        display: grid !important;
-                        grid-template-columns: repeat(4, max-content) !important;
-                        gap: 8px 12px !important;
-                        justify-content: start !important;
+                        max-width: calc(100% - 70px) !important; /* Full width minus padding, same as preview */
+                        display: flex !important; /* Changed from grid to flex to match preview */
+                        flex-wrap: wrap !important;
+                        gap: 6px !important;
+                        justify-content: flex-start !important;
                     }
                     #temp-poster .section-3 .tag-container {
                         left: auto !important; right: 20px !important;
