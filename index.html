@@ -980,6 +980,7 @@
         <div class="header">
             <h1>CoinEx VIP Weekly</h1>
             <div class="update-section">
+                <button class="update-btn" onclick="loadGoogleSheetData()">🔄 Load Data</button>
                 <button class="update-btn" onclick="downloadPoster()">Download Poster</button>
             </div>
         </div>
@@ -1231,8 +1232,124 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
+        // CSV Parser
+        function parseCSV(text) {
+            const rows = [];
+            let currentRow = [];
+            let currentCell = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+
+                if (inQuotes) {
+                    if (char === '"' && nextChar === '"') {
+                        currentCell += '"';
+                        i++;
+                    } else if (char === '"') {
+                        inQuotes = false;
+                    } else {
+                        currentCell += char;
+                    }
+                } else {
+                    if (char === '"') {
+                        inQuotes = true;
+                    } else if (char === ',') {
+                        currentRow.push(currentCell.trim());
+                        currentCell = '';
+                    } else if (char === '\n' || char === '\r') {
+                        if (currentCell || currentRow.length > 0) {
+                            currentRow.push(currentCell.trim());
+                            rows.push(currentRow);
+                        }
+                        currentRow = [];
+                        currentCell = '';
+                        if (char === '\r' && nextChar === '\n') i++;
+                    } else {
+                        currentCell += char;
+                    }
+                }
+            }
+            if (currentCell || currentRow.length > 0) {
+                currentRow.push(currentCell.trim());
+                rows.push(currentRow);
+            }
+            return rows;
+        }
+
+        async function loadGoogleSheetData() {
+            const btn = document.querySelector('button[onclick="loadGoogleSheetData()"]');
+            const originalText = btn.textContent;
+            btn.textContent = 'Loading...';
+            btn.disabled = true;
+
+            const sheetId = '1AgjQ07PQeyp6UzVRnjNG8lHebW2zKr6PqRur3hNQDBo';
+            const sheetName = 'past';
+            // 使用 encodeURIComponent 处理 URL，并通过 allorigins 代理访问
+            const targetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const text = await response.text();
+                const data = parseCSV(text);
+
+                // 假设第一行是表头，第二行是数据
+                if (data.length < 2) throw new Error('No data found in sheet');
+
+                // 获取最新的一行数据（这里取第二行，即 index 1）
+                const row = data[1];
+
+                // 1. Fill Content (Title + Summary)
+                // Column 0: title, Column 1: summary
+                const title = row[0] || '';
+                const summary = row[1] || '';
+                let htmlContent = '';
+
+                // Bold title if exists
+                if (title) htmlContent += `<strong>${title}</strong>`;
+                if (title && summary) htmlContent += ' - ';
+                if (summary) htmlContent += summary;
+
+                if (htmlContent) {
+                    const contentEl = document.getElementById('section2-content1');
+                    contentEl.innerHTML = htmlContent;
+                    contentEl.dispatchEvent(new Event('input'));
+                }
+
+                // 2. Fill Tags (Columns 2-9)
+                // Columns 2 to 9 correspond to the 8 tags
+                for (let i = 0; i < 8; i++) {
+                    const colIndex = i + 2; // Start from column index 2 (BTC)
+                    const val = row[colIndex];
+
+                    const tagInput = document.getElementById(`section2-tag1-${i+1}`);
+                    if (tagInput && val) {
+                        tagInput.value = val;
+                        tagInput.dispatchEvent(new Event('input'));
+                    } else if (tagInput) {
+                        // Clear if empty
+                        tagInput.value = '';
+                        tagInput.dispatchEvent(new Event('input'));
+                    }
+                }
+
+                alert('Data loaded successfully from "past" sheet!');
+
+            } catch (error) {
+                console.error(error);
+                alert('Error loading data: ' + error.message + '\n\n如果是跨域问题，请尝试使用本地服务器 (python -m http.server) 或检查代理服务是否可用。');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
         // 折叠卡片切换函数
         function toggleCard(card) {
+
             card.classList.toggle('expanded');
         }
 
