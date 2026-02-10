@@ -409,7 +409,7 @@
         }
 
         .bubble-text {
-            font-size: 27px !important; /* Changed from 30px to 27px */
+            font-size: 27px; /* Default size, can be overridden by inline style */
             line-height: 1.4 !important; /* Increased line-height */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -421,10 +421,10 @@
             overflow: hidden;
         }
 
-        /* 强制覆盖所有粘贴文字的颜色和字体大小，使用poster默认样式 */
+        /* 强制覆盖所有粘贴文字的颜色，保留字体大小自定义能力 */
         .bubble-text * {
             color: inherit !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed to allow custom font sizes */
             line-height: inherit !important;
             font-family: inherit !important;
         }
@@ -434,7 +434,7 @@
         .bubble-text b {
             color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
             font-weight: 700 !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
@@ -442,13 +442,13 @@
         .bubble-text i {
             color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
             font-style: italic !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
         }
 
         .bubble-text u {
             color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
             text-decoration: underline !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
         }
 
         /* 三个气泡框布局 - 用于板块2和3 */
@@ -635,7 +635,7 @@
         }
 
         .triple-bubble-text {
-            font-size: 27px !important; /* Changed from 30px to 27px */
+            font-size: 27px; /* Default size, can be overridden by inline style */
             line-height: 1.4 !important; /* Increased line-height */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -651,10 +651,10 @@
             padding-right: 5px;
         }
 
-        /* 强制覆盖三气泡框中所有粘贴文字的颜色和字体大小 */
+        /* 强制覆盖三气泡框中所有粘贴文字的颜色，保留字体大小自定义 */
         .triple-bubble-text * {
             color: inherit !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
             line-height: inherit !important;
             font-family: inherit !important;
         }
@@ -664,7 +664,7 @@
         .triple-bubble-text b {
             color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
             font-weight: 700 !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
@@ -672,13 +672,13 @@
         .triple-bubble-text i {
             color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
             font-style: italic !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
         }
 
         .triple-bubble-text u {
             color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
             text-decoration: underline !important;
-            font-size: inherit !important;
+            /* font-size: inherit !important; Removed */
         }
 
         /* 空白区域样式 - 用于板块4 */
@@ -828,13 +828,42 @@
             min-height: 60px;
             padding: 8px;
             border: 2px solid #e1e8ed;
-            border-radius: 6px;
+            border-top: none; /* Remove top border as it will attach to toolbar */
+            border-radius: 0 0 6px 6px; /* Top corners square */
             font-size: 0.9rem;
             font-family: inherit;
             line-height: 1.3;
             transition: border-color 0.3s ease;
             background: white;
             overflow-y: auto;
+        }
+
+        .editor-toolbar {
+            background: #f8f9fa;
+            border: 2px solid #e1e8ed;
+            border-bottom: 1px solid #e1e8ed;
+            border-radius: 6px 6px 0 0;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-toolbar select {
+            padding: 2px 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+            height: 24px;
+        }
+
+        .editor-toolbar label {
+            margin: 0;
+            font-size: 12px;
+            font-weight: normal;
+            color: #666;
         }
 
         .rich-text-input:focus {
@@ -1001,6 +1030,61 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        /* RTL Mode Styles for Preview */
+        .rtl-mode {
+            direction: rtl;
+            font-family: 'Tahoma', 'Segoe UI', sans-serif;
+        }
+
+        .rtl-mode .poster-title {
+            text-align: right;
+        }
+
+        .rtl-mode .poster-date {
+            text-align: left;
+        }
+
+        .rtl-mode .section-title {
+            text-align: right;
+            padding-right: 10px;
+            padding-left: 0;
+        }
+
+        .rtl-mode .section-content {
+            justify-content: center;
+        }
+
+        .rtl-mode .triple-bubble,
+        .rtl-mode .bubble-text,
+        .rtl-mode .triple-bubble-text {
+            text-align: right;
+        }
+
+        /* Mirroring absolute positioned elements for RTL Preview */
+        .rtl-mode .poster-logo {
+            left: 40px;
+            right: auto;
+        }
+
+        /* Section 2 Tags: Originally left: 35px -> RTL right: 35px */
+        .rtl-mode .poster-section.section-2 .tag-container {
+            right: 35px;
+            left: auto;
+            justify-content: start; /* Flex start in RTL is Right */
+        }
+
+        /* Section 3 Tags: Originally right: 20px -> RTL left: 20px */
+        .rtl-mode .poster-section.section-3 .tag-container {
+            left: 20px;
+            right: auto;
+        }
+
+        /* Section 3 Verdict: Originally left: 20px -> RTL right: 20px */
+        .rtl-mode .poster-section.section-3 .verdict-container {
+            right: 20px;
+            left: auto;
+        }
     </style>
 </head>
 <body>
@@ -1093,11 +1177,22 @@
                         <h3>Basic Information</h3>
                         <div class="input-group">
                             <label for="poster-title">Title</label>
-                            <input type="text" id="poster-title" value="VIP Weekly" placeholder="Enter title">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="poster-title" value="VIP Weekly" placeholder="Enter title" style="flex: 1;">
+                                <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                    <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem; white-space: nowrap;">Size:</label>
+                                    <input type="number" id="title-fontsize" value="60" min="20" max="100" style="width: 60px; padding: 2px 5px; height: 36px;" oninput="updateTitleFontSize(this.value)">
+                                    <span style="font-size: 0.8rem;">px</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="date">Date</label>
                             <input type="date" id="date" name="date">
+                        </div>
+                        <div class="input-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                            <input type="checkbox" id="rtl-mode-toggle" style="width: auto;">
+                            <label for="rtl-mode-toggle" style="margin: 0; cursor: pointer;">Enable Persian/RTL Mode</label>
                         </div>
                     </div>
 
@@ -1106,7 +1201,14 @@
                         <h3>Section 2 - 1 Bubble (8 Tags)</h3>
                         <div class="input-group">
                             <label for="section2-title">Section Title</label>
-                            <input type="text" id="section2-title" value="MARKET RECAP" placeholder="Enter section title">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="section2-title" value="MARKET RECAP" placeholder="Enter section title" style="flex: 1;">
+                                <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                    <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem; white-space: nowrap;">Size:</label>
+                                    <input type="number" id="section2-title-fontsize" value="40" min="20" max="80" style="width: 60px; padding: 2px 5px; height: 36px;" oninput="updateSectionTitleFontSize(2, this.value)">
+                                    <span style="font-size: 0.8rem;">px</span>
+                                </div>
+                            </div>
                         </div>
                         <!-- Bubble 1 折叠卡片 -->
                         <div class="collapsible-card" onclick="toggleCard(this)">
@@ -1116,7 +1218,14 @@
                             </div>
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
-                                    <label>Content</label>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <label style="margin-bottom: 0;">Content</label>
+                                        <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                            <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem;">Size:</label>
+                                            <input type="number" id="section2-fontsize1" value="27" min="10" max="100" style="width: 60px; padding: 2px 5px; height: 24px;" oninput="updateFontSize(2, 1, this.value)">
+                                            <span style="font-size: 0.8rem;">px</span>
+                                        </div>
+                                    </div>
                                     <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Loading data from Google Sheets..."><em>Extreme Fear: Whales Capitulate, Institutions Accumulate, and HYPE Rallies</em><br>
 The crypto market has endured a week of severe capitulation, underscored by the "Fear & Greed Index" plunging to 6 ("Extreme Fear")—a level rarely seen in history. Central to this panic was the massive deleveraging of Trend Research (linked to Yi Lihua), which liquidated 658k ETH for a $700 million loss. However, a divergence emerged in the ETF sector: despite the price collapse, <b>U.S. Bitcoin Spot ETFs saw a net inflow of $330.7 million on Feb 6, suggesting institutional "buy the dip" behavior .</b>
 
@@ -1149,7 +1258,14 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         <h3>Section 3 - 3 Bubbles</h3>
                         <div class="input-group">
                             <label for="section3-title">Section Title</label>
-                            <input type="text" id="section3-title" value="THE WEEK AHEAD" placeholder="Enter section title">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="section3-title" value="THE WEEK AHEAD" placeholder="Enter section title" style="flex: 1;">
+                                <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                    <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem; white-space: nowrap;">Size:</label>
+                                    <input type="number" id="section3-title-fontsize" value="40" min="20" max="80" style="width: 60px; padding: 2px 5px; height: 36px;" oninput="updateSectionTitleFontSize(3, this.value)">
+                                    <span style="font-size: 0.8rem;">px</span>
+                                </div>
+                            </div>
                         </div>
                         <!-- Bubble 1 -->
                         <div class="collapsible-card" onclick="toggleCard(this)">
@@ -1159,7 +1275,14 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                             </div>
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
-                                    <label>Content</label>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <label style="margin-bottom: 0;">Content</label>
+                                        <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                            <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem;">Size:</label>
+                                            <input type="number" id="section3-fontsize1" value="27" min="10" max="100" style="width: 60px; padding: 2px 5px; height: 24px;" oninput="updateFontSize(3, 1, this.value)">
+                                            <span style="font-size: 0.8rem;">px</span>
+                                        </div>
+                                    </div>
                                     <div class="rich-text-input" id="section3-content1" contenteditable="true" placeholder="Loading..."><em>US Retail Sales</em> - Key gauge of consumer health. A "hot" print (>0.5%) could push yields higher and DXY up, weighing on risk assets like Crypto. A miss suggests recession risk, potentially bullish for bonds but choppy for equities. </div>
                                 </div>
                                 <div class="input-group">
@@ -1193,7 +1316,14 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                             </div>
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
-                                    <label>Content</label>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <label style="margin-bottom: 0;">Content</label>
+                                        <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                            <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem;">Size:</label>
+                                            <input type="number" id="section3-fontsize2" value="27" min="10" max="100" style="width: 60px; padding: 2px 5px; height: 24px;" oninput="updateFontSize(3, 2, this.value)">
+                                            <span style="font-size: 0.8rem;">px</span>
+                                        </div>
+                                    </div>
                                     <div class="rich-text-input" id="section3-content2" contenteditable="true" placeholder="Loading..."><em>US CPI Inflation</em> - This is <b>**The "Main Event" of the week**.</b> A core CPI surprise (>0.3–0.4% MoM, breaking the recent disinflation trend) would challenge the "soft landing" narrative, raising fears of reflation or stagflation. This sustains "higher for longer" Fed pricing, elevates real yields, and crushes risk assets.</div>
                                 </div>
                                 <div class="input-group">
@@ -1227,7 +1357,14 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                             </div>
                             <div class="collapsible-body" onclick="event.stopPropagation()">
                                 <div class="input-group">
-                                    <label>Content</label>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <label style="margin-bottom: 0;">Content</label>
+                                        <div class="font-size-control" style="display: flex; align-items: center; gap: 5px;">
+                                            <label style="margin-bottom: 0; font-weight: normal; font-size: 0.8rem;">Size:</label>
+                                            <input type="number" id="section3-fontsize3" value="27" min="10" max="100" style="width: 60px; padding: 2px 5px; height: 24px;" oninput="updateFontSize(3, 3, this.value)">
+                                            <span style="font-size: 0.8rem;">px</span>
+                                        </div>
+                                    </div>
                                     <div class="rich-text-input" id="section3-content3" contenteditable="true" placeholder="Loading..."><em>SushiSwap (SUSHI)</em> - SushiSwap officially expands to Solana (via Jupiter integration) on Feb 9. It enables cross-chain swaps between EVM and Solana. <b>Watch for liquidity flows into SUSHI and potential re-rating as a multi-chain DEX aggregator.</b></div>
                                 </div>
                                 <div class="input-group">
@@ -1619,11 +1756,16 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 // 添加专门用于渲染的样式
                 const renderStyle = document.createElement('style');
                 renderStyle.id = 'render-style';
+
+                // 检查是否开启了 RTL 模式
+                const isRtlMode = document.getElementById('poster').classList.contains('rtl-mode');
+
                 renderStyle.textContent = `
                     #temp-poster {
                         background-size: cover !important;
                         background-position: center !important;
                         background-repeat: no-repeat !important;
+                        ${isRtlMode ? 'direction: rtl !important; font-family: "Tahoma", "Segoe UI", sans-serif !important;' : ''}
                     }
                     #temp-poster::before {
                         content: '';
@@ -1651,11 +1793,14 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                     #temp-poster .poster-title {
                         font-size: 60px; font-weight: 800; color: #00D9D9 !important;
                         margin: 0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-                        line-height: 1.1; text-align: left;
+                        line-height: 1.1;
+                        text-align: ${isRtlMode ? 'right' : 'left'} !important;
+                        /* Allow override by inline style for font-size */
                     }
                     #temp-poster .poster-date {
                         font-size: 20px; color: rgba(255, 255, 255, 0.9);
-                        font-weight: 500; margin: 0; text-align: right;
+                        font-weight: 500; margin: 0;
+                        text-align: ${isRtlMode ? 'left' : 'right'} !important;
                     }
                     #temp-poster .poster-sections {
                         flex: 1; display: flex; flex-direction: column;
@@ -1671,7 +1816,10 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                     #temp-poster .section-title {
                         font-size: 40px; font-weight: 700; color: #0EAD98 !important;
                         margin-bottom: 1px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-                        text-align: left; padding-left: 10px; display: flex; align-items: center;
+                        text-align: ${isRtlMode ? 'right' : 'left'} !important;
+                        padding-left: ${isRtlMode ? '0' : '10px'} !important;
+                        padding-right: ${isRtlMode ? '10px' : '0'} !important;
+                        display: flex; align-items: center;
                         height: 70px;
                     }
                     #temp-poster .section-content {
@@ -1693,7 +1841,8 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         padding: 20px 35px 40px 35px;
                         width: 100%;
                         display: flex; flex-direction: column; justify-content: flex-start;
-                        text-align: left; overflow: hidden; position: relative;
+                        text-align: ${isRtlMode ? 'right' : 'left'} !important;
+                        overflow: hidden; position: relative;
                         box-sizing: border-box; margin: 0;
                     }
                     /* Section 2 Bubble Height: Full */
@@ -1710,35 +1859,41 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                     #temp-poster .bubble-text,
                     #temp-poster .triple-bubble-text {
                         color: white !important; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-                        font-weight: 500; text-align: left; white-space: pre-wrap;
+                        font-weight: 500;
+                        text-align: ${isRtlMode ? 'right' : 'left'} !important;
+                        white-space: pre-wrap;
                         word-wrap: break-word;
                     }
                     #temp-poster .bubble-text {
-                        font-size: 27px !important; /* Synced with Preview */
+                        font-size: 27px; /* Default, overridden by inline style */
                         line-height: 1.4 !important;
                         overflow: hidden;
                     }
                     #temp-poster .triple-bubble-text {
-                        font-size: 27px !important; /* Synced with Preview */
+                        font-size: 27px; /* Default, overridden by inline style */
                         line-height: 1.4 !important;
                         width: 100%; flex: 1; overflow: hidden;
                         margin-bottom: 8px; padding-right: 5px;
                     }
                     #temp-poster .bubble-text *, #temp-poster .triple-bubble-text * {
-                        color: inherit !important; font-size: inherit !important;
+                        color: inherit !important;
+                        /* font-size: inherit !important; Removed to allow custom sizes */
                         line-height: inherit !important; font-family: inherit !important;
                     }
                     #temp-poster .bubble-text strong, #temp-poster .bubble-text b,
                     #temp-poster .triple-bubble-text strong, #temp-poster .triple-bubble-text b {
                         color: #0EAD98 !important; font-weight: 700 !important;
+                        /* font-size: inherit !important; Removed */
                         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
                     }
                     #temp-poster .bubble-text em, #temp-poster .bubble-text i,
                     #temp-poster .triple-bubble-text em, #temp-poster .triple-bubble-text i {
                         color: #00D9D9 !important; font-style: italic !important;
+                        /* font-size: inherit !important; Removed */
                     }
                     #temp-poster .bubble-text u, #temp-poster .triple-bubble-text u {
                         color: #F3BB2C !important; text-decoration: underline !important;
+                        /* font-size: inherit !important; Removed */
                     }
                     #temp-poster .tag-container {
                         position: absolute; bottom: 12px; left: 20px;
@@ -1746,7 +1901,8 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         max-width: calc(100% - 140px); z-index: 10;
                     }
                     #temp-poster .section-2 .tag-container {
-                        left: 35px !important; right: auto !important;
+                        left: ${isRtlMode ? 'auto' : '35px'} !important;
+                        right: ${isRtlMode ? '35px' : 'auto'} !important;
                         bottom: 20px !important;
                         max-width: calc(100% - 70px) !important; /* Full width minus padding, same as preview */
                         display: flex !important; /* Changed from grid to flex to match preview */
@@ -1755,7 +1911,8 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         justify-content: flex-start !important;
                     }
                     #temp-poster .section-3 .tag-container {
-                        left: auto !important; right: 20px !important;
+                        left: ${isRtlMode ? '20px' : 'auto'} !important;
+                        right: ${isRtlMode ? 'auto' : '20px'} !important;
                     }
                     #temp-poster .tag-item {
                         color: white !important; font-size: 18px !important;
@@ -1777,7 +1934,8 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                     }
                     /* Section 2 Verdict removed */
                     #temp-poster .section-3 .verdict-container {
-                        right: auto !important; left: 20px !important;
+                        right: ${isRtlMode ? '20px' : 'auto'} !important;
+                        left: ${isRtlMode ? 'auto' : '20px'} !important;
                     }
                     #temp-poster .poster-footer {
                         height: 80px; flex-shrink: 0; position: relative; background: transparent;
@@ -1788,7 +1946,9 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
                     }
                     #temp-poster .poster-logo {
-                        position: absolute; bottom: 20px; right: 40px;
+                        position: absolute; bottom: 20px;
+                        right: ${isRtlMode ? 'auto' : '40px'} !important;
+                        left: ${isRtlMode ? '40px' : 'auto'} !important;
                         width: 150px; height: auto; z-index: 10;
                     }
                     #temp-poster .header-logo {
@@ -1936,9 +2096,40 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             });
         }
 
+        function updateFontSize(sectionNum, bubbleNum, size) {
+            const bubbleText = document.getElementById(`poster-section${sectionNum}-bubble${bubbleNum}`);
+            if (bubbleText) {
+                bubbleText.style.fontSize = `${size}px`;
+            }
+        }
+
+        function updateTitleFontSize(size) {
+            const titleDisplay = document.getElementById('poster-title-display');
+            if (titleDisplay) {
+                titleDisplay.style.fontSize = `${size}px`;
+            }
+        }
+
+        function updateSectionTitleFontSize(sectionNum, size) {
+            const titleDisplay = document.getElementById(`poster-section${sectionNum}-title`);
+            if (titleDisplay) {
+                titleDisplay.style.fontSize = `${size}px`;
+            }
+        }
+
         // 实时更新功能
         document.getElementById('poster-title').addEventListener('input', function() {
             document.getElementById('poster-title-display').textContent = this.value;
+        });
+
+        // RTL Mode Toggle
+        document.getElementById('rtl-mode-toggle').addEventListener('change', function() {
+            const poster = document.getElementById('poster');
+            if (this.checked) {
+                poster.classList.add('rtl-mode');
+            } else {
+                poster.classList.remove('rtl-mode');
+            }
         });
 
         document.getElementById('date').addEventListener('change', updatePosterDate);
@@ -2125,6 +2316,16 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 updateBubbleVisibility(2, j);
             });
 
+            // Add font size event listener for S2 Bubble 1
+            const fontSizeInput = document.getElementById(`section2-fontsize${j}`);
+            if (fontSizeInput) {
+                fontSizeInput.addEventListener('input', function() {
+                    updateFontSize(2, j, this.value);
+                });
+                // Initialize font size
+                updateFontSize(2, j, fontSizeInput.value);
+            }
+
             // 8 Tags for S2 Bubble 1
             for (let k = 1; k <= 8; k++) {
                 ['input', 'change'].forEach(eventType => {
@@ -2184,6 +2385,16 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                     if (bubbleText) bubbleText.innerHTML = this.innerHTML;
                     updateBubbleVisibility(3, j);
                 });
+            }
+
+            // Add font size event listener for S3 Bubbles
+            const fontSizeInput = document.getElementById(`section3-fontsize${j}`);
+            if (fontSizeInput) {
+                fontSizeInput.addEventListener('input', function() {
+                    updateFontSize(3, j, this.value);
+                });
+                // Initialize font size
+                updateFontSize(3, j, fontSizeInput.value);
             }
 
             for (let k = 1; k <= 3; k++) {
