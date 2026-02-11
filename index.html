@@ -2060,17 +2060,12 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 `;
                 document.head.appendChild(renderStyle);
 
-                // For foreignObjectRendering, also inject style inside the poster element
-                const inlineStyle = document.createElement('style');
-                inlineStyle.textContent = renderStyle.textContent;
-                newPoster.insertBefore(inlineStyle, newPoster.firstChild);
-
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 300));
 
                 const canvas = await html2canvas(newPoster, {
                     width: 1080, height: 1920, scale: 2, backgroundColor: null,
-                    logging: true, useCORS: true, allowTaint: true,
-                    removeContainer: false, foreignObjectRendering: true,
+                    logging: false, useCORS: true, allowTaint: true,
+                    removeContainer: false, foreignObjectRendering: false,
                     imageTimeout: 15000,
                     windowWidth: 1080, windowHeight: 1920
                 });
