@@ -1847,15 +1847,15 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 const originalContent = originalPoster.querySelector('.poster-content');
                 const newContent = originalContent.cloneNode(true);
 
-                // Update logo src in the new poster to base64
+                renderContainer.appendChild(newPoster);
+                newPoster.appendChild(newContent);
+
+                // Update logo src in the new poster to base64 (must be after content is appended)
                 const newLogo = newPoster.querySelector('.poster-logo');
                 if (newLogo) newLogo.src = logoImage;
 
                 const newHeaderLogo = newPoster.querySelector('.header-logo');
                 if (newHeaderLogo) newHeaderLogo.src = headerLogoImage;
-
-                renderContainer.appendChild(newPoster);
-                newPoster.appendChild(newContent);
 
                 // 添加专门用于渲染的样式
                 const renderStyle = document.createElement('style');
@@ -2060,11 +2060,16 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 `;
                 document.head.appendChild(renderStyle);
 
-                await new Promise(resolve => setTimeout(resolve, 300));
+                // For foreignObjectRendering, also inject style inside the poster element
+                const inlineStyle = document.createElement('style');
+                inlineStyle.textContent = renderStyle.textContent;
+                newPoster.insertBefore(inlineStyle, newPoster.firstChild);
+
+                await new Promise(resolve => setTimeout(resolve, 500));
 
                 const canvas = await html2canvas(newPoster, {
                     width: 1080, height: 1920, scale: 2, backgroundColor: null,
-                    logging: false, useCORS: true, allowTaint: true,
+                    logging: true, useCORS: true, allowTaint: true,
                     removeContainer: false, foreignObjectRendering: true,
                     imageTimeout: 15000,
                     windowWidth: 1080, windowHeight: 1920
@@ -2176,16 +2181,27 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
         }
 
         function loadFontAsBase64(fontUrl) {
-            return fetch(fontUrl)
-                .then(response => response.arrayBuffer())
-                .then(buffer => {
-                    const bytes = new Uint8Array(buffer);
-                    let binary = '';
-                    for (let i = 0; i < bytes.length; i++) {
-                        binary += String.fromCharCode(bytes[i]);
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', fontUrl, true);
+                xhr.responseType = 'arraybuffer';
+                xhr.onload = function() {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        const bytes = new Uint8Array(xhr.response);
+                        let binary = '';
+                        for (let i = 0; i < bytes.length; i++) {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+                        resolve(btoa(binary));
+                    } else {
+                        reject(new Error('Failed to load font: ' + fontUrl));
                     }
-                    return btoa(binary);
-                });
+                };
+                xhr.onerror = function() {
+                    reject(new Error('Failed to load font: ' + fontUrl));
+                };
+                xhr.send();
+            });
         }
 
         function loadImageAsBase64(imageUrl) {
