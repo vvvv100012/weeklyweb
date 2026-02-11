@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinEx VIP Weekly</title>
     <style>
+        @font-face {
+            font-family: "HarmonyOS Sans Naskh Arabic";
+            src: url("fonts/HarmonyOS-Sans-Naskh-Arabic.woff2") format("woff2"),
+                 url("fonts/HarmonyOS-Sans-Naskh-Arabic.woff") format("woff"),
+                 url("fonts/HarmonyOS-Sans-Naskh-Arabic.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Google Sans";
+            src: url("fonts/GoogleSans-Regular.woff2") format("woff2");
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Google Sans";
+            src: url("fonts/GoogleSans-Medium.woff2") format("woff2");
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Google Sans";
+            src: url("fonts/GoogleSans-SemiBold.woff2") format("woff2");
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Google Sans";
+            src: url("fonts/GoogleSans-Bold.woff2") format("woff2");
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -249,6 +291,7 @@
             position: relative;
             overflow: hidden;
             flex-shrink: 0;
+            font-family: 'Google Sans', sans-serif;
             /* 改善渲染质量 */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
@@ -1035,16 +1078,11 @@
         .rtl-mode {
             direction: rtl;
             font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
-            /* Improve font rendering quality */
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
         }
 
         .rtl-mode .poster-title {
             text-align: right;
             font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
-            font-weight: 700;
         }
 
         .rtl-mode .poster-date {
@@ -1057,7 +1095,6 @@
             padding-right: 10px;
             padding-left: 0;
             font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
-            font-weight: 700;
         }
 
         .rtl-mode .section-content {
@@ -1069,23 +1106,11 @@
         .rtl-mode .triple-bubble-text {
             text-align: right;
             font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
-            /* Use regular weight for body text to avoid faux bold */
-            font-weight: 400 !important;
-        }
-
-        /* Re-apply bold explicitly for strong/b tags */
-        .rtl-mode .bubble-text strong,
-        .rtl-mode .bubble-text b,
-        .rtl-mode .triple-bubble-text strong,
-        .rtl-mode .triple-bubble-text b {
-            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
-            font-weight: 700 !important;
         }
 
         .rtl-mode .tag-item,
         .rtl-mode .verdict-container {
             font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
-            -webkit-font-smoothing: antialiased;
         }
 
         /* Mirroring absolute positioned elements for RTL Preview */
@@ -1747,6 +1772,50 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 const logoImage = await loadImageAsBase64('logo.png');
                 const headerLogoImage = await loadImageAsBase64('log_white.png');
 
+                // 检查是否开启了 RTL 模式，加载对应字体 base64
+                const isRtlMode = document.getElementById('poster').classList.contains('rtl-mode');
+                let fontFaceDeclarations = '';
+                if (isRtlMode) {
+                    const arabicFontBase64 = await loadFontAsBase64('fonts/HarmonyOS-Sans-Naskh-Arabic.woff2');
+                    fontFaceDeclarations = `
+                        @font-face {
+                            font-family: "HarmonyOS Sans Naskh Arabic";
+                            src: url("data:font/woff2;base64,${arabicFontBase64}") format("woff2");
+                            font-weight: normal;
+                            font-style: normal;
+                        }
+                    `;
+                } else {
+                    const [gsRegular, gsMedium, gsSemiBold, gsBold] = await Promise.all([
+                        loadFontAsBase64('fonts/GoogleSans-Regular.woff2'),
+                        loadFontAsBase64('fonts/GoogleSans-Medium.woff2'),
+                        loadFontAsBase64('fonts/GoogleSans-SemiBold.woff2'),
+                        loadFontAsBase64('fonts/GoogleSans-Bold.woff2'),
+                    ]);
+                    fontFaceDeclarations = `
+                        @font-face {
+                            font-family: "Google Sans";
+                            src: url("data:font/woff2;base64,${gsRegular}") format("woff2");
+                            font-weight: 400; font-style: normal;
+                        }
+                        @font-face {
+                            font-family: "Google Sans";
+                            src: url("data:font/woff2;base64,${gsMedium}") format("woff2");
+                            font-weight: 500; font-style: normal;
+                        }
+                        @font-face {
+                            font-family: "Google Sans";
+                            src: url("data:font/woff2;base64,${gsSemiBold}") format("woff2");
+                            font-weight: 600; font-style: normal;
+                        }
+                        @font-face {
+                            font-family: "Google Sans";
+                            src: url("data:font/woff2;base64,${gsBold}") format("woff2");
+                            font-weight: 700; font-style: normal;
+                        }
+                    `;
+                }
+
                 // 获取原始 poster 的内容
                 const originalPoster = document.getElementById('poster');
 
@@ -1792,15 +1861,13 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 const renderStyle = document.createElement('style');
                 renderStyle.id = 'render-style';
 
-                // 检查是否开启了 RTL 模式
-                const isRtlMode = document.getElementById('poster').classList.contains('rtl-mode');
-
                 renderStyle.textContent = `
+                    ${fontFaceDeclarations}
                     #temp-poster {
                         background-size: cover !important;
                         background-position: center !important;
                         background-repeat: no-repeat !important;
-                        ${isRtlMode ? 'direction: rtl !important; font-family: "HarmonyOS Sans Naskh Arabic", "Tahoma", "Segoe UI", sans-serif !important;' : ''}
+                        ${isRtlMode ? 'direction: rtl !important; font-family: "HarmonyOS Sans Naskh Arabic", "Tahoma", "Segoe UI", sans-serif !important;' : 'font-family: "Google Sans", sans-serif !important;'}
                     }
                     #temp-poster::before {
                         content: '';
@@ -1814,7 +1881,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         position: relative; z-index: 2; height: 100%;
                         display: flex; flex-direction: column; color: white;
                         padding: 0; margin: 0;
-                        ${isRtlMode ? 'font-family: "HarmonyOS Sans Naskh Arabic", "Tahoma", "Segoe UI", sans-serif !important;' : ''}
+                        ${isRtlMode ? 'font-family: "HarmonyOS Sans Naskh Arabic", "Tahoma", "Segoe UI", sans-serif !important;' : 'font-family: "Google Sans", sans-serif !important;'}
                     }
                     #temp-poster .poster-header {
                         height: 100px; display: flex; justify-content: space-between;
@@ -1998,7 +2065,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                 const canvas = await html2canvas(newPoster, {
                     width: 1080, height: 1920, scale: 2, backgroundColor: null,
                     logging: false, useCORS: true, allowTaint: true,
-                    removeContainer: false, foreignObjectRendering: false,
+                    removeContainer: false, foreignObjectRendering: true,
                     imageTimeout: 15000,
                     windowWidth: 1080, windowHeight: 1920
                 });
@@ -2106,6 +2173,19 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             } catch (e) {
                 console.error('Error loading defaults:', e);
             }
+        }
+
+        function loadFontAsBase64(fontUrl) {
+            return fetch(fontUrl)
+                .then(response => response.arrayBuffer())
+                .then(buffer => {
+                    const bytes = new Uint8Array(buffer);
+                    let binary = '';
+                    for (let i = 0; i < bytes.length; i++) {
+                        binary += String.fromCharCode(bytes[i]);
+                    }
+                    return btoa(binary);
+                });
         }
 
         function loadImageAsBase64(imageUrl) {
