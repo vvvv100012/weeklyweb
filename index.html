@@ -1034,21 +1034,24 @@
         /* RTL Mode Styles for Preview */
         .rtl-mode {
             direction: rtl;
-            font-family: 'Tahoma', 'Segoe UI', sans-serif;
+            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
         }
 
         .rtl-mode .poster-title {
             text-align: right;
+            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
         }
 
         .rtl-mode .poster-date {
             text-align: left;
+            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
         }
 
         .rtl-mode .section-title {
             text-align: right;
             padding-right: 10px;
             padding-left: 0;
+            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
         }
 
         .rtl-mode .section-content {
@@ -1059,6 +1062,12 @@
         .rtl-mode .bubble-text,
         .rtl-mode .triple-bubble-text {
             text-align: right;
+            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
+        }
+
+        .rtl-mode .tag-item,
+        .rtl-mode .verdict-container {
+            font-family: 'HarmonyOS Sans Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif !important;
         }
 
         /* Mirroring absolute positioned elements for RTL Preview */
@@ -1675,8 +1684,16 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
         function updatePosterDate() {
             const dateInput = document.getElementById('date').value;
             const date = new Date(dateInput);
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('poster-date-display').textContent = date.toLocaleDateString('en-US', options);
+            const isRtl = document.getElementById('rtl-mode-toggle').checked;
+
+            if (isRtl) {
+                // Persian Date
+                document.getElementById('poster-date-display').textContent = formatPersianDate(date);
+            } else {
+                // Gregorian Date
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('poster-date-display').textContent = date.toLocaleDateString('en-US', options);
+            }
         }
 
         function generatePoster() {
@@ -1765,7 +1782,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         background-size: cover !important;
                         background-position: center !important;
                         background-repeat: no-repeat !important;
-                        ${isRtlMode ? 'direction: rtl !important; font-family: "Tahoma", "Segoe UI", sans-serif !important;' : ''}
+                        ${isRtlMode ? 'direction: rtl !important; font-family: "HarmonyOS Sans Naskh Arabic", "Tahoma", "Segoe UI", sans-serif !important;' : ''}
                     }
                     #temp-poster::before {
                         content: '';
@@ -1779,6 +1796,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
                         position: relative; z-index: 2; height: 100%;
                         display: flex; flex-direction: column; color: white;
                         padding: 0; margin: 0;
+                        ${isRtlMode ? 'font-family: "HarmonyOS Sans Naskh Arabic", "Tahoma", "Segoe UI", sans-serif !important;' : ''}
                     }
                     #temp-poster .poster-header {
                         height: 100px; display: flex; justify-content: space-between;
@@ -2130,6 +2148,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             } else {
                 poster.classList.remove('rtl-mode');
             }
+            updatePosterDate(); // Refresh date format immediately
         });
 
         document.getElementById('date').addEventListener('change', updatePosterDate);
@@ -2175,6 +2194,35 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // Persian Calendar Helpers
+        const persianMonths = ["Farvardin", "Ordibehesht", "Khordad", "Tir", "Mordad", "Shahrivar", "Mehr", "Aban", "Azar", "Dey", "Bahman", "Esfand"];
+
+        function gregorianToJalali(gy, gm, gd) {
+            var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            var jy = (gy <= 1600) ? 0 : 979;
+            gy -= (gy <= 1600) ? 621 : 1600;
+            var gy2 = (gm > 2) ? (gy + 1) : gy;
+            var days = (365 * gy) + parseInt((gy2 + 3) / 4) - parseInt((gy2 + 99) / 100) + parseInt((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+            jy += 33 * parseInt(days / 12053);
+            days %= 12053;
+            jy += 4 * parseInt(days / 1461);
+            days %= 1461;
+            jy += parseInt((days - 1) / 365);
+            if (days > 365) days = (days - 1) % 365;
+            var jm = (days < 186) ? 1 + parseInt(days / 31) : 7 + parseInt((days - 186) / 30);
+            var jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+            return [jy, jm, jd];
+        }
+
+        function formatPersianDate(date) {
+            const gy = date.getFullYear();
+            const gm = date.getMonth() + 1;
+            const gd = date.getDate();
+            const [jy, jm, jd] = gregorianToJalali(gy, gm, gd);
+            // Format: Day Month Year (e.g., 10 Bahman 1402)
+            return `${jd} ${persianMonths[jm - 1]} ${jy}`;
         }
 
         // Function to check content and control bubble visibility
