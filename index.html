@@ -1242,6 +1242,10 @@
                             <label for="date">Date</label>
                             <input type="date" id="date" name="date">
                         </div>
+                        <div class="input-group" id="persian-date-group" style="display: none;">
+                            <label for="persian-date-custom">Persian Date (custom)</label>
+                            <input type="text" id="persian-date-custom" placeholder="e.g. 1404 بهمن 23" dir="rtl" style="font-family: 'HarmonyOS Sans Naskh Arabic', Tahoma, sans-serif;">
+                        </div>
                         <div class="input-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
                             <input type="checkbox" id="rtl-mode-toggle" style="width: auto;">
                             <label for="rtl-mode-toggle" style="margin: 0; cursor: pointer;">Enable Persian/RTL Mode</label>
@@ -1688,7 +1692,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             console.log('Data load process completed!');
         }
 
-        // 折叠卡片切换函数
+        // 折叠卡片切换函���
         function toggleCard(card) {
 
             card.classList.toggle('expanded');
@@ -1730,8 +1734,16 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             const isRtl = document.getElementById('rtl-mode-toggle').checked;
 
             if (isRtl) {
-                // Persian Date
-                document.getElementById('poster-date-display').textContent = formatPersianDate(date);
+                const customInput = document.getElementById('persian-date-custom');
+                if (customInput.value) {
+                    // Use custom input if it has content
+                    document.getElementById('poster-date-display').textContent = customInput.value;
+                } else {
+                    // Auto-convert from calendar and fill custom input
+                    const persianDate = formatPersianDate(date);
+                    customInput.value = persianDate;
+                    document.getElementById('poster-date-display').textContent = persianDate;
+                }
             } else {
                 // Gregorian Date
                 const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -2252,15 +2264,32 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
         // RTL Mode Toggle
         document.getElementById('rtl-mode-toggle').addEventListener('change', function() {
             const poster = document.getElementById('poster');
+            const persianDateGroup = document.getElementById('persian-date-group');
             if (this.checked) {
                 poster.classList.add('rtl-mode');
+                persianDateGroup.style.display = 'block';
             } else {
                 poster.classList.remove('rtl-mode');
+                persianDateGroup.style.display = 'none';
             }
-            updatePosterDate(); // Refresh date format immediately
+            updatePosterDate();
         });
 
-        document.getElementById('date').addEventListener('change', updatePosterDate);
+        document.getElementById('date').addEventListener('change', function() {
+            const isRtl = document.getElementById('rtl-mode-toggle').checked;
+            if (isRtl) {
+                // When calendar changes in RTL mode, auto-fill the custom input
+                const dateInput = this.value;
+                const date = new Date(dateInput);
+                document.getElementById('persian-date-custom').value = formatPersianDate(date);
+            }
+            updatePosterDate();
+        });
+
+        document.getElementById('persian-date-custom').addEventListener('input', function() {
+            // Custom Persian date input directly updates the poster
+            document.getElementById('poster-date-display').textContent = this.value;
+        });
 
         // Function to update tag display
         function updateTagDisplay(sectionNum, bubbleNum) {
@@ -2306,7 +2335,7 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
         }
 
         // Persian Calendar Helpers
-        const persianMonths = ["Farvardin", "Ordibehesht", "Khordad", "Tir", "Mordad", "Shahrivar", "Mehr", "Aban", "Azar", "Dey", "Bahman", "Esfand"];
+        const persianMonths = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
 
         function gregorianToJalali(gy, gm, gd) {
             var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -2330,8 +2359,8 @@ Hyperliquid (HYPE) has acted as a market outlier. <b>While majors collapsed, HYP
             const gm = date.getMonth() + 1;
             const gd = date.getDate();
             const [jy, jm, jd] = gregorianToJalali(gy, gm, gd);
-            // Format: Day Month Year (e.g., 10 Bahman 1402)
-            return `${jd} ${persianMonths[jm - 1]} ${jy}`;
+            // Format: Year Month Day (e.g., 1404 بهمن 23)
+            return `${jy} ${persianMonths[jm - 1]} ${jd}`;
         }
 
         // Function to check content and control bubble visibility
