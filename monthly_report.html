@@ -193,6 +193,167 @@
         .triple-bubble-text em, .triple-bubble-text i { color: #00D9D9 !important; font-style: italic !important; }
         .triple-bubble-text u { color: #F3BB2C !important; text-decoration: underline !important; }
 
+        .triple-bubble-text .cet-burn-stats,
+        .rich-text-input .cet-burn-stats {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .triple-bubble-text .cet-burn-grid,
+        .rich-text-input .cet-burn-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .triple-bubble-text .cet-burn-card,
+        .rich-text-input .cet-burn-card {
+            border-radius: 16px;
+            padding: 13px 15px;
+        }
+        .triple-bubble-text .cet-burn-card {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        .rich-text-input .cet-burn-card {
+            background: transparent;
+            border: 1px solid #e7ecf1;
+        }
+        .cet-burn-card-primary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            grid-column: 1 / -1;
+        }
+        .cet-burn-primary-copy {
+            flex: 1;
+            min-width: 0;
+        }
+        .cet-burn-card-primary .cet-burn-primary-copy {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+        .cet-burn-card-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+        .triple-bubble-text .cet-burn-card,
+        .triple-bubble-text .cet-burn-card * {
+            text-shadow: none !important;
+            font-family: inherit !important;
+        }
+        .rich-text-input .cet-burn-card,
+        .rich-text-input .cet-burn-card * { font-family: inherit; }
+        .triple-bubble-text .cet-burn-label {
+            color: rgba(255,255,255,0.72) !important;
+            font-size: 0.8em !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
+        }
+        .rich-text-input .cet-burn-label {
+            color: rgba(13,14,16,0.5) !important;
+            font-size: 0.8em !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
+        }
+        .triple-bubble-text .cet-burn-value {
+            color: #ffffff !important;
+            font-size: 1.15em !important;
+            font-weight: 700 !important;
+            line-height: 1.25 !important;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+        .rich-text-input .cet-burn-value {
+            color: rgba(13,14,16,0.95) !important;
+            font-size: 1.15em !important;
+            font-weight: 700 !important;
+            line-height: 1.25 !important;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+        .cet-burn-card-primary .cet-burn-value { font-size: 1.45em !important; }
+        .cet-burn-card-primary .cet-burn-value {
+            line-height: 1.02 !important;
+        }
+        .triple-bubble-text .cet-burn-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 0.8em !important;
+            line-height: 1.5 !important;
+            color: rgba(255,255,255,0.72) !important;
+        }
+        .rich-text-input .cet-burn-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 0.8em !important;
+            line-height: 1.5 !important;
+            color: rgba(13,14,16,0.5) !important;
+        }
+        .cet-burn-card-primary .cet-burn-meta {
+            margin-top: 0;
+            gap: 6px;
+            line-height: 1.3 !important;
+        }
+        .triple-bubble-text .cet-burn-meta strong {
+            color: rgba(255,255,255,0.72) !important;
+            font-weight: 500 !important;
+        }
+        .rich-text-input .cet-burn-meta strong {
+            color: rgba(13,14,16,0.5) !important;
+            font-weight: 500 !important;
+        }
+        .cet-burn-ring {
+            flex: 0 0 auto;
+            width: 3.05em;
+            height: 3.05em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cet-burn-ring-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+            transform: rotate(-90deg);
+        }
+        .cet-burn-ring-track,
+        .cet-burn-ring-progress {
+            fill: none;
+            stroke-width: 4;
+        }
+        .triple-bubble-text .cet-burn-ring-track { stroke: rgba(255,255,255,0.16); }
+        .rich-text-input .cet-burn-ring-track { stroke: rgba(13,14,16,0.10); }
+        .triple-bubble-text .cet-burn-ring-progress { stroke: #29ddcb; }
+        .rich-text-input .cet-burn-ring-progress { stroke: #0EAD98; }
+        .cet-burn-ring-progress {
+            stroke-linecap: round;
+            stroke-dashoffset: 25;
+        }
+
+        .poster-section.section-1 { margin-bottom: 1px; }
+        #poster-section1-subtitle3 { margin-bottom: -10px; }
+        #poster-section1-bubble-container3 {
+            padding-top: 8px;
+            padding-bottom: 0;
+        }
+        #poster-section1-bubble3 .cet-burn-stats {
+            margin-top: -12px;
+            margin-bottom: -8px;
+        }
+        #poster-section1-bubble-container3 .tag-container { margin-top: 2px; }
+
         /* Tag & Verdict */
         .tag-container {
             display: flex; gap: 6px; flex-wrap: wrap; width: 100%;
@@ -267,7 +428,46 @@
                                         </div>
                                         <div class="triple-bubble" id="poster-section1-bubble-container3">
                                             <div class="bubble-subtitle" id="poster-section1-subtitle3">CET Repurchase &amp; Burn</div>
-                                            <div class="triple-bubble-text" id="poster-section1-bubble3">CET repurchase &amp; burn...</div>
+                                            <div class="triple-bubble-text" id="poster-section1-bubble3">
+                                                <div class="cet-burn-stats">
+                                                    <div class="cet-burn-grid">
+                                                        <div class="cet-burn-card cet-burn-card-primary">
+                                                        <div class="cet-burn-primary-copy">
+                                                            <div class="cet-burn-card-row cet-burn-primary-metric">
+                                                                <div class="cet-burn-label">Burnt Proportion</div>
+                                                                <div class="cet-burn-value">74.54%</div>
+                                                            </div>
+                                                            <div class="cet-burn-meta">
+                                                                <span>Total Issued:</span>
+                                                                <strong>10B CET</strong>
+                                                            </div>
+                                                        </div>
+                                                        <div class="cet-burn-ring" aria-hidden="true">
+                                                            <svg class="cet-burn-ring-svg" viewBox="0 0 42 42">
+                                                                <circle class="cet-burn-ring-track" cx="21" cy="21" r="15.9155"></circle>
+                                                                <circle class="cet-burn-ring-progress" cx="21" cy="21" r="15.9155" pathLength="100" stroke-dasharray="74.54 100"></circle>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                        <div class="cet-burn-card cet-burn-card-row">
+                                                            <div class="cet-burn-label">Circulating Supply (CET)</div>
+                                                            <div class="cet-burn-value">2,523,353,566.22</div>
+                                                        </div>
+                                                        <div class="cet-burn-card cet-burn-card-row">
+                                                            <div class="cet-burn-label">Circulating Market Cap (USD)</div>
+                                                            <div class="cet-burn-value">75,025,584.67</div>
+                                                        </div>
+                                                        <div class="cet-burn-card cet-burn-card-row">
+                                                            <div class="cet-burn-label">Total Burnt (CET)</div>
+                                                            <div class="cet-burn-value">7,454,569,463.35</div>
+                                                        </div>
+                                                        <div class="cet-burn-card cet-burn-card-row">
+                                                            <div class="cet-burn-label">To-be-burnt (CET)</div>
+                                                            <div class="cet-burn-value">3,148,622.56</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="tag-container" id="poster-section1-tag3"></div>
                                         </div>
                                     </div>
@@ -473,7 +673,46 @@
                                             <span style="font-size: 0.8rem;">px</span>
                                         </div>
                                     </div>
-                                    <div class="rich-text-input" id="section1-content3" contenteditable="true" placeholder="Enter CET repurchase &amp; burn update...">• Total burned: XX CET<br>• Monthly burn: XX CET<br>• Remaining supply: XX</div>
+                                    <div class="rich-text-input" id="section1-content3" contenteditable="true" placeholder="Enter CET repurchase &amp; burn update...">
+                                        <div class="cet-burn-stats">
+                                            <div class="cet-burn-grid">
+                                                <div class="cet-burn-card cet-burn-card-primary">
+                                                    <div class="cet-burn-primary-copy">
+                                                        <div class="cet-burn-card-row cet-burn-primary-metric">
+                                                            <div class="cet-burn-label">Burnt Proportion</div>
+                                                            <div class="cet-burn-value">74.54%</div>
+                                                        </div>
+                                                        <div class="cet-burn-meta">
+                                                            <span>Total Issued:</span>
+                                                            <strong>10B CET</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="cet-burn-ring" aria-hidden="true">
+                                                        <svg class="cet-burn-ring-svg" viewBox="0 0 42 42">
+                                                            <circle class="cet-burn-ring-track" cx="21" cy="21" r="15.9155"></circle>
+                                                            <circle class="cet-burn-ring-progress" cx="21" cy="21" r="15.9155" pathLength="100" stroke-dasharray="74.54 100"></circle>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="cet-burn-card cet-burn-card-row">
+                                                    <div class="cet-burn-label">Circulating Supply (CET)</div>
+                                                    <div class="cet-burn-value">2,523,353,566.22</div>
+                                                </div>
+                                                <div class="cet-burn-card cet-burn-card-row">
+                                                    <div class="cet-burn-label">Circulating Market Cap (USD)</div>
+                                                    <div class="cet-burn-value">75,025,584.67</div>
+                                                </div>
+                                                <div class="cet-burn-card cet-burn-card-row">
+                                                    <div class="cet-burn-label">Total Burnt (CET)</div>
+                                                    <div class="cet-burn-value">7,454,569,463.35</div>
+                                                </div>
+                                                <div class="cet-burn-card cet-burn-card-row">
+                                                    <div class="cet-burn-label">To-be-burnt (CET)</div>
+                                                    <div class="cet-burn-value">3,148,622.56</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Bubble Background Color</label>
@@ -630,7 +869,7 @@
                 const preview = document.getElementById(previewId);
                 const content = document.getElementById(contentId);
                 if (preview && content) {
-                    const text = content.textContent || content.innerText;
+                    const text = (content.innerText || content.textContent || '').replace(/\s+/g, ' ').trim();
                     preview.textContent = text.substring(0, 25) + (text.length > 25 ? '...' : '');
                 }
             }
@@ -949,6 +1188,7 @@
                     '#temp-poster .poster-date { font-size: 20px; color: rgba(255,255,255,0.9); font-weight: 500; }' +
                     '#temp-poster .poster-sections { flex: 1; display: flex; flex-direction: column; padding: 0 15px; }' +
                     '#temp-poster .poster-section { display: flex; flex-direction: column; flex: 0 0 auto; margin-bottom: 10px; }' +
+                    '#temp-poster .poster-section.section-1 { margin-bottom: 1px; }' +
                     '#temp-poster .poster-section:last-child { margin-bottom: 0; }' +
                     '#temp-poster .section-title { font-size: 36px; font-weight: 700; color: #0EAD98 !important; margin-bottom: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); padding-left: 10px; display: flex; align-items: center; height: 60px; }' +
                     '#temp-poster .section-content { display: flex; align-items: flex-start; justify-content: center; padding: 0; }' +
@@ -961,6 +1201,29 @@
                     '#temp-poster .triple-bubble-text strong, #temp-poster .triple-bubble-text b { color: #0EAD98 !important; font-weight: 700 !important; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }' +
                     '#temp-poster .triple-bubble-text em, #temp-poster .triple-bubble-text i { color: #00D9D9 !important; font-style: italic !important; }' +
                     '#temp-poster .triple-bubble-text u { color: #F3BB2C !important; text-decoration: underline !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-stats { width: 100%; display: flex; flex-direction: column; gap: 8px; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-grid { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card { background: transparent; border: 1px solid rgba(255,255,255,0.18); border-radius: 16px; padding: 13px 15px; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card, #temp-poster .triple-bubble-text .cet-burn-card * { text-shadow: none !important; font-family: inherit !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card-primary { display: flex; align-items: center; justify-content: space-between; gap: 14px; grid-column: 1 / -1; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-primary-copy { flex: 1; min-width: 0; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card-primary .cet-burn-primary-copy { display: flex; flex-direction: column; justify-content: center; gap: 4px; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card-row { display: flex; flex-direction: column; gap: 6px; min-width: 0; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-label { color: rgba(255,255,255,0.72) !important; font-size: 0.8em !important; font-weight: 400 !important; line-height: 1.5 !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-value { color: #ffffff !important; font-size: 1.15em !important; font-weight: 700 !important; line-height: 1.25 !important; margin-top: 2px; word-break: break-word; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card-primary .cet-burn-value { font-size: 1.45em !important; line-height: 1.02 !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; font-size: 0.8em !important; line-height: 1.5 !important; color: rgba(255,255,255,0.72) !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-card-primary .cet-burn-meta { margin-top: 0; gap: 6px; line-height: 1.3 !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-meta strong { color: rgba(255,255,255,0.72) !important; font-weight: 500 !important; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-ring { flex: 0 0 auto; width: 3.05em; height: 3.05em; display: flex; align-items: center; justify-content: center; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-ring-svg { width: 100%; height: 100%; display: block; overflow: visible; transform: rotate(-90deg); }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-ring-track, #temp-poster .triple-bubble-text .cet-burn-ring-progress { fill: none; stroke-width: 4; }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-ring-track { stroke: rgba(255,255,255,0.16); }' +
+                    '#temp-poster .triple-bubble-text .cet-burn-ring-progress { stroke: #29ddcb; stroke-linecap: round; stroke-dashoffset: 25; }' +
+                    '#temp-poster #poster-section1-subtitle3 { margin-bottom: -10px; }' +
+                    '#temp-poster #poster-section1-bubble-container3 { padding-top: 8px; padding-bottom: 0; }' +
+                    '#temp-poster #poster-section1-bubble3 .cet-burn-stats { margin-top: -12px; margin-bottom: -8px; }' +
+                    '#temp-poster #poster-section1-bubble-container3 .tag-container { margin-top: 2px; }' +
                     '#temp-poster .tag-container { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; justify-content: flex-end; margin-top: 12px; z-index: 10; }' +
                     '#temp-poster .tag-item { color: white !important; font-size: 16px !important; font-weight: 600 !important; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); text-shadow: none !important; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }' +
                     '#temp-poster .poster-footer { height: 80px; flex-shrink: 0; position: relative; }' +
