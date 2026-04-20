@@ -1301,12 +1301,12 @@ The macro picture brightened mid-week: VIX fell to its lowest since the conflict
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-1" value='BTC <span style="color: #46cc71;">⬆︎ 0.31%</span>' placeholder="Tag 1">
                                     <input type="color" id="section2-tag1-color1" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-2" value='S&P 500 <span style="color: #46cc71;">⬆︎ 4.54%</span>' placeholder="Tag 2"><input type="color" id="section2-tag1-color2" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-3" value='Gold <span style="color: #46cc71;">⬆︎ 1.30%</span>' placeholder="Tag 3"><input type="color" id="section2-tag1-color3" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-3" value='GOLD <span style="color: #46cc71;">⬆︎ 1.30%</span>' placeholder="Tag 3"><input type="color" id="section2-tag1-color3" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-4" value='VIX <span style="color: #e74c3c;">⬇︎ 9.10%</span>' placeholder="Tag 4"><input type="color" id="section2-tag1-color4" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-5" value='DXY <span style="color: #e74c3c;">⬇︎ 0.34%</span>' placeholder="Tag 5"><input type="color" id="section2-tag1-color5" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-6" value='BTC ETF <span style="color: #46cc71;">⬆︎ $816.9M</span>' placeholder="Tag 6"><input type="color" id="section2-tag1-color6" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-7" value='ETH ETF <span style="color: #46cc71;">⬆︎ $187.0M</span>' placeholder="Tag 7"><input type="color" id="section2-tag1-color7" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-8" value='Stablecoin Flow <span style="color: #46cc71;">⬆︎ $1.51B</span>' placeholder="Tag 8"><input type="color" id="section2-tag1-color8" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-8" value='STABLECOIN FLOW <span style="color: #46cc71;">⬆︎ $1.51B</span>' placeholder="Tag 8"><input type="color" id="section2-tag1-color8" value="#000000"></div>
                                 </div>
                             </div>
                         </div>
@@ -1524,6 +1524,10 @@ The macro picture brightened mid-week: VIX fell to its lowest since the conflict
                 if (!text) return '';
 
                 const rules = {
+                    2: {
+                        label: 'GOLD',
+                        pattern: /^(?:GOLD)\b(?:\s*[:,-]?\s*)/i
+                    },
                     5: {
                         label: 'BTC ETF',
                         pattern: /^(?:(?:BTC\s*ETF)|BTC)\b(?:\s*[:,-]?\s*)/i
@@ -1533,7 +1537,7 @@ The macro picture brightened mid-week: VIX fell to its lowest since the conflict
                         pattern: /^(?:(?:ETH\s*ETF)|ETH)\b(?:\s*[:,-]?\s*)/i
                     },
                     7: {
-                        label: 'Stablecoin Flow',
+                        label: 'STABLECOIN FLOW',
                         pattern: /^(?:STABLECOIN\s*FLOW)\b(?:\s*[:,-]?\s*)/i
                     }
                 };
