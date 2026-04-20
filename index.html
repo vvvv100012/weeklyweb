@@ -1285,7 +1285,7 @@
                                     <div class="rich-text-input" id="section2-content1" contenteditable="true" placeholder="Loading data from Google Sheets..."><em>Hormuz Whiplash Undercuts Crypto's Strongest Flow Week in Months</em><br>
 The macro picture brightened mid-week: VIX fell to its lowest since the conflict began, Nasdaq extended a 13-session winning streak to fresh highs, and BTC ETF inflows hit nearly $1 billion — the strongest week since mid-January. Iran's conditional reopening of Hormuz crushed oil and briefly pushed BTC through $78,000. By the weekend the tape reversed hard: Iran re-closed the strait, IRGC forces fired on ships attempting transit, the KelpDAO exploit drained $290 million and triggered $9 billion in Aave outflows, and BTC slid back below $75,000.
 
-<b>We think the underlying bid is real — ETF flows, $2.3 billion in stablecoin issuance, and institutional accumulation all confirm genuine demand — but price action remains hostage to Hormuz.</b> The April 22 ceasefire expiry is the nearest binary event, with Vance and Witkoff heading to Islamabad for fresh talks. Before the event materialize, it is advisable to remain cautious and monitor the market’s reaction to developments in those events.
+<b>We think the underlying bid is real — ETF flows, $2.3 billion in stablecoin issuance, and institutional accumulation all confirm genuine demand — but price action remains hostage to Hormuz.</b> The April 22 ceasefire expiry is the nearest binary event, with Vance and Witkoff heading to Islamabad for fresh talks. Before the event materialize, it is advisable to remain cautious and monitor the market’s reaction to the event.
 
 </div>
                                 </div>
@@ -1304,9 +1304,9 @@ The macro picture brightened mid-week: VIX fell to its lowest since the conflict
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-3" value='Gold <span style="color: #46cc71;">⬆︎ 1.30%</span>' placeholder="Tag 3"><input type="color" id="section2-tag1-color3" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-4" value='VIX <span style="color: #e74c3c;">⬇︎ 9.10%</span>' placeholder="Tag 4"><input type="color" id="section2-tag1-color4" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-5" value='DXY <span style="color: #e74c3c;">⬇︎ 0.34%</span>' placeholder="Tag 5"><input type="color" id="section2-tag1-color5" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-6" value='BTC ETF BTC <span style="color: #46cc71;">⬆︎ $816.9M</span>' placeholder="Tag 6"><input type="color" id="section2-tag1-color6" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-7" value='ETH ETF ETH <span style="color: #46cc71;">⬆︎ $187.0M</span>' placeholder="Tag 7"><input type="color" id="section2-tag1-color7" value="#000000"></div>
-                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-8" value='Stablecoin Flow STABLECOIN FLOW <span style="color: #46cc71;">⬆︎ $1.51B</span>' placeholder="Tag 8"><input type="color" id="section2-tag1-color8" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-6" value='BTC ETF <span style="color: #46cc71;">⬆︎ $816.9M</span>' placeholder="Tag 6"><input type="color" id="section2-tag1-color6" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-7" value='ETH ETF <span style="color: #46cc71;">⬆︎ $187.0M</span>' placeholder="Tag 7"><input type="color" id="section2-tag1-color7" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-8" value='Stablecoin Flow <span style="color: #46cc71;">⬆︎ $1.51B</span>' placeholder="Tag 8"><input type="color" id="section2-tag1-color8" value="#000000"></div>
                                 </div>
                             </div>
                         </div>
@@ -1517,6 +1517,36 @@ The macro picture brightened mid-week: VIX fell to its lowest since the conflict
 
             const sheetId = '1AgjQ07PQeyp6UzVRnjNG8lHebW2zKr6PqRur3hNQDBo';
             const timestamp = new Date().getTime();
+            const normalizeSection2TagValue = (index, value) => {
+                if (value == null) return '';
+
+                let text = String(value).trim();
+                if (!text) return '';
+
+                const rules = {
+                    5: {
+                        label: 'BTC ETF',
+                        pattern: /^(?:(?:BTC\s*ETF)|BTC)\b(?:\s*[:,-]?\s*)/i
+                    },
+                    6: {
+                        label: 'ETH ETF',
+                        pattern: /^(?:(?:ETH\s*ETF)|ETH)\b(?:\s*[:,-]?\s*)/i
+                    },
+                    7: {
+                        label: 'Stablecoin Flow',
+                        pattern: /^(?:STABLECOIN\s*FLOW)\b(?:\s*[:,-]?\s*)/i
+                    }
+                };
+
+                const rule = rules[index];
+                if (!rule) return text;
+
+                while (rule.pattern.test(text)) {
+                    text = text.replace(rule.pattern, '').trimStart();
+                }
+
+                return text ? `${rule.label} ${text}` : rule.label;
+            };
 
             // ==========================================
             // 1. Load Section 2 (Past Sheet)
@@ -1556,13 +1586,7 @@ The macro picture brightened mid-week: VIX fell to its lowest since the conflict
                     // 2. Fill Tags (Columns 2-9)
                     for (let i = 0; i < 8; i++) {
                         const colIndex = i + 2;
-                        let val = row[colIndex];
-
-                        if (val) {
-                            if (i === 5 && !val.includes('BTC ETF')) val = `BTC ETF ${val}`;
-                            if (i === 6 && !val.includes('ETH ETF')) val = `ETH ETF ${val}`;
-                            if (i === 7 && !val.includes('Stablecoin Flow')) val = `Stablecoin Flow ${val}`;
-                        }
+                        const val = normalizeSection2TagValue(i, row[colIndex]);
 
                         const tagInput = document.getElementById(`section2-tag1-${i+1}`);
                         if (tagInput) {
