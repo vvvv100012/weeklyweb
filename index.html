@@ -599,7 +599,7 @@
             color: white !important;
         }
 
-        /* 板块2的标签容器 - 位于左下角，两排四列 */
+        /* 板块2的标签容器 - 位于左下角，支持最多 10 个标签 */
         .section-2 .tag-container {
             left: 35px; /* 对齐左侧padding */
             right: auto;
@@ -1254,7 +1254,7 @@
 
                     <!-- Section 2 -->
                     <div class="module">
-                        <h3>Section 2 - 1 Bubble (8 Tags)</h3>
+                        <h3>Section 2 - 1 Bubble (10 Tags)</h3>
                         <div class="input-group">
                             <label for="section2-title">Section Title</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
@@ -1299,7 +1299,7 @@ The clearest way this orderly grind gets overturned is a material escalation at 
                                     </div>
                                 </div>
                                 <div class="input-group">
-                                    <label>Tags (Up to 8)</label>
+                                    <label>Tags (Up to 10)</label>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-1" value='BTC <span style="color: #46cc71;">⬆︎ 5.30%</span>' placeholder="Tag 1">
                                     <input type="color" id="section2-tag1-color1" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-2" value='S&P 500 <span style="color: #46cc71;">⬆︎ 0.87%</span>' placeholder="Tag 2"><input type="color" id="section2-tag1-color2" value="#000000"></div>
@@ -1309,6 +1309,8 @@ The clearest way this orderly grind gets overturned is a material escalation at 
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-6" value='BTC ETF <span style="color: #46cc71;">⬆︎ $162.8M</span>' placeholder="Tag 6"><input type="color" id="section2-tag1-color6" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-7" value='ETH ETF <span style="color: #e74c3c;">⬇︎ $82.5M</span>' placeholder="Tag 7"><input type="color" id="section2-tag1-color7" value="#000000"></div>
                                     <div class="compact-tag-row"><input type="text" id="section2-tag1-8" value='STABLECOIN FLOW <span style="color: #46cc71;">⬆︎ $255.4M</span>' placeholder="Tag 8"><input type="color" id="section2-tag1-color8" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-9" value='OIL <span style="color: #46cc71;">⬆︎ 4.65%</span>' placeholder="Tag 9"><input type="color" id="section2-tag1-color9" value="#000000"></div>
+                                    <div class="compact-tag-row"><input type="text" id="section2-tag1-10" value='US 10Y <span style="color: #46cc71;">⬆︎ 2.11%</span>' placeholder="Tag 10"><input type="color" id="section2-tag1-color10" value="#000000"></div>
                                 </div>
                             </div>
                         </div>
@@ -1461,6 +1463,28 @@ The clearest way this orderly grind gets overturned is a material escalation at 
 
     <script src="html2canvas.min.js"></script>
     <script>
+        const SECTION2_TAG_COUNT = 10;
+
+        function getSection2TagColumns(headers) {
+            const tagColumns = [];
+
+            if (Array.isArray(headers)) {
+                for (let colIndex = 2; colIndex < headers.length && tagColumns.length < SECTION2_TAG_COUNT; colIndex++) {
+                    if (String(headers[colIndex] || '').trim()) {
+                        tagColumns.push(colIndex);
+                    }
+                }
+            }
+
+            for (let colIndex = 2; tagColumns.length < SECTION2_TAG_COUNT; colIndex++) {
+                if (!tagColumns.includes(colIndex)) {
+                    tagColumns.push(colIndex);
+                }
+            }
+
+            return tagColumns;
+        }
+
         // CSV Parser - Improved to handle empty fields better
         function parseCSV(text) {
             const rows = [];
@@ -1541,6 +1565,14 @@ The clearest way this orderly grind gets overturned is a material escalation at 
                     7: {
                         label: 'STABLECOIN FLOW',
                         pattern: /^(?:STABLECOIN\s*FLOW)\b(?:\s*[:,-]?\s*)/i
+                    },
+                    8: {
+                        label: 'OIL',
+                        pattern: /^(?:OIL)\b(?:\s*[:,-]?\s*)/i
+                    },
+                    9: {
+                        label: 'US 10Y',
+                        pattern: /^(?:(?:US\s*)?10Y|US\s*10\s*Y|UST\s*10Y)\b(?:\s*[:,-]?\s*)/i
                     }
                 };
 
@@ -1589,9 +1621,10 @@ The clearest way this orderly grind gets overturned is a material escalation at 
                         }
                     }
 
-                    // 2. Fill Tags (Columns 2-9)
-                    for (let i = 0; i < 8; i++) {
-                        const colIndex = i + 2;
+                    // 2. Fill Tags from non-empty header columns so spacer columns are ignored
+                    const tagColumns = getSection2TagColumns(dataPast[0]);
+                    for (let i = 0; i < SECTION2_TAG_COUNT; i++) {
+                        const colIndex = tagColumns[i];
                         const val = normalizeSection2TagValue(i, row[colIndex]);
 
                         const tagInput = document.getElementById(`section2-tag1-${i+1}`);
@@ -2330,8 +2363,8 @@ The clearest way this orderly grind gets overturned is a material escalation at 
 
             tagContainer.innerHTML = '';
 
-            // Section 2 has 8 tags, Section 3 has 3 tags
-            const maxTags = (sectionNum === 2) ? 8 : 3;
+            // Section 2 has 10 tags, Section 3 has 3 tags
+            const maxTags = (sectionNum === 2) ? SECTION2_TAG_COUNT : 3;
 
             for (let k = 1; k <= maxTags; k++) {
                 const tagInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-${k}`);
@@ -2472,7 +2505,7 @@ The clearest way this orderly grind gets overturned is a material escalation at 
 
                 if (tagContainer) {
                     tagContainer.innerHTML = '';
-                    const maxTags = (sectionNum === 2) ? 8 : 3;
+                    const maxTags = (sectionNum === 2) ? SECTION2_TAG_COUNT : 3;
                     for (let k = 1; k <= maxTags; k++) {
                         const tagInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-${k}`);
                         const colorInput = document.getElementById(`section${sectionNum}-tag${bubbleNum}-color${k}`);
@@ -2520,7 +2553,7 @@ The clearest way this orderly grind gets overturned is a material escalation at 
 
         // Real-time Event Listeners
 
-        // Section 2: 1 Bubble, 8 Tags
+        // Section 2: 1 Bubble, 10 Tags
         document.getElementById('section2-title').addEventListener('input', function() {
             document.getElementById('poster-section2-title').textContent = this.value;
         });
@@ -2544,8 +2577,8 @@ The clearest way this orderly grind gets overturned is a material escalation at 
                 updateFontSize(2, j, fontSizeInput.value);
             }
 
-            // 8 Tags for S2 Bubble 1
-            for (let k = 1; k <= 8; k++) {
+            // 10 Tags for S2 Bubble 1
+            for (let k = 1; k <= SECTION2_TAG_COUNT; k++) {
                 ['input', 'change'].forEach(eventType => {
                     const tagInput = document.getElementById(`section2-tag${j}-${k}`);
                     const colorInput = document.getElementById(`section2-tag${j}-color${k}`);
