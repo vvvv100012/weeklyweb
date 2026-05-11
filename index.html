@@ -464,10 +464,10 @@
             overflow: hidden;
         }
 
-        /* 强制覆盖所有粘贴文字的颜色，保留字体大小自定义能力 */
+        /* 强制覆盖所有粘贴文字的外部样式，字号跟随 Bubble Size 控件 */
         .bubble-text * {
             color: inherit !important;
-            /* font-size: inherit !important; Removed to allow custom font sizes */
+            font-size: inherit !important;
             line-height: inherit !important;
             font-family: inherit !important;
         }
@@ -477,7 +477,7 @@
         .bubble-text b {
             color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
             font-weight: 700 !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
@@ -485,13 +485,13 @@
         .bubble-text i {
             color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
             font-style: italic !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
         }
 
         .bubble-text u {
             color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
             text-decoration: underline !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
         }
 
         /* 三个气泡框布局 - 用于板块2和3 */
@@ -694,10 +694,10 @@
             padding-right: 5px;
         }
 
-        /* 强制覆盖三气泡框中所有粘贴文字的颜色，保留字体大小自定义 */
+        /* 强制覆盖三气泡框中所有粘贴文字的外部样式，字号跟随 Bubble Size 控件 */
         .triple-bubble-text * {
             color: inherit !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
             line-height: inherit !important;
             font-family: inherit !important;
         }
@@ -707,7 +707,7 @@
         .triple-bubble-text b {
             color: #0EAD98 !important; /* Bamboo Green - 用于加粗文字 */
             font-weight: 700 !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
@@ -715,13 +715,13 @@
         .triple-bubble-text i {
             color: #00D9D9 !important; /* Bright Cyan - 用于斜体文字 */
             font-style: italic !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
         }
 
         .triple-bubble-text u {
             color: #F3BB2C !important; /* Sunset - 用于下划线文字 */
             text-decoration: underline !important;
-            /* font-size: inherit !important; Removed */
+            font-size: inherit !important;
         }
 
         /* 空白区域样式 - 用于板块4 */
@@ -879,6 +879,12 @@
             transition: border-color 0.3s ease;
             background: white;
             overflow-y: auto;
+        }
+
+        .rich-text-input * {
+            font-size: inherit !important;
+            line-height: inherit !important;
+            font-family: inherit !important;
         }
 
         .editor-toolbar {
@@ -1783,9 +1789,35 @@ BTC is also at a pivotal technical level. A hot CPI or hawkish Warsh signal may 
             }
         }
 
+        function stripExternalFontStyles(root) {
+            if (!root) return;
+
+            root.querySelectorAll('[style]').forEach(element => {
+                element.style.removeProperty('font');
+                element.style.removeProperty('font-size');
+                element.style.removeProperty('font-family');
+                element.style.removeProperty('line-height');
+
+                if (!element.getAttribute('style')) {
+                    element.removeAttribute('style');
+                }
+            });
+
+            root.querySelectorAll('font').forEach(element => {
+                element.removeAttribute('size');
+                element.removeAttribute('face');
+            });
+        }
+
         // 监听内容变化更新预览
         document.querySelectorAll('.rich-text-input').forEach(el => {
             el.addEventListener('input', updateCardPreviews);
+            el.addEventListener('paste', () => {
+                window.requestAnimationFrame(() => {
+                    stripExternalFontStyles(el);
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+            });
         });
 
         // Set current date
@@ -2057,23 +2089,23 @@ BTC is also at a pivotal technical level. A hot CPI or hawkish Warsh signal may 
                     }
                     #temp-poster .bubble-text *, #temp-poster .triple-bubble-text * {
                         color: inherit !important;
-                        /* font-size: inherit !important; Removed to allow custom sizes */
+                        font-size: inherit !important;
                         line-height: inherit !important; font-family: inherit !important;
                     }
                     #temp-poster .bubble-text strong, #temp-poster .bubble-text b,
                     #temp-poster .triple-bubble-text strong, #temp-poster .triple-bubble-text b {
                         color: #0EAD98 !important; font-weight: 700 !important;
-                        /* font-size: inherit !important; Removed */
+                        font-size: inherit !important;
                         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
                     }
                     #temp-poster .bubble-text em, #temp-poster .bubble-text i,
                     #temp-poster .triple-bubble-text em, #temp-poster .triple-bubble-text i {
                         color: #00D9D9 !important; font-style: italic !important;
-                        /* font-size: inherit !important; Removed */
+                        font-size: inherit !important;
                     }
                     #temp-poster .bubble-text u, #temp-poster .triple-bubble-text u {
                         color: #F3BB2C !important; text-decoration: underline !important;
-                        /* font-size: inherit !important; Removed */
+                        font-size: inherit !important;
                     }
                     #temp-poster .tag-container {
                         position: absolute; bottom: 12px; left: 20px;
@@ -2433,6 +2465,7 @@ BTC is also at a pivotal technical level. A hot CPI or hawkish Warsh signal may 
             const contentElement = document.getElementById(`section${sectionNum}-content${bubbleNum}`);
             if (!contentElement) return; // Guard clause
 
+            stripExternalFontStyles(contentElement);
             const content = contentElement.innerHTML;
             const textContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').replace(/\s/g, '').trim();
             const bubbleContainer = document.getElementById(`poster-section${sectionNum}-bubble-container${bubbleNum}`);
